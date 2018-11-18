@@ -18,12 +18,10 @@
 package us.springett.parsers.cpe;
 
 import java.text.ParseException;
-import us.springett.parsers.cpe.values.Part;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mitre.cpe.common.LogicalValue;
 import org.mitre.cpe.common.WellFormedName;
-import org.mitre.cpe.naming.CPENameBinder;
 import org.mitre.cpe.naming.CPENameUnbinder;
 import us.springett.parsers.cpe.util.FormatUtil;
 

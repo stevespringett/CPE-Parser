@@ -94,6 +94,5 @@ public class CpeBuilderIT {
         WellFormedName wfn2 = cpeUnbinder.unbindFS(unbound);
 
         Assert.assertEquals(wfn.get("product"), wfn2.get("product"));
-
     }
 }
