@@ -43,6 +43,21 @@ public class FormatUtilTest {
         result = FormatUtil.toWellFormed(value);
         assertEquals(expResult, result);
 
+        value = "test_value";
+        expResult = "test_value";
+        result = FormatUtil.toWellFormed(value);
+        assertEquals(expResult, result);
+
+        value = "test-value";
+        expResult = "test-value";
+        result = FormatUtil.toWellFormed(value);
+        assertEquals(expResult, result);
+
+        value = "test.value";
+        expResult = "test.value";
+        result = FormatUtil.toWellFormed(value);
+        assertEquals(expResult, result);
+
         value = null;
         expResult = BindValue.ANY.getAbbreviation();
         result = FormatUtil.toWellFormed(value);
@@ -71,6 +86,21 @@ public class FormatUtilTest {
 
         value = "te\\$st";
         expResult = "te$st";
+        result = FormatUtil.fromWellFormed(value);
+        assertEquals(expResult, result);
+
+        value = "test_value";
+        expResult = "test_value";
+        result = FormatUtil.fromWellFormed(value);
+        assertEquals(expResult, result);
+
+        value = "test-value";
+        expResult = "test-value";
+        result = FormatUtil.fromWellFormed(value);
+        assertEquals(expResult, result);
+
+        value = "test.value";
+        expResult = "test.value";
         result = FormatUtil.fromWellFormed(value);
         assertEquals(expResult, result);
 
@@ -176,12 +206,7 @@ public class FormatUtilTest {
 
         value = "visual_c++";
         //TODO - is the quoting of the underscore correct
-        expResult = "visual\\_c\\\\+\\\\+";
-        result = FormatUtil.encodeCpe23Component(value);
-        assertEquals(expResult, result);
-
-        value = "test:";
-        expResult = "test\\\\:";
+        expResult = "visual_c\\\\+\\\\+";
         result = FormatUtil.encodeCpe23Component(value);
         assertEquals(expResult, result);
 
@@ -227,7 +252,7 @@ public class FormatUtilTest {
         result = FormatUtil.decodeCpe23Component(value);
         assertEquals(expResult, result);
 
-        value = "visual\\_c\\\\+\\\\+";
+        value = "visual_c\\\\+\\\\+";
         expResult = "visual_c++";
         result = FormatUtil.decodeCpe23Component(value);
         assertEquals(expResult, result);

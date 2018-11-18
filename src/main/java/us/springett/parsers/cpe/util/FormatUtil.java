@@ -38,10 +38,11 @@ public final class FormatUtil {
     }
 
     /**
-     * Transforms the given string into a "well formed string". A well formed
-     * string has all non-alphanumeric characters escaped with a backslash. If a
-     * <code>null</code> value is passed in the default {@link BindValue#ANY}
-     * will be returned.
+     * Transforms the given string into a "well (partially) formed string". A
+     * well formed string has all non-alphanumeric characters escaped with a
+     * backslash; however, this implementation does not escape '_', '-', or '.'.
+     * If a <code>null</code> value is passed in the default
+     * {@link BindValue#ANY} will be returned.
      *
      * @param value the string to format
      * @return the well formed string
@@ -54,7 +55,7 @@ public final class FormatUtil {
                 || BindValue.NA.getAbbreviation().equals(value)) {
             return value;
         }
-        return value.replaceAll("([^0-9A-Za-z])", "\\\\$1");
+        return value.replaceAll("([^0-9A-Za-z._-])", "\\\\$1");
     }
 
     /**
@@ -69,7 +70,7 @@ public final class FormatUtil {
         if (value == null) {
             return BindValue.ANY.getAbbreviation();
         }
-        return value.replaceAll("\\\\([^0-9A-Za-z ])", "$1");
+        return value.replaceAll("\\\\([^0-9A-Za-z])", "$1");
     }
 
     /**
