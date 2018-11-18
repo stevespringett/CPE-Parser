@@ -63,7 +63,6 @@
         <maven.site.plugin.version>3.7.1</maven.site.plugin.version>
         <maven.project.info.reports.plugin.version>3.0.0</maven.project.info.reports.plugin.version>
         <maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
-        <maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
     </properties>
 
     <scm>
@@ -146,23 +145,6 @@
                 <version>${maven.surefire.plugin.version}</version>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven.failsafe.plugin.version}</version>
-                <configuration>
-                    <failIfNoTests>true</failIfNoTests>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <phase>verify</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>${com.github.spotbugs.plugin.version}</version>
@@ -205,9 +187,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
-                <configuration>
-                    <excludePackageNames>org.mitre.cpe</excludePackageNames>
-                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -252,18 +231,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>${maven.jxr.plugin.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/org/mitre/**/*.java</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven.checkstyle.plugin.version}</version>
                 <configuration>
-                    <excludes>**/org/mitre/**/*.java</excludes>
                     <configLocation>${basedir}/src/config/checkstyle.xml</configLocation>
                 </configuration>
             </plugin>
@@ -271,9 +244,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
-                <configuration>
-                    <excludePackageNames>org.mitre.cpe</excludePackageNames>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
