@@ -31,6 +31,7 @@ public class CpeParserTest {
 
     /**
      * Test the Parse method.
+     *
      * @throws CpeParsingException thrown if there is a parsing error
      */
     @Test
@@ -74,6 +75,7 @@ public class CpeParserTest {
 
     /**
      * Test the parse23 method.
+     *
      * @throws CpeParsingException thrown if there is a parsing error
      */
     @Test
@@ -109,6 +111,7 @@ public class CpeParserTest {
 
     /**
      * Test of parse22 method, of class CpeParser.
+     *
      * @throws CpeParsingException thrown if there is a parsing error
      */
     @Test
@@ -296,6 +299,26 @@ public class CpeParserTest {
         assertEquals("chrome", cpe.getTargetSw());
         assertEquals("*", cpe.getTargetHw());
         assertEquals("*", cpe.getOther());
+    }
+
+    /**
+     * Test the parsing and binding cycles to ensure everything stays the same.
+     *
+     * @throws CpeParsingException thrown if there is a parsing error
+     */
+    @Test
+    public void testParseBindCicle() throws CpeParsingException {
+        exception = ExpectedException.none();
+
+        String initial = "cpe:2.3:a:embarcadero:embarcadero_c\\\\+\\\\+builder_xe6:20.0.15596.9843:*:*:en:*:*:*:other";
+        String cpeString = initial;
+        for (int x = 0; x < 10; x++) {
+            Cpe cpe = CpeParser.parse(cpeString);
+            cpeString = cpe.toCpe22Uri();
+            cpe = CpeParser.parse(cpeString);
+            cpeString = cpe.toCpe23FS();
+        }
+        Assert.assertEquals(initial, cpeString);
     }
 
     @Test
