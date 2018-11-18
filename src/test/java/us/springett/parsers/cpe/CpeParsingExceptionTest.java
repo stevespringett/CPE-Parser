@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) Steve Springett. All Rights Reserved.
+ * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
  */
 package us.springett.parsers.cpe;
 
-public enum Part {
+import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
-    APPLICATION("a"),
-    OPERATING_SYSTEM("o"),
-    HARDWARE_DEVICE("h");
+/**
+ *
+ * @author jeremy
+ */
+public class CpeParsingExceptionTest {
 
-    private String abbreviation;
-
-    Part(String abbreviation) {
-        this.abbreviation = abbreviation;
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+    
+    @Test
+    public void testException() throws Exception {
+        exception.expect(CpeParsingException.class);
+        
+        throw new CpeParsingException("This is a test");
     }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
+    
 }
