@@ -66,6 +66,7 @@ public class CpeBuilderTest {
 
     /**
      * Test of part method, of class CpeBuilder.
+     *
      * @throws CpeParsingException thrown if there is a parsing error
      */
     @Test

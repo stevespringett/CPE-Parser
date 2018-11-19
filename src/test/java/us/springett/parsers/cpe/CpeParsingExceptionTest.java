@@ -23,18 +23,18 @@ import org.junit.rules.ExpectedException;
 
 /**
  *
- * @author jeremy
+ * @author Jeremy Long
  */
 public class CpeParsingExceptionTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
-    
+
     @Test
     public void testException() throws Exception {
         exception.expect(CpeParsingException.class);
-        
+
         throw new CpeParsingException("This is a test");
     }
-    
+
 }

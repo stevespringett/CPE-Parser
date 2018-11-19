@@ -23,7 +23,6 @@ import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
 
-
 /**
  *
  * @author Jeremy Long
@@ -66,8 +65,8 @@ public class Cpe23PartIteratorTest {
     public void testConstructorException1() throws CpeParsingException {
         exception.expect(CpeParsingException.class);
         Cpe23PartIterator instance = new Cpe23PartIterator(null);
-    }    
-    
+    }
+
     /**
      * Test of next method, of class Cpe23PartIterator.
      *
@@ -76,11 +75,11 @@ public class Cpe23PartIteratorTest {
     @Test
     public void testNext() throws CpeParsingException {
         Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:pocoproject:poco_c\\\\+\\\\+_libraries:1.4.5:*:*:*:*:*:*:*");
-        String[] expResults = {"a","pocoproject:poco_c++_libraries","1.4.5","*","*","*","*","*","*","*"};
+        String[] expResults = {"a", "pocoproject:poco_c++_libraries", "1.4.5", "*", "*", "*", "*", "*", "*", "*"};
         String expResult = "a";
         String result = instance.next();
         assertEquals(expResult, result);
-        
+
         expResult = "pocoproject";
         result = instance.next();
         assertEquals(expResult, result);

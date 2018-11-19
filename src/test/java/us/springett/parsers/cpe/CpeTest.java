@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author jeremy
+ * @author Jeremy Long
  */
 public class CpeTest {
 
@@ -32,7 +32,7 @@ public class CpeTest {
      */
     @Test
     public void testGetPart() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         Part expResult = Part.ANY;
         Part result = instance.getPart();
@@ -44,7 +44,7 @@ public class CpeTest {
      */
     @Test
     public void testGetVendor() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "vendor";
         String result = instance.getVendor();
@@ -56,7 +56,7 @@ public class CpeTest {
      */
     @Test
     public void testGetProduct() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "product";
         String result = instance.getProduct();
@@ -68,7 +68,7 @@ public class CpeTest {
      */
     @Test
     public void testGetVersion() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "version";
         String result = instance.getVersion();
@@ -80,7 +80,7 @@ public class CpeTest {
      */
     @Test
     public void testGetUpdate() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "update";
         String result = instance.getUpdate();
@@ -92,7 +92,7 @@ public class CpeTest {
      */
     @Test
     public void testGetEdition() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "edition";
         String result = instance.getEdition();
@@ -104,7 +104,7 @@ public class CpeTest {
      */
     @Test
     public void testGetLanguage() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "language";
         String result = instance.getLanguage();
@@ -116,7 +116,7 @@ public class CpeTest {
      */
     @Test
     public void testGetSwEdition() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "swEdition";
         String result = instance.getSwEdition();
@@ -128,7 +128,7 @@ public class CpeTest {
      */
     @Test
     public void testGetTargetSw() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "targetSw";
         String result = instance.getTargetSw();
@@ -140,7 +140,7 @@ public class CpeTest {
      */
     @Test
     public void testGetTargetHw() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "targetHw";
         String result = instance.getTargetHw();
@@ -152,7 +152,7 @@ public class CpeTest {
      */
     @Test
     public void testGetOther() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "other";
         String result = instance.getOther();
@@ -164,62 +164,61 @@ public class CpeTest {
      */
     @Test
     public void testToCpe22Uri() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~targetSw~targetHw~other:language";
         String result = instance.toCpe22Uri();
         assertEquals(expResult, result);
-        
-        
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+
+        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "*", "*", "*", "*");
         expResult = "cpe:/*:vendor:product:version:update:edition:language";
         result = instance.toCpe22Uri();
         assertEquals(expResult, result);
-        
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+
+        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "", "targetSw", "targetHw", "other");
         expResult = "cpe:/*:vendor:product:version:update:~edition~~targetSw~targetHw~other:language";
         result = instance.toCpe22Uri();
         assertEquals(expResult, result);
-        
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+
+        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "*", "targetSw", "targetHw", "other");
         expResult = "cpe:/*:vendor:product:version:update:~edition~~targetSw~targetHw~other:language";
         result = instance.toCpe22Uri();
         assertEquals(expResult, result);
-        
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+
+        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "*", "targetHw", "other");
         expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~~targetHw~other:language";
         result = instance.toCpe22Uri();
         assertEquals(expResult, result);
-        
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+
+        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "", "targetHw", "other");
         expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~~targetHw~other:language";
         result = instance.toCpe22Uri();
         assertEquals(expResult, result);
-        
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+
+        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "*", "other");
         expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~targetSw~~other:language";
         result = instance.toCpe22Uri();
         assertEquals(expResult, result);
-        
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+
+        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "", "other");
         expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~targetSw~~other:language";
         result = instance.toCpe22Uri();
         assertEquals(expResult, result);
-        
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+
+        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "*");
         expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~targetSw~targetHw~:language";
         result = instance.toCpe22Uri();
         assertEquals(expResult, result);
-        
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+
+        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "");
         expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~targetSw~targetHw~:language";
         result = instance.toCpe22Uri();
@@ -231,10 +230,10 @@ public class CpeTest {
      */
     @Test
     public void testToCpe23FS() {
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update", 
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "cpe:2.3:*:vendor:product:version:update:edition:language:swEdition:targetSw:targetHw:other";
         String result = instance.toCpe23FS();
         assertEquals(expResult, result);
-    }    
+    }
 }
