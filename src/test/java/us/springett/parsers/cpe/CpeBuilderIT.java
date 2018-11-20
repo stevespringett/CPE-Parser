@@ -86,13 +86,16 @@ public class CpeBuilderIT {
         CPENameBinder cpeBinder = new CPENameBinder();
         CPENameUnbinder cpeUnbinder = new CPENameUnbinder();
 
-        String cpeString = "cpe:2.3:a:embarcadero:embarcadero_c\\\\+\\\\+builder_xe6:20.0.15596.9843:*:*:*:*:*:*:*";
-        WellFormedName wfn = cpeUnbinder.unbindFS(cpeString);
-        String unbound = cpeBinder.bindToFS(wfn);
-        System.out.println(cpeString);
-        System.out.println(unbound);
-        WellFormedName wfn2 = cpeUnbinder.unbindFS(unbound);
+        String original = "cpe:2.3:a:embarcadero:embarcadero_c\\\\+\\\\+builder_xe6:20.0.15596.9843:*:*:*:*:*:*:*";
 
-        Assert.assertEquals(wfn.get("product"), wfn2.get("product"));
+        String cpeString = original;
+
+        WellFormedName wfn = cpeUnbinder.unbindFS(cpeString);
+        cpeString = cpeBinder.bindToFS(wfn);
+
+        System.out.println("Original:  " + original);
+        System.out.println("Processed: " + cpeString);
+        Assert.assertEquals(original, cpeString);
+
     }
 }
