@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) Steve Springett. All Rights Reserved.
+ * Copyright (c) 2018 Jeremy Lomg. All Rights Reserved.
  */
 package us.springett.parsers.cpe;
 
 /**
- * Exception used when parsing CPE strings.
+ * Exception used when validating CPE strings.
  *
- * @author Steve Springett
+ * @author Jeremy Long
  */
-public class CpeParsingException extends CpeValidationException {
+public class CpeValidationException extends Exception {
 
     /**
      * Constructs a new exception with the specified detail message. The cause
@@ -32,7 +32,7 @@ public class CpeParsingException extends CpeValidationException {
      * @param message the detail message. The detail message is saved for later
      * retrieval by the {@link #getMessage()} method.
      */
-    public CpeParsingException(String message) {
+    public CpeValidationException(String message) {
         super(message);
     }
 
@@ -42,7 +42,7 @@ public class CpeParsingException extends CpeValidationException {
      * @param message the detailed message
      * @param cause the cause of the exception
      */
-    public CpeParsingException(String message, Exception cause) {
+    public CpeValidationException(String message, Exception cause) {
         super(message, cause);
     }
 }

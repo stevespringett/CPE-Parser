@@ -46,7 +46,11 @@ public final class CpeParser {
         if (cpeString == null) {
             throw new CpeParsingException("CPE String is null and cannot be parsed");
         } else if (cpeString.regionMatches(0, "cpe:/", 0, 5)) {
-            return parse22(cpeString);
+            try {
+                return parse22(cpeString);
+            } catch (CpeValidationException ex) {
+                throw new CpeParsingException(ex.getMessage(), ex);
+            }
         } else if (cpeString.regionMatches(0, "cpe:2.3:", 0, 8)) {
             return parse23(cpeString);
         }
@@ -72,24 +76,28 @@ public final class CpeParser {
         if (parts[1].length() != 2) {
             throw new CpeParsingException("CPE String contains a malformed part: " + cpeString);
         }
-        cb.part(parts[1].substring(1));
-        if (parts.length > 2) {
-            cb.vendor(FormatUtil.decodeCpe22Component(parts[2]));
-        }
-        if (parts.length > 3) {
-            cb.product(FormatUtil.decodeCpe22Component(parts[3]));
-        }
-        if (parts.length > 4) {
-            cb.version(FormatUtil.decodeCpe22Component(parts[4]));
-        }
-        if (parts.length > 5) {
-            cb.update(FormatUtil.decodeCpe22Component(parts[5]));
-        }
-        if (parts.length > 6) {
-            unpackEdition(parts[6], cb);
-        }
-        if (parts.length > 7) {
-            cb.language(FormatUtil.decodeCpe22Component(parts[7]));
+        try {
+            cb.part(parts[1].substring(1));
+            if (parts.length > 2) {
+                cb.vendor(FormatUtil.decodeCpe22Component(parts[2]));
+            }
+            if (parts.length > 3) {
+                cb.product(FormatUtil.decodeCpe22Component(parts[3]));
+            }
+            if (parts.length > 4) {
+                cb.version(FormatUtil.decodeCpe22Component(parts[4]));
+            }
+            if (parts.length > 5) {
+                cb.update(FormatUtil.decodeCpe22Component(parts[5]));
+            }
+            if (parts.length > 6) {
+                unpackEdition(parts[6], cb);
+            }
+            if (parts.length > 7) {
+                cb.language(FormatUtil.decodeCpe22Component(parts[7]));
+            }
+        } catch (CpeValidationException ex) {
+            throw new CpeParsingException(ex.getMessage(), ex);
         }
         return cb.build();
     }
@@ -101,30 +109,35 @@ public final class CpeParser {
      *
      * @param edition the edition string to unpack
      * @param cb a reference to the CPE Builder to unpack the edition into
+     * @throws CpeParsingException thrown if the edition value is invalid
      */
-    protected static void unpackEdition(String edition, CpeBuilder cb) {
+    protected static void unpackEdition(String edition, CpeBuilder cb) throws CpeParsingException {
         if (edition == null || edition.isEmpty()) {
             return;
         }
-        if (edition.startsWith("~")) {
-            String[] unpacked = edition.split("~");
-            if (unpacked.length > 1) {
-                cb.edition(FormatUtil.decodeCpe22Component(unpacked[1]));
+        try {
+            if (edition.startsWith("~")) {
+                String[] unpacked = edition.split("~");
+                if (unpacked.length > 1) {
+                    cb.edition(FormatUtil.decodeCpe22Component(unpacked[1]));
+                }
+                if (unpacked.length > 2) {
+                    cb.swEdition(FormatUtil.decodeCpe22Component(unpacked[2]));
+                }
+                if (unpacked.length > 3) {
+                    cb.targetSw(FormatUtil.decodeCpe22Component(unpacked[3]));
+                }
+                if (unpacked.length > 4) {
+                    cb.targetHw(FormatUtil.decodeCpe22Component(unpacked[4]));
+                }
+                if (unpacked.length > 5) {
+                    cb.other(FormatUtil.decodeCpe22Component(unpacked[5]));
+                }
+            } else {
+                cb.edition(FormatUtil.decodeCpe22Component(edition));
             }
-            if (unpacked.length > 2) {
-                cb.swEdition(FormatUtil.decodeCpe22Component(unpacked[2]));
-            }
-            if (unpacked.length > 3) {
-                cb.targetSw(FormatUtil.decodeCpe22Component(unpacked[3]));
-            }
-            if (unpacked.length > 4) {
-                cb.targetHw(FormatUtil.decodeCpe22Component(unpacked[4]));
-            }
-            if (unpacked.length > 5) {
-                cb.other(FormatUtil.decodeCpe22Component(unpacked[5]));
-            }
-        } else {
-            cb.edition(FormatUtil.decodeCpe22Component(edition));
+        } catch (CpeValidationException ex) {
+            throw new CpeParsingException(ex.getMessage(), ex);
         }
     }
 
@@ -155,6 +168,8 @@ public final class CpeParser {
             cb.other(FormatUtil.decodeCpe23Component(cpe.next()));
         } catch (NoSuchElementException ex) {
             throw new CpeParsingException("Invalid CPE (too few components): " + cpeString);
+        } catch (CpeValidationException ex) {
+            throw new CpeParsingException(ex.getMessage(), ex);
         }
         if (cpe.hasNext()) {
             throw new CpeParsingException("Invalid CPE (too many components): " + cpeString);

@@ -17,12 +17,16 @@
  */
 package us.springett.parsers.cpe;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import us.springett.parsers.cpe.values.Part;
 import us.springett.parsers.cpe.values.BindValue;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
 
 /**
  * Test the CPE Builder.
@@ -33,6 +37,22 @@ public class CpeBuilderTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
 
     /**
      * Test of part method, of class CpeBuilder.
@@ -51,10 +71,10 @@ public class CpeBuilderTest {
     /**
      * Test of part method, of class CpeBuilder.
      *
-     * @throws CpeParsingException thrown if there is a parsing error
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testPart_String() throws CpeParsingException {
+    public void testPart_String() throws Exception {
         exception = ExpectedException.none();
 
         String part = "-";
@@ -67,10 +87,10 @@ public class CpeBuilderTest {
     /**
      * Test of part method, of class CpeBuilder.
      *
-     * @throws CpeParsingException thrown if there is a parsing error
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testPart_StringInvalid() throws CpeParsingException {
+    public void testPart_StringInvalid() throws Exception {
         exception.expect(CpeParsingException.class);
         String part = "x";
         CpeBuilder instance = new CpeBuilder();
@@ -79,9 +99,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of vendor method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testVendor_String() {
+    public void testVendor_String() throws Exception {
         exception = ExpectedException.none();
 
         String vendor = "vendor";
@@ -93,9 +115,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of product method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testProduct_String() {
+    public void testProduct_String() throws Exception {
         exception = ExpectedException.none();
 
         String product = "product";
@@ -107,9 +131,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of version method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testVersion_String() {
+    public void testVersion_String() throws Exception {
         exception = ExpectedException.none();
 
         String version = "version";
@@ -121,9 +147,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of update method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testUpdate_String() {
+    public void testUpdate_String() throws Exception {
         exception = ExpectedException.none();
 
         String update = "update";
@@ -135,9 +163,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of edition method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testEdition_String() {
+    public void testEdition_String() throws Exception {
         exception = ExpectedException.none();
 
         String edition = "edition";
@@ -149,9 +179,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of language method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testLanguage_String() {
+    public void testLanguage_String() throws Exception {
         exception = ExpectedException.none();
 
         String language = "language";
@@ -163,9 +195,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of swEdition method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testSwEdition_String() {
+    public void testSwEdition_String() throws Exception {
         exception = ExpectedException.none();
 
         String swEdition = "swEdition";
@@ -177,9 +211,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of targetSw method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testTargetSw_String() {
+    public void testTargetSw_String() throws Exception {
         exception = ExpectedException.none();
 
         String targetSw = "targetSw";
@@ -191,9 +227,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of targetHw method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testTargetHw_String() {
+    public void testTargetHw_String() throws Exception {
         exception = ExpectedException.none();
 
         String targetHw = "targetHw";
@@ -205,9 +243,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of other method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testOther_String() {
+    public void testOther_String() throws Exception {
         exception = ExpectedException.none();
 
         String other = "other";
@@ -368,5 +408,89 @@ public class CpeBuilderTest {
         Cpe expResult = new Cpe(Part.ANY, "*", "*", "*", "*", "*", "*", "*", "*", "*", "*");
         Cpe result = instance.build();
         assertEquals(expResult.toString(), result.toString());
+    }
+
+    /**
+     * Test of validateComponent method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
+     */
+    @Test
+    public void testValidateComponent() throws Exception {
+        exception = ExpectedException.none();
+
+        CpeValidationException validationException = null;
+        try {
+            CpeBuilder instance = new CpeBuilder();
+            String value = null;
+            instance.validateComponent(value);
+            value = "";
+            instance.validateComponent(value);
+            value = "abc";
+            instance.validateComponent(value);
+            value = "abc*";
+            instance.validateComponent(value);
+        } catch (CpeValidationException ex) {
+            validationException = ex;
+        }
+        assertNull(validationException);
+    }
+
+    /**
+     * Test of validateComponent method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
+     */
+    @Test
+    public void testValidateComponent2() throws Exception {
+        exception.expect(CpeValidationException.class);
+
+        CpeBuilder instance = new CpeBuilder();
+        char[] str = {10, 34};
+        String value = new String(str);
+        instance.validateComponent(value);
+    }
+
+    /**
+     * Test of validateComponent method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
+     */
+    @Test
+    public void testValidateComponent3() throws Exception {
+        exception.expect(CpeValidationException.class);
+
+        CpeBuilder instance = new CpeBuilder();
+        char[] str = {128, 34};
+        String value = new String(str);
+        instance.validateComponent(value);
+    }
+
+    /**
+     * Test of validateComponent method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
+     */
+    @Test
+    public void testValidateComponent4() throws Exception {
+        exception.expect(CpeValidationException.class);
+
+        CpeBuilder instance = new CpeBuilder();
+        String value = "has a space";
+        instance.validateComponent(value);
+    }
+
+    /**
+     * Test of validateComponent method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is a parsing error
+     */
+    @Test
+    public void testValidateComponent5() throws Exception {
+        exception.expect(CpeValidationException.class);
+
+        CpeBuilder instance = new CpeBuilder();
+        String value = "*asterisk*";
+        instance.validateComponent(value);
     }
 }

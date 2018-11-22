@@ -120,9 +120,10 @@ public class CpeBuilder {
      * @param part the type of CPE entry: application, operating system, or
      * hardware
      * @return the builder
-     * @throws CpeParsingException thrown if an invalid part type is specified
+     * @throws CpeValidationException thrown if an invalid part type is
+     * specified
      */
-    public CpeBuilder part(final String part) throws CpeParsingException {
+    public CpeBuilder part(final String part) throws CpeValidationException {
         this.part = Part.getEnum(part);
         return this;
     }
@@ -134,8 +135,10 @@ public class CpeBuilder {
      *
      * @param vendor the vendor name
      * @return the builder
+     * @throws CpeValidationException thrown if an vendor is invalid
      */
-    public CpeBuilder vendor(final String vendor) {
+    public CpeBuilder vendor(final String vendor) throws CpeValidationException {
+        validateComponent(vendor);
         this.vendor = vendor;
         return this;
     }
@@ -147,8 +150,10 @@ public class CpeBuilder {
      *
      * @param product the product name
      * @return the builder
+     * @throws CpeValidationException thrown if an product is invalid
      */
-    public CpeBuilder product(final String product) {
+    public CpeBuilder product(final String product) throws CpeValidationException {
+        validateComponent(product);
         this.product = product;
         return this;
     }
@@ -160,8 +165,10 @@ public class CpeBuilder {
      *
      * @param version the version number
      * @return the builder
+     * @throws CpeValidationException thrown if an version is invalid
      */
-    public CpeBuilder version(final String version) {
+    public CpeBuilder version(final String version) throws CpeValidationException {
+        validateComponent(version);
         this.version = version;
         return this;
     }
@@ -173,8 +180,10 @@ public class CpeBuilder {
      *
      * @param update the update version
      * @return the builder
+     * @throws CpeValidationException thrown if an update is invalid
      */
-    public CpeBuilder update(final String update) {
+    public CpeBuilder update(final String update) throws CpeValidationException {
+        validateComponent(update);
         this.update = update;
         return this;
     }
@@ -186,8 +195,10 @@ public class CpeBuilder {
      *
      * @param edition the edition name
      * @return the builder
+     * @throws CpeValidationException thrown if an edition is invalid
      */
-    public CpeBuilder edition(final String edition) {
+    public CpeBuilder edition(final String edition) throws CpeValidationException {
+        validateComponent(edition);
         this.edition = edition;
         return this;
     }
@@ -199,8 +210,10 @@ public class CpeBuilder {
      *
      * @param language the language name
      * @return the builder
+     * @throws CpeValidationException thrown if an language is invalid
      */
-    public CpeBuilder language(final String language) {
+    public CpeBuilder language(final String language) throws CpeValidationException {
+        validateComponent(language);
         this.language = language;
         return this;
     }
@@ -212,8 +225,10 @@ public class CpeBuilder {
      *
      * @param swEdition the software edition
      * @return the builder
+     * @throws CpeValidationException thrown if an edition is invalid
      */
-    public CpeBuilder swEdition(final String swEdition) {
+    public CpeBuilder swEdition(final String swEdition) throws CpeValidationException {
+        validateComponent(swEdition);
         this.swEdition = swEdition;
         return this;
     }
@@ -225,8 +240,10 @@ public class CpeBuilder {
      *
      * @param targetSw the target software environment
      * @return the builder
+     * @throws CpeValidationException thrown if an targetSw is invalid
      */
-    public CpeBuilder targetSw(final String targetSw) {
+    public CpeBuilder targetSw(final String targetSw) throws CpeValidationException {
+        validateComponent(targetSw);
         this.targetSw = targetSw;
         return this;
     }
@@ -238,8 +255,10 @@ public class CpeBuilder {
      *
      * @param targetHw the target hardware environment
      * @return the builder
+     * @throws CpeValidationException thrown if an targetHw is invalid
      */
-    public CpeBuilder targetHw(final String targetHw) {
+    public CpeBuilder targetHw(final String targetHw) throws CpeValidationException {
+        validateComponent(targetHw);
         this.targetHw = targetHw;
         return this;
     }
@@ -251,8 +270,10 @@ public class CpeBuilder {
      *
      * @param other the other component
      * @return the builder
+     * @throws CpeValidationException thrown if an other component is invalid
      */
-    public CpeBuilder other(final String other) {
+    public CpeBuilder other(final String other) throws CpeValidationException {
+        validateComponent(other);
         this.other = other;
         return this;
     }
@@ -398,5 +419,33 @@ public class CpeBuilder {
                 language, swEdition, targetSw, targetHw, other);
         reset();
         return cpe;
+    }
+
+    /**
+     * Validates the component to ensure it meets the CPE 2.3 specification of
+     * allowed values.
+     *
+     * @param value the value to validate
+     * @throws CpeValidationException thrown if the string is invalid
+     */
+    protected void validateComponent(String value) throws CpeValidationException {
+        if (value != null && !value.isEmpty()) {
+            int asterisk = 0;
+            for (int x = 0; x < value.length(); x++) {
+                char c = value.charAt(x);
+                if (Character.isWhitespace(c)) {
+                    throw new CpeValidationException("CPE strings may not contain whitespace; consider using an underscore instead.");
+                }
+                if (c < 32 || c > 127) {
+                    throw new CpeValidationException("CPE strings may only contain printable characters in the UTF-8 character set between x00 and x7F.");
+                }
+                if (c == '*') {
+                    asterisk += 1;
+                }
+            }
+            if (asterisk > 1) {
+                throw new CpeValidationException("CPE strings may not contain multiple asterisk characters.");
+            }
+        }
     }
 }

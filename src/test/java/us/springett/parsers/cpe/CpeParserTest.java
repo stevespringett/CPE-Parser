@@ -112,10 +112,10 @@ public class CpeParserTest {
     /**
      * Test of parse22 method, of class CpeParser.
      *
-     * @throws CpeParsingException thrown if there is a parsing error
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testParse22() throws CpeParsingException {
+    public void testParse22() throws Exception {
         exception = ExpectedException.none();
 
         Cpe cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:?:beta::c%2b%2b");
@@ -186,9 +186,11 @@ public class CpeParserTest {
 
     /**
      * Test of unpackEdition method, of class CpeParser.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testUnpackEdition() {
+    public void testUnpackEdition() throws Exception {
         exception = ExpectedException.none();
 
         CpeBuilder cb = new CpeBuilder();
