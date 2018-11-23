@@ -15,14 +15,9 @@
  *
  * Copyright (c) 2018 Jeremy Long. All Rights Reserved.
  */
-package us.springett.parsers.cpe;
+package us.springett.parsers.cpe.exceptions;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 
@@ -30,23 +25,23 @@ import org.junit.rules.ExpectedException;
  *
  * @author Jeremy Long
  */
-public class CpeValidationExceptionTest {
+public class CpeParsingExceptionTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
     @Test
     public void testException() throws Exception {
-        exception.expect(CpeValidationException.class);
+        exception.expect(CpeParsingException.class);
 
-        throw new CpeValidationException("This is a test");
+        throw new CpeParsingException("This is a test");
     }
 
     @Test
     public void testException2() throws Exception {
-        exception.expect(CpeValidationException.class);
+        exception.expect(CpeParsingException.class);
 
-        throw new CpeValidationException("This is a test", new RuntimeException("cause"));
+        throw new CpeParsingException("This is a test", new RuntimeException("cause"));
     }
 
 }

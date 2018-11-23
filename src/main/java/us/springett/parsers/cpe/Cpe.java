@@ -20,6 +20,9 @@ package us.springett.parsers.cpe;
 import us.springett.parsers.cpe.values.Part;
 import us.springett.parsers.cpe.util.FormatUtil;
 import java.io.Serializable;
+import us.springett.parsers.cpe.exceptions.CpeEncodingException;
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.util.Validate;
 
 /**
  * Object representation of a Common Platform Enumeration (CPE).
@@ -35,43 +38,47 @@ public class Cpe implements Serializable {
      */
     private final Part part;
     /**
-     * The vendor component of the CPE.
+     * The vendor component of the CPE in the Well Formed format.
      */
     private final String vendor;
     /**
-     * The product component of the CPE.
+     * The product component of the CPE in the Well Formed format.
      */
     private final String product;
     /**
-     * The version component of the CPE.
+     * The version component of the CPE in the Well Formed format.
      */
     private final String version;
     /**
-     * The update component of the CPE.
+     * The update component of the CPE in the Well Formed format.
      */
     private final String update;
     /**
-     * The edition component of the CPE.
+     * The edition component of the CPE in the Well Formed format.
      */
     private final String edition;
     /**
-     * The language component of the CPE.
+     * The language component of the CPE in the Well Formed format.
      */
     private final String language;
     /**
-     * The swEdition component of the CPE. Introduced with CPE 2.3.
+     * The swEdition component of the CPE in the Well Formed format. Introduced
+     * with CPE 2.3.
      */
     private final String swEdition;
     /**
-     * The targetSw component of the CPE. Introduced with CPE 2.3.
+     * The targetSw component of the CPE in the Well Formed format. Introduced
+     * with CPE 2.3.
      */
     private final String targetSw;
     /**
-     * The targetHw component of the CPE. Introduced with CPE 2.3.
+     * The targetHw component of the CPE in the Well Formed format. Introduced
+     * with CPE 2.3.
      */
     private final String targetHw;
     /**
-     * The other component of the CPE. Introduced with CPE 2.3.
+     * The other component of the CPE in the Well Formed format. Introduced with
+     * CPE 2.3.
      */
     private final String other;
 
@@ -79,7 +86,8 @@ public class Cpe implements Serializable {
      * Constructs a new immutable CPE object that represents the Well Form Named
      * defined in the CPE 2.3 specification. Specifying <code>null</code> will
      * be set to the default
-     * {@link us.springett.parsers.cpe.values.BindValue#ANY}.
+     * {@link us.springett.parsers.cpe.values.BindValue#ANY}. All values passed
+     * in must be well formed (i.e. special characters quoted with a backslash).
      *
      * @see <a href="https://cpe.mitre.org/specification/">CPE 2.3</a>
      * @param part the type of entry: application, operating system, or hardware
@@ -93,10 +101,23 @@ public class Cpe implements Serializable {
      * @param targetSw the targetSw of the CPE entry
      * @param targetHw the targetHw of the CPE entry
      * @param other the other of the CPE entry
+     * @throws CpeValidationException thrown if one of the CPE entries is
+     * invalid
      */
-    public Cpe(Part part, String vendor, String product, String version,
+    Cpe(Part part, String vendor, String product, String version,
             String update, String edition, String language, String swEdition,
-            String targetSw, String targetHw, String other) {
+            String targetSw, String targetHw, String other) throws CpeValidationException {
+
+        Validate.component(vendor);
+        Validate.component(product);
+        Validate.component(version);
+        Validate.component(update);
+        Validate.component(edition);
+        Validate.component(language);
+        Validate.component(swEdition);
+        Validate.component(targetSw);
+        Validate.component(targetHw);
+        Validate.component(other);
         this.part = part;
         this.vendor = vendor;
         this.product = product;
@@ -129,7 +150,7 @@ public class Cpe implements Serializable {
      * @return the vendor for the CPE entry
      */
     public String getVendor() {
-        return vendor;
+        return FormatUtil.fromWellFormed(vendor);
     }
 
     /**
@@ -140,7 +161,7 @@ public class Cpe implements Serializable {
      * @return the product for the CPE entry
      */
     public String getProduct() {
-        return product;
+        return FormatUtil.fromWellFormed(product);
     }
 
     /**
@@ -151,7 +172,7 @@ public class Cpe implements Serializable {
      * @return the version for the CPE entry
      */
     public String getVersion() {
-        return version;
+        return FormatUtil.fromWellFormed(version);
     }
 
     /**
@@ -162,7 +183,7 @@ public class Cpe implements Serializable {
      * @return the update for the CPE entry
      */
     public String getUpdate() {
-        return update;
+        return FormatUtil.fromWellFormed(update);
     }
 
     /**
@@ -173,7 +194,7 @@ public class Cpe implements Serializable {
      * @return the edition for the CPE entry
      */
     public String getEdition() {
-        return edition;
+        return FormatUtil.fromWellFormed(edition);
     }
 
     /**
@@ -184,7 +205,7 @@ public class Cpe implements Serializable {
      * @return the language for the CPE entry
      */
     public String getLanguage() {
-        return language;
+        return FormatUtil.fromWellFormed(language);
     }
 
     /**
@@ -195,7 +216,7 @@ public class Cpe implements Serializable {
      * @return the software edition for the CPE entry
      */
     public String getSwEdition() {
-        return swEdition;
+        return FormatUtil.fromWellFormed(swEdition);
     }
 
     /**
@@ -206,7 +227,7 @@ public class Cpe implements Serializable {
      * @return the target software environment for the CPE entry.
      */
     public String getTargetSw() {
-        return targetSw;
+        return FormatUtil.fromWellFormed(targetSw);
     }
 
     /**
@@ -217,7 +238,7 @@ public class Cpe implements Serializable {
      * @return the target hardware environment for the CPE entry
      */
     public String getTargetHw() {
-        return targetHw;
+        return FormatUtil.fromWellFormed(targetHw);
     }
 
     /**
@@ -228,21 +249,22 @@ public class Cpe implements Serializable {
      * @return the other component for the CPE entry
      */
     public String getOther() {
-        return other;
+        return FormatUtil.fromWellFormed(other);
     }
 
     /**
      * Converts the CPE into the CPE 2.2 URI format.
      *
      * @return the CPE 2.2 URI format of the CPE
+     * @throws CpeEncodingException thrown if the CPE is not well formed
      */
-    public String toCpe22Uri() {
+    public String toCpe22Uri() throws CpeEncodingException {
         StringBuilder sb = new StringBuilder("cpe:/");
         sb.append(FormatUtil.encodeCpe22Component(part)).append(":");
-        sb.append(FormatUtil.encodeCpe22Component(vendor)).append(":");
-        sb.append(FormatUtil.encodeCpe22Component(product)).append(":");
-        sb.append(FormatUtil.encodeCpe22Component(version)).append(":");
-        sb.append(FormatUtil.encodeCpe22Component(update)).append(":");
+        sb.append(FormatUtil.transformWfsToCpeUriComponent(vendor)).append(":");
+        sb.append(FormatUtil.transformWfsToCpeUriComponent(product)).append(":");
+        sb.append(FormatUtil.transformWfsToCpeUriComponent(version)).append(":");
+        sb.append(FormatUtil.transformWfsToCpeUriComponent(update)).append(":");
         //pack the extra fields from CPE 2.3 into the edition field if present
         //when outputing to 2.2 format
         if (!((swEdition.isEmpty() || "*".equals(swEdition))
@@ -250,20 +272,20 @@ public class Cpe implements Serializable {
                 && (targetHw.isEmpty() || "*".equals(targetHw))
                 && (other.isEmpty() || "*".equals(other)))) {
             sb.append("~")
-                    .append(FormatUtil.encodeCpe22Component(edition))
+                    .append(FormatUtil.transformWfsToCpeUriComponent(edition))
                     .append("~")
-                    .append(FormatUtil.encodeCpe22Component(swEdition))
+                    .append(FormatUtil.transformWfsToCpeUriComponent(swEdition))
                     .append("~")
-                    .append(FormatUtil.encodeCpe22Component(targetSw))
+                    .append(FormatUtil.transformWfsToCpeUriComponent(targetSw))
                     .append("~")
-                    .append(FormatUtil.encodeCpe22Component(targetHw))
+                    .append(FormatUtil.transformWfsToCpeUriComponent(targetHw))
                     .append("~")
-                    .append(FormatUtil.encodeCpe22Component(other))
+                    .append(FormatUtil.transformWfsToCpeUriComponent(other))
                     .append(":");
         } else {
-            sb.append(FormatUtil.encodeCpe22Component(edition)).append(":");
+            sb.append(FormatUtil.transformWfsToCpeUriComponent(edition)).append(":");
         }
-        sb.append(FormatUtil.encodeCpe22Component(language));
+        sb.append(FormatUtil.transformWfsToCpeUriComponent(language));
         return sb.toString().replaceAll("[:]*$", "");
     }
 
@@ -275,16 +297,16 @@ public class Cpe implements Serializable {
     public String toCpe23FS() {
         return String.format("cpe:2.3:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s",
                 FormatUtil.encodeCpe23Component(part),
-                FormatUtil.encodeCpe23Component(vendor),
-                FormatUtil.encodeCpe23Component(product),
-                FormatUtil.encodeCpe23Component(version),
-                FormatUtil.encodeCpe23Component(update),
-                FormatUtil.encodeCpe23Component(edition),
-                FormatUtil.encodeCpe23Component(language),
-                FormatUtil.encodeCpe23Component(swEdition),
-                FormatUtil.encodeCpe23Component(targetSw),
-                FormatUtil.encodeCpe23Component(targetHw),
-                FormatUtil.encodeCpe23Component(other));
+                FormatUtil.transfromWfsToFS(vendor),
+                FormatUtil.transfromWfsToFS(product),
+                FormatUtil.transfromWfsToFS(version),
+                FormatUtil.transfromWfsToFS(update),
+                FormatUtil.transfromWfsToFS(edition),
+                FormatUtil.transfromWfsToFS(language),
+                FormatUtil.transfromWfsToFS(swEdition),
+                FormatUtil.transfromWfsToFS(targetSw),
+                FormatUtil.transfromWfsToFS(targetHw),
+                FormatUtil.transfromWfsToFS(other));
     }
 
     @Override

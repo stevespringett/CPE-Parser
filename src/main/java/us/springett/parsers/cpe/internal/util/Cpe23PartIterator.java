@@ -19,7 +19,7 @@ package us.springett.parsers.cpe.internal.util;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import us.springett.parsers.cpe.CpeParsingException;
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
 
 /**
  * A utility that will tokenize and iterate over a CPE v2.3 string and return

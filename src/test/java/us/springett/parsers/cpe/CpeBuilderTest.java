@@ -17,6 +17,8 @@
  */
 package us.springett.parsers.cpe;
 
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import org.junit.After;
 import org.junit.AfterClass;
 import us.springett.parsers.cpe.values.Part;
@@ -27,6 +29,7 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import us.springett.parsers.cpe.util.Validate;
 
 /**
  * Test the CPE Builder.
@@ -56,9 +59,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of part method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testPart_Part() {
+    public void testPart_Part() throws Exception {
         exception = ExpectedException.none();
 
         Part part = Part.NA;
@@ -259,9 +264,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of vendor method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testVendor_BindValue() {
+    public void testVendor_BindValue() throws Exception {
         exception = ExpectedException.none();
 
         BindValue vendor = BindValue.NA;
@@ -273,9 +280,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of product method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testProduct_BindValue() {
+    public void testProduct_BindValue() throws Exception {
         exception = ExpectedException.none();
 
         BindValue product = BindValue.NA;
@@ -287,9 +296,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of version method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testVersion_BindValue() {
+    public void testVersion_BindValue() throws Exception {
         exception = ExpectedException.none();
 
         BindValue version = BindValue.NA;
@@ -301,9 +312,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of update method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testUpdate_BindValue() {
+    public void testUpdate_BindValue() throws Exception {
         exception = ExpectedException.none();
 
         BindValue update = BindValue.NA;
@@ -315,9 +328,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of edition method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testEdition_BindValue() {
+    public void testEdition_BindValue() throws Exception {
         exception = ExpectedException.none();
 
         BindValue edition = BindValue.NA;
@@ -329,9 +344,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of language method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testLanguage_BindValue() {
+    public void testLanguage_BindValue() throws Exception {
         exception = ExpectedException.none();
 
         BindValue language = BindValue.NA;
@@ -343,9 +360,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of swEdition method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testSwEdition_BindValue() {
+    public void testSwEdition_BindValue() throws Exception {
         exception = ExpectedException.none();
 
         BindValue swEdition = BindValue.NA;
@@ -357,9 +376,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of targetSw method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testTargetSw_BindValue() {
+    public void testTargetSw_BindValue() throws Exception {
         exception = ExpectedException.none();
 
         BindValue targetSw = BindValue.NA;
@@ -371,9 +392,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of targetHw method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testTargetHw_BindValue() {
+    public void testTargetHw_BindValue() throws Exception {
         exception = ExpectedException.none();
 
         BindValue targetHw = BindValue.NA;
@@ -385,9 +408,11 @@ public class CpeBuilderTest {
 
     /**
      * Test of other method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testOther_BindValue() {
+    public void testOther_BindValue() throws Exception {
         exception = ExpectedException.none();
 
         BindValue other = BindValue.NA;
@@ -399,98 +424,16 @@ public class CpeBuilderTest {
 
     /**
      * Test of build method, of class CpeBuilder.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testBuild() {
+    public void testBuild() throws Exception {
         exception = ExpectedException.none();
 
         CpeBuilder instance = new CpeBuilder();
         Cpe expResult = new Cpe(Part.ANY, "*", "*", "*", "*", "*", "*", "*", "*", "*", "*");
         Cpe result = instance.build();
         assertEquals(expResult.toString(), result.toString());
-    }
-
-    /**
-     * Test of validateComponent method, of class CpeBuilder.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent() throws Exception {
-        exception = ExpectedException.none();
-
-        CpeValidationException validationException = null;
-        try {
-            CpeBuilder instance = new CpeBuilder();
-            String value = null;
-            instance.validateComponent(value);
-            value = "";
-            instance.validateComponent(value);
-            value = "abc";
-            instance.validateComponent(value);
-            value = "abc*";
-            instance.validateComponent(value);
-        } catch (CpeValidationException ex) {
-            validationException = ex;
-        }
-        assertNull(validationException);
-    }
-
-    /**
-     * Test of validateComponent method, of class CpeBuilder.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent2() throws Exception {
-        exception.expect(CpeValidationException.class);
-
-        CpeBuilder instance = new CpeBuilder();
-        char[] str = {10, 34};
-        String value = new String(str);
-        instance.validateComponent(value);
-    }
-
-    /**
-     * Test of validateComponent method, of class CpeBuilder.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent3() throws Exception {
-        exception.expect(CpeValidationException.class);
-
-        CpeBuilder instance = new CpeBuilder();
-        char[] str = {128, 34};
-        String value = new String(str);
-        instance.validateComponent(value);
-    }
-
-    /**
-     * Test of validateComponent method, of class CpeBuilder.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent4() throws Exception {
-        exception.expect(CpeValidationException.class);
-
-        CpeBuilder instance = new CpeBuilder();
-        String value = "has a space";
-        instance.validateComponent(value);
-    }
-
-    /**
-     * Test of validateComponent method, of class CpeBuilder.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent5() throws Exception {
-        exception.expect(CpeValidationException.class);
-
-        CpeBuilder instance = new CpeBuilder();
-        String value = "*asterisk*";
-        instance.validateComponent(value);
     }
 }

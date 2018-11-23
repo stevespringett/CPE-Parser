@@ -17,6 +17,7 @@
  */
 package us.springett.parsers.cpe;
 
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -82,7 +83,7 @@ public class CpeParserTest {
     public void testParse23() throws CpeParsingException {
         exception = ExpectedException.none();
 
-        Cpe cpe = CpeParser.parse23("cpe:2.3:a:hiox_india:guest_book:4.0:*:*:*:*:*:*:*");
+        Cpe cpe = CpeParser.parse23("cpe:2.3:a:hiox_india:guest_book:4.0:*:*:*:*:*:*:?");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("hiox_india", cpe.getVendor());
         Assert.assertEquals("guest_book", cpe.getProduct());
@@ -93,7 +94,7 @@ public class CpeParserTest {
         Assert.assertEquals("*", cpe.getSwEdition());
         Assert.assertEquals("*", cpe.getTargetSw());
         Assert.assertEquals("*", cpe.getTargetHw());
-        Assert.assertEquals("*", cpe.getOther());
+        Assert.assertEquals("?", cpe.getOther());
 
         cpe = CpeParser.parse23("cpe:2.3:a:test\\\\::guest_book:4.0:*:*:*:*:*:*:*");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
@@ -118,10 +119,10 @@ public class CpeParserTest {
     public void testParse22() throws Exception {
         exception = ExpectedException.none();
 
-        Cpe cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:?:beta::c%2b%2b");
+        Cpe cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:%01:beta::c%2b%2b");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("microsoft", cpe.getVendor());
-        Assert.assertEquals("internet_explorer", cpe.getProduct());
+        Assert.assertEquals("internet_explorer????", cpe.getProduct());
         Assert.assertEquals("?", cpe.getVersion());
         Assert.assertEquals("beta", cpe.getUpdate());
         Assert.assertEquals("*", cpe.getEdition());
@@ -131,10 +132,10 @@ public class CpeParserTest {
         Assert.assertEquals("*", cpe.getTargetHw());
         Assert.assertEquals("*", cpe.getOther());
 
-        cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:?");
+        cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:%01");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("microsoft", cpe.getVendor());
-        Assert.assertEquals("internet_explorer", cpe.getProduct());
+        Assert.assertEquals("internet_explorer????", cpe.getProduct());
         Assert.assertEquals("?", cpe.getVersion());
         Assert.assertEquals("*", cpe.getUpdate());
         Assert.assertEquals("*", cpe.getEdition());
@@ -147,7 +148,7 @@ public class CpeParserTest {
         cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("microsoft", cpe.getVendor());
-        Assert.assertEquals("internet_explorer", cpe.getProduct());
+        Assert.assertEquals("internet_explorer????", cpe.getProduct());
         Assert.assertEquals("*", cpe.getVersion());
         Assert.assertEquals("*", cpe.getUpdate());
         Assert.assertEquals("*", cpe.getEdition());
@@ -309,7 +310,7 @@ public class CpeParserTest {
      * @throws CpeParsingException thrown if there is a parsing error
      */
     @Test
-    public void testParseBindCicle() throws CpeParsingException {
+    public void testParseBindCycle() throws Exception {
         exception = ExpectedException.none();
 
         String initial = "cpe:2.3:a:embarcadero:embarcadero_c\\\\+\\\\+builder_xe6:20.0.15596.9843:*:*:en:*:*:*:other";

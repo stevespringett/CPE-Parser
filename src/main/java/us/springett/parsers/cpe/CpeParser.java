@@ -17,7 +17,10 @@
  */
 package us.springett.parsers.cpe;
 
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import java.util.NoSuchElementException;
+import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 import us.springett.parsers.cpe.util.FormatUtil;
 import us.springett.parsers.cpe.internal.util.Cpe23PartIterator;
 
@@ -46,11 +49,7 @@ public final class CpeParser {
         if (cpeString == null) {
             throw new CpeParsingException("CPE String is null and cannot be parsed");
         } else if (cpeString.regionMatches(0, "cpe:/", 0, 5)) {
-            try {
-                return parse22(cpeString);
-            } catch (CpeValidationException ex) {
-                throw new CpeParsingException(ex.getMessage(), ex);
-            }
+            return parse22(cpeString);
         } else if (cpeString.regionMatches(0, "cpe:2.3:", 0, 8)) {
             return parse23(cpeString);
         }
@@ -79,27 +78,27 @@ public final class CpeParser {
         try {
             cb.part(parts[1].substring(1));
             if (parts.length > 2) {
-                cb.vendor(FormatUtil.decodeCpe22Component(parts[2]));
+                cb.wfVendor(FormatUtil.transformCpeUriComponentToWfs(parts[2]));
             }
             if (parts.length > 3) {
-                cb.product(FormatUtil.decodeCpe22Component(parts[3]));
+                cb.wfProduct(FormatUtil.transformCpeUriComponentToWfs(parts[3]));
             }
             if (parts.length > 4) {
-                cb.version(FormatUtil.decodeCpe22Component(parts[4]));
+                cb.wfVersion(FormatUtil.transformCpeUriComponentToWfs(parts[4]));
             }
             if (parts.length > 5) {
-                cb.update(FormatUtil.decodeCpe22Component(parts[5]));
+                cb.wfUpdate(FormatUtil.transformCpeUriComponentToWfs(parts[5]));
             }
             if (parts.length > 6) {
                 unpackEdition(parts[6], cb);
             }
             if (parts.length > 7) {
-                cb.language(FormatUtil.decodeCpe22Component(parts[7]));
+                cb.wfLanguage(FormatUtil.transformCpeUriComponentToWfs(parts[7]));
             }
-        } catch (CpeValidationException ex) {
+            return cb.build();
+        } catch (CpeValidationException | CpeEncodingException ex) {
             throw new CpeParsingException(ex.getMessage(), ex);
         }
-        return cb.build();
     }
 
     /**
@@ -119,24 +118,24 @@ public final class CpeParser {
             if (edition.startsWith("~")) {
                 String[] unpacked = edition.split("~");
                 if (unpacked.length > 1) {
-                    cb.edition(FormatUtil.decodeCpe22Component(unpacked[1]));
+                    cb.wfEdition(FormatUtil.transformCpeUriComponentToWfs(unpacked[1]));
                 }
                 if (unpacked.length > 2) {
-                    cb.swEdition(FormatUtil.decodeCpe22Component(unpacked[2]));
+                    cb.wfSwEdition(FormatUtil.transformCpeUriComponentToWfs(unpacked[2]));
                 }
                 if (unpacked.length > 3) {
-                    cb.targetSw(FormatUtil.decodeCpe22Component(unpacked[3]));
+                    cb.wfTargetSw(FormatUtil.transformCpeUriComponentToWfs(unpacked[3]));
                 }
                 if (unpacked.length > 4) {
-                    cb.targetHw(FormatUtil.decodeCpe22Component(unpacked[4]));
+                    cb.wfTargetHw(FormatUtil.transformCpeUriComponentToWfs(unpacked[4]));
                 }
                 if (unpacked.length > 5) {
-                    cb.other(FormatUtil.decodeCpe22Component(unpacked[5]));
+                    cb.wfOther(FormatUtil.transformCpeUriComponentToWfs(unpacked[5]));
                 }
             } else {
-                cb.edition(FormatUtil.decodeCpe22Component(edition));
+                cb.wfEdition(FormatUtil.transformCpeUriComponentToWfs(edition));
             }
-        } catch (CpeValidationException ex) {
+        } catch (CpeEncodingException ex) {
             throw new CpeParsingException(ex.getMessage(), ex);
         }
     }
@@ -156,24 +155,26 @@ public final class CpeParser {
         Cpe23PartIterator cpe = new Cpe23PartIterator(cpeString);
         try {
             cb.part(cpe.next());
-            cb.vendor(FormatUtil.decodeCpe23Component(cpe.next()));
-            cb.product(FormatUtil.decodeCpe23Component(cpe.next()));
-            cb.version(FormatUtil.decodeCpe23Component(cpe.next()));
-            cb.update(FormatUtil.decodeCpe23Component(cpe.next()));
-            cb.edition(FormatUtil.decodeCpe23Component(cpe.next()));
-            cb.language(FormatUtil.decodeCpe23Component(cpe.next()));
-            cb.swEdition(FormatUtil.decodeCpe23Component(cpe.next()));
-            cb.targetSw(FormatUtil.decodeCpe23Component(cpe.next()));
-            cb.targetHw(FormatUtil.decodeCpe23Component(cpe.next()));
-            cb.other(FormatUtil.decodeCpe23Component(cpe.next()));
+            cb.wfVendor(FormatUtil.transfromFsToWfs(cpe.next()));
+            cb.wfProduct(FormatUtil.transfromFsToWfs(cpe.next()));
+            cb.wfVersion(FormatUtil.transfromFsToWfs(cpe.next()));
+            cb.wfUpdate(FormatUtil.transfromFsToWfs(cpe.next()));
+            cb.wfEdition(FormatUtil.transfromFsToWfs(cpe.next()));
+            cb.wfLanguage(FormatUtil.transfromFsToWfs(cpe.next()));
+            cb.wfSwEdition(FormatUtil.transfromFsToWfs(cpe.next()));
+            cb.wfTargetSw(FormatUtil.transfromFsToWfs(cpe.next()));
+            cb.wfTargetHw(FormatUtil.transfromFsToWfs(cpe.next()));
+            cb.wfOther(FormatUtil.transfromFsToWfs(cpe.next()));
         } catch (NoSuchElementException ex) {
             throw new CpeParsingException("Invalid CPE (too few components): " + cpeString);
-        } catch (CpeValidationException ex) {
-            throw new CpeParsingException(ex.getMessage(), ex);
         }
         if (cpe.hasNext()) {
             throw new CpeParsingException("Invalid CPE (too many components): " + cpeString);
         }
-        return cb.build();
+        try {
+            return cb.build();
+        } catch (CpeValidationException ex) {
+            throw new CpeParsingException(ex.getMessage(), ex);
+        }
     }
 }

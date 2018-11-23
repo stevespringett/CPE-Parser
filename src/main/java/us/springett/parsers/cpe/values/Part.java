@@ -17,7 +17,7 @@
  */
 package us.springett.parsers.cpe.values;
 
-import us.springett.parsers.cpe.CpeParsingException;
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
 
 /**
  * <p>

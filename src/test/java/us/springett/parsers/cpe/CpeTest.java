@@ -20,6 +20,7 @@ package us.springett.parsers.cpe;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 
 /**
  *
@@ -29,9 +30,11 @@ public class CpeTest {
 
     /**
      * Test of getPart method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetPart() {
+    public void testGetPart() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         Part expResult = Part.ANY;
@@ -41,9 +44,11 @@ public class CpeTest {
 
     /**
      * Test of getVendor method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetVendor() {
+    public void testGetVendor() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "vendor";
@@ -53,9 +58,11 @@ public class CpeTest {
 
     /**
      * Test of getProduct method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetProduct() {
+    public void testGetProduct() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "product";
@@ -65,9 +72,11 @@ public class CpeTest {
 
     /**
      * Test of getVersion method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetVersion() {
+    public void testGetVersion() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "version";
@@ -77,9 +86,11 @@ public class CpeTest {
 
     /**
      * Test of getUpdate method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetUpdate() {
+    public void testGetUpdate() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "update";
@@ -89,9 +100,11 @@ public class CpeTest {
 
     /**
      * Test of getEdition method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetEdition() {
+    public void testGetEdition() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "edition";
@@ -101,9 +114,11 @@ public class CpeTest {
 
     /**
      * Test of getLanguage method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetLanguage() {
+    public void testGetLanguage() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "language";
@@ -113,9 +128,11 @@ public class CpeTest {
 
     /**
      * Test of getSwEdition method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetSwEdition() {
+    public void testGetSwEdition() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "swEdition";
@@ -125,9 +142,11 @@ public class CpeTest {
 
     /**
      * Test of getTargetSw method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetTargetSw() {
+    public void testGetTargetSw() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "targetSw";
@@ -137,9 +156,11 @@ public class CpeTest {
 
     /**
      * Test of getTargetHw method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetTargetHw() {
+    public void testGetTargetHw() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "targetHw";
@@ -149,9 +170,11 @@ public class CpeTest {
 
     /**
      * Test of getOther method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testGetOther() {
+    public void testGetOther() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "other";
@@ -161,9 +184,11 @@ public class CpeTest {
 
     /**
      * Test of toCpe22Uri method, of class Cpe.
+     *
+     * @throws Exception thrown if an error occurs
      */
     @Test
-    public void testToCpe22Uri() {
+    public void testToCpe22Uri() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~targetSw~targetHw~other:language";
@@ -227,9 +252,11 @@ public class CpeTest {
 
     /**
      * Test of toCpe23FS method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testToCpe23FS() {
+    public void testToCpe23FS() throws Exception {
         Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
         String expResult = "cpe:2.3:*:vendor:product:version:update:edition:language:swEdition:targetSw:targetHw:other";

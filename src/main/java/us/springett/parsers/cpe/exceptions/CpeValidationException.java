@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2018 Jeremy Lomg. All Rights Reserved.
  */
-package us.springett.parsers.cpe;
+package us.springett.parsers.cpe.exceptions;
 
 /**
  * Exception used when validating CPE strings.
@@ -25,12 +25,9 @@ package us.springett.parsers.cpe;
 public class CpeValidationException extends Exception {
 
     /**
-     * Constructs a new exception with the specified detail message. The cause
-     * is not initialized, and may subsequently be initialized by a call to
-     * {@link #initCause}.
+     * Constructs a new exception with the specified detail message.
      *
-     * @param message the detail message. The detail message is saved for later
-     * retrieval by the {@link #getMessage()} method.
+     * @param message the detailed message
      */
     public CpeValidationException(String message) {
         super(message);
