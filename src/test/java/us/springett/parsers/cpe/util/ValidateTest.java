@@ -46,11 +46,43 @@ public class ValidateTest {
             String value = null;
             Validate.component(value);
             value = "";
+
+            value = "*";
+            Validate.component(value);
+
+            value = "?";
+            Validate.component(value);
+
+            value = "-";
+            Validate.component(value);
+
             Validate.component(value);
             value = "abc";
             Validate.component(value);
             value = "abc*";
             Validate.component(value);
+
+            value = "*abc*";
+            Validate.component(value);
+
+            value = "*abc";
+            Validate.component(value);
+
+            value = "ab\\*c";
+            Validate.component(value);
+
+            value = "???abc???";
+            Validate.component(value);
+
+            value = "???abc";
+            Validate.component(value);
+
+            value = "abc???";
+            Validate.component(value);
+
+            value = "ab\\?c";
+            Validate.component(value);
+
         } catch (CpeValidationException ex) {
             validationException = ex;
         }
@@ -108,6 +140,45 @@ public class ValidateTest {
         exception.expect(CpeValidationException.class);
 
         String value = "**asterisk";
+        Validate.component(value);
+    }
+
+    /**
+     * Test of component method, of class Validate.
+     *
+     * @throws Exception thrown if there is a parsing error
+     */
+    @Test
+    public void testValidateComponent6() throws Exception {
+        exception.expect(CpeValidationException.class);
+
+        String value = "\\-";
+        Validate.component(value);
+    }
+
+    /**
+     * Test of component method, of class Validate.
+     *
+     * @throws Exception thrown if there is a parsing error
+     */
+    @Test
+    public void testValidateComponent7() throws Exception {
+        exception.expect(CpeValidationException.class);
+
+        String value = "??test?test??";
+        Validate.component(value);
+    }
+
+    /**
+     * Test of component method, of class Validate.
+     *
+     * @throws Exception thrown if there is a parsing error
+     */
+    @Test
+    public void testValidateComponent8() throws Exception {
+        exception.expect(CpeValidationException.class);
+
+        String value = "*test*test*";
         Validate.component(value);
     }
 }

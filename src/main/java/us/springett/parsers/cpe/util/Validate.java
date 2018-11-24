@@ -41,16 +41,24 @@ public final class Validate {
      */
     public static void component(String value) throws CpeValidationException {
         if (value != null && !value.isEmpty()) {
+            if ("\\-".equals(value)) {
+                throw new CpeValidationException("CPE components cannot be a single quoted hyphen.");
+            }
             for (int x = 0; x < value.length(); x++) {
                 char c = value.charAt(x);
-                if (Character.isWhitespace(c)) {
+                if (c == '?' && x > 0
+                        && !((value.charAt(x - 1) == '?' || value.charAt(x - 1) == '\\')
+                        || (x < value.length() - 1 && value.charAt(x + 1) == '?'))) {
+                    throw new CpeValidationException("CPE Strings may not contain unquoted question marks except at the beginning or end of the string");
+                } else if (Character.isWhitespace(c)) {
                     throw new CpeValidationException("CPE strings may not contain whitespace; consider using an underscore instead.");
-                }
-                if (c < 32 || c > 127) {
+                } else if (c < 32 || c > 127) {
                     throw new CpeValidationException("CPE strings may only contain printable characters in the UTF-8 character set between x00 and x7F.");
-                }
-                if (c == '*' && x != 0 && value.charAt(x - 1) == '*') {
+                } else if (c == '*' && x != 0 && value.charAt(x - 1) == '*') {
                     throw new CpeValidationException("CPE strings may not contain multiple asterisk characters in sequence.");
+                } else if (c == '*' && !((x == 0 || x == value.length() - 1)
+                        || (x > 0 && '\\' == value.charAt(x - 1)))) {
+                    throw new CpeValidationException("CPE strings may only contain unquoted asterisk at the beginning or end of the string.");
                 }
             }
         }
