@@ -20,17 +20,24 @@ package us.springett.parsers.cpe.util;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import us.springett.parsers.cpe.exceptions.CpeParsingException;
-import us.springett.parsers.cpe.exceptions.CpeValidationException;
 import us.springett.parsers.cpe.internal.util.Cpe23PartIterator;
 import us.springett.parsers.cpe.values.Part;
 
 /**
+ * Validation utility to validate CPE URI, Formated Strings, and the individual
+ * attributes of a CPE.
  *
  * @author Jeremy Long
  */
 public final class Validate {
 
+    /**
+     * A reference to the logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(Validate.class);
     /**
      * The CPE URI validation regular expression.
      */
@@ -48,31 +55,33 @@ public final class Validate {
      * allowed values.
      *
      * @param value the value to validate
-     * @throws CpeValidationException thrown if the string is invalid
+     * @return the validation status of the component
      */
-    public static void component(String value) throws CpeValidationException {
+    public static Status component(String value) {
         if (value != null && !value.isEmpty()) {
             if ("\\-".equals(value)) {
-                throw new CpeValidationException("CPE components cannot be a single quoted hyphen.");
+                return Status.SINGLE_QUOTED_HYPHEN;
             }
             for (int x = 0; x < value.length(); x++) {
                 char c = value.charAt(x);
                 if (c == '?' && x > 0
-                        && !((value.charAt(x - 1) == '?' || value.charAt(x - 1) == '\\')
-                        || (x < value.length() - 1 && value.charAt(x + 1) == '?'))) {
-                    throw new CpeValidationException("CPE Strings may not contain unquoted question marks except at the beginning or end of the string");
+                        && !((value.charAt(x - 1) == '?' || value.charAt(x - 1) == '*' || value.charAt(x - 1) == '\\')
+                        || (x < value.length() - 1 && (value.charAt(x + 1) == '?' || value.charAt(x + 1) == '*')))) {
+                    return Status.UNQUOTED_QUESTION_MARK;
                 } else if (Character.isWhitespace(c)) {
-                    throw new CpeValidationException("CPE strings may not contain whitespace; consider using an underscore instead.");
+                    return Status.WHITESPACE;
                 } else if (c < 32 || c > 127) {
-                    throw new CpeValidationException("CPE strings may only contain printable characters in the UTF-8 character set between x00 and x7F.");
+                    return Status.NON_PRINTABLE;
                 } else if (c == '*' && x != 0 && value.charAt(x - 1) == '*') {
-                    throw new CpeValidationException("CPE strings may not contain multiple asterisk characters in sequence.");
+                    return Status.ASTERISK_SEQUENCE;
                 } else if (c == '*' && !((x == 0 || x == value.length() - 1)
                         || (x > 0 && '\\' == value.charAt(x - 1)))) {
-                    throw new CpeValidationException("CPE strings may only contain unquoted asterisk at the beginning or end of the string.");
+                    return Status.UNQUOTED_ASTERISK;
                 }
             }
+            return Status.VALID;
         }
+        return Status.EMPTY;
     }
 
     /**
@@ -82,39 +91,93 @@ public final class Validate {
      * @return <code>true</code> if the provided value is a valid CPE 2.3
      * formated string; otherwise <code>false</code>
      */
-    public static boolean formatedString(String value) {
+    public static Status formattedString(String value) {
         boolean result = true;
         try {
-            Cpe23PartIterator instance = new Cpe23PartIterator(value);
-            //part
-            Part.getEnum(instance.next());
-            //vendor
-            Validate.component(instance.next());
-            //product
-            Validate.component(instance.next());
-            //version
-            Validate.component(instance.next());
-            //update
-            Validate.component(instance.next());
-            //edition
-            Validate.component(instance.next());
-            //language
-            Validate.component(instance.next());
-            //swEdition
-            Validate.component(instance.next());
-            //targetSw
-            Validate.component(instance.next());
-            //targetHw
-            Validate.component(instance.next());
-            //other
-            Validate.component(instance.next());
-            if (instance.hasNext()) {
-                return false;
+            Cpe23PartIterator instance;
+            try {
+                instance = new Cpe23PartIterator(value);
+            } catch (CpeParsingException ex) {
+                LOG.warn("The CPE is invalid as it is not in the formatted string format", ex);
+                return Status.INVALID;
             }
-        } catch (CpeParsingException | CpeValidationException | NoSuchElementException ex) {
-            return false;
+            try {
+                //part
+                Part.getEnum(instance.next());
+            } catch (CpeParsingException ex) {
+                LOG.warn("The CPE is invalid as it has an invalid part attribute", ex);
+                return Status.INVALID_PART;
+            }
+            Status status;
+            //vendor
+            status = Validate.component(instance.next());
+            if (!status.isValid()) {
+                LOG.warn("The CPE has an invalid vendor - " + status.getMessage());
+                return status;
+            }
+            //product
+            status = Validate.component(instance.next());
+            if (!status.isValid()) {
+                LOG.warn("The CPE has an invalid product - " + status.getMessage());
+                return status;
+            }
+            //version
+            status = Validate.component(instance.next());
+            if (!status.isValid()) {
+                LOG.warn("The CPE has an version vendor - " + status.getMessage());
+                return status;
+            }
+            //update
+            status = Validate.component(instance.next());
+            if (!status.isValid()) {
+                LOG.warn("The CPE has an invalid update - " + status.getMessage());
+                return status;
+            }
+            //edition
+            status = Validate.component(instance.next());
+            if (!status.isValid()) {
+                LOG.warn("The CPE has an invalid edition - " + status.getMessage());
+                return status;
+            }
+            //language
+            status = Validate.component(instance.next());
+            if (!status.isValid()) {
+                LOG.warn("The CPE has an invalid language - " + status.getMessage());
+                return status;
+            }
+            //swEdition
+            status = Validate.component(instance.next());
+            if (!status.isValid()) {
+                LOG.warn("The CPE has an invalid swEdition - " + status.getMessage());
+                return status;
+            }
+            //targetSw
+            status = Validate.component(instance.next());
+            if (!status.isValid()) {
+                LOG.warn("The CPE has an invalid targetSw - " + status.getMessage());
+                return status;
+            }
+            //targetHw
+            status = Validate.component(instance.next());
+            if (!status.isValid()) {
+                LOG.warn("The CPE has an invalid targetHw - " + status.getMessage());
+                return status;
+            }
+            //other
+            status = Validate.component(instance.next());
+            if (!status.isValid()) {
+                LOG.warn("The CPE has an invalid other attribute - " + status.getMessage());
+                return status;
+            }
+            if (instance.hasNext()) {
+                LOG.warn(Status.TOO_MANY_ELEMENTS.getMessage());
+                return Status.TOO_MANY_ELEMENTS;
+            }
+        } catch (NoSuchElementException ex) {
+            LOG.warn(Status.TOO_FEW_ELEMENTS.getMessage());
+            return Status.TOO_FEW_ELEMENTS;
         }
-        return true;
+        return Status.VALID;
     }
 
     /**
@@ -124,8 +187,26 @@ public final class Validate {
      * @return <code>true</code> if the provided value is a valid CPE 2.2
      * formated string; otherwise <code>false</code>
      */
-    public static boolean cpeUri(String value) {
+    public static Status cpeUri(String value) {
         Matcher m = CPE_URI.matcher(value);
-        return m.matches();
+        if (m.matches()) {
+            return Status.VALID;
+        }
+        return Status.INVALID;
+    }
+
+    /**
+     * Validates the given CPE string value to ensure it is either a valid CPE
+     * URI or Formatted String.
+     *
+     * @param value the CPE to validate
+     * @return <code>true</code> if the CPE is valid; otherwise
+     * <code>false</code>
+     */
+    public static Status cpe(String value) {
+        if ("cpe:2.3:".regionMatches(0, value, 0, 8)) {
+            return formattedString(value);
+        }
+        return cpeUri(value);
     }
 }

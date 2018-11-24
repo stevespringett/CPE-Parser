@@ -21,7 +21,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
-import us.springett.parsers.cpe.exceptions.CpeValidationException;
 
 /**
  *
@@ -41,176 +40,137 @@ public class ValidateTest {
     public void testComponent() throws Exception {
         exception = ExpectedException.none();
 
-        CpeValidationException validationException = null;
-        try {
-            String value = null;
-            Validate.component(value);
-            value = "";
+        String value = null;
+        assertFalse(Validate.component(value).isValid());
 
-            value = "*";
-            Validate.component(value);
+        value = "";
+        assertFalse(Validate.component(value).isValid());
 
-            value = "?";
-            Validate.component(value);
+        value = "*";
+        Validate.component(value);
 
-            value = "-";
-            Validate.component(value);
+        value = "?";
+        assertTrue(Validate.component(value).isValid());
 
-            Validate.component(value);
-            value = "abc";
-            Validate.component(value);
-            value = "abc*";
-            Validate.component(value);
+        value = "-";
+        assertTrue(Validate.component(value).isValid());
 
-            value = "*abc*";
-            Validate.component(value);
+        value = "abc";
+        assertTrue(Validate.component(value).isValid());
 
-            value = "*abc";
-            Validate.component(value);
+        value = "abc*";
+        assertTrue(Validate.component(value).isValid());
 
-            value = "ab\\*c";
-            Validate.component(value);
+        value = "*abc*";
+        assertTrue(Validate.component(value).isValid());
 
-            value = "???abc???";
-            Validate.component(value);
+        value = "*abc";
+        assertTrue(Validate.component(value).isValid());
 
-            value = "???abc";
-            Validate.component(value);
+        value = "ab\\*c";
+        assertTrue(Validate.component(value).isValid());
 
-            value = "abc???";
-            Validate.component(value);
+        value = "???abc???";
+        assertTrue(Validate.component(value).isValid());
 
-            value = "ab\\?c";
-            Validate.component(value);
+        value = "???abc";
+        assertTrue(Validate.component(value).isValid());
 
-        } catch (CpeValidationException ex) {
-            validationException = ex;
-        }
-        assertNull(validationException);
-    }
+        value = "abc???";
+        assertTrue(Validate.component(value).isValid());
 
-    /**
-     * Test of component method, of class Validate.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent2() throws Exception {
-        exception.expect(CpeValidationException.class);
+        value = "ab\\?c";
+        assertTrue(Validate.component(value).isValid());
+
+        value = "*?foobar";
+        assertTrue(Validate.component(value).isValid());
+
+        value = "foobar?*";
+        assertTrue(Validate.component(value).isValid());
 
         char[] str = {10, 34};
-        String value = new String(str);
-        Validate.component(value);
+        value = new String(str);
+        assertFalse(Validate.component(value).isValid());
+
+        char[] str2 = {128, 34};
+        value = new String(str2);
+        assertFalse(Validate.component(value).isValid());
+
+        value = "has a space";
+        assertFalse(Validate.component(value).isValid());
+
+        value = "**asterisk";
+        assertFalse(Validate.component(value).isValid());
+
+        value = "\\-";
+        assertFalse(Validate.component(value).isValid());
+
+        value = "??test?test??";
+        assertFalse(Validate.component(value).isValid());
+
+        value = "??test*test??";
+        assertFalse(Validate.component(value).isValid());
+
     }
 
     /**
-     * Test of component method, of class Validate.
-     *
-     * @throws Exception thrown if there is a parsing error
+     * Test of formattedString method, of class Validate.
      */
     @Test
-    public void testValidateComponent3() throws Exception {
-        exception.expect(CpeValidationException.class);
-
-        char[] str = {128, 34};
-        String value = new String(str);
-        Validate.component(value);
-    }
-
-    /**
-     * Test of component method, of class Validate.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent4() throws Exception {
-        exception.expect(CpeValidationException.class);
-
-        String value = "has a space";
-        Validate.component(value);
-    }
-
-    /**
-     * Test of component method, of class Validate.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent5() throws Exception {
-        exception.expect(CpeValidationException.class);
-
-        String value = "**asterisk";
-        Validate.component(value);
-    }
-
-    /**
-     * Test of component method, of class Validate.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent6() throws Exception {
-        exception.expect(CpeValidationException.class);
-
-        String value = "\\-";
-        Validate.component(value);
-    }
-
-    /**
-     * Test of component method, of class Validate.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent7() throws Exception {
-        exception.expect(CpeValidationException.class);
-
-        String value = "??test?test??";
-        Validate.component(value);
-    }
-
-    /**
-     * Test of component method, of class Validate.
-     *
-     * @throws Exception thrown if there is a parsing error
-     */
-    @Test
-    public void testValidateComponent8() throws Exception {
-        exception.expect(CpeValidationException.class);
-
-        String value = "*test*test*";
-        Validate.component(value);
-    }
-
-    /**
-     * Test of formatedString method, of class Validate.
-     */
-    @Test
-    public void testFormatedString() {
+    public void testFormattedString() {
         exception = ExpectedException.none();
         String value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
-        assertTrue(Validate.formatedString(value));
+        assertTrue(Validate.formattedString(value).isValid());
 
         value = "cpe:2.3:o:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
-        assertTrue(Validate.formatedString(value));
+        assertTrue(Validate.formattedString(value).isValid());
 
         value = "cpe:2.3:h:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
-        assertTrue(Validate.formatedString(value));
+        assertTrue(Validate.formattedString(value).isValid());
 
         value = "cpe:2.3:-:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
-        assertTrue(Validate.formatedString(value));
+        assertTrue(Validate.formattedString(value).isValid());
 
         value = "cpe:2.3:*:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
-        assertTrue(Validate.formatedString(value));
+        assertTrue(Validate.formattedString(value).isValid());
 
         value = "cpe:2.3:t:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
-        assertFalse(Validate.formatedString(value));
+        assertFalse(Validate.formattedString(value).isValid());
 
         value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*";
-        assertFalse(Validate.formatedString(value));
+        assertFalse(Validate.formattedString(value).isValid());
 
         value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*:*";
-        assertFalse(Validate.formatedString(value));
+        assertFalse(Validate.formattedString(value).isValid());
+
+        value = "cpe:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*:*";
+        assertFalse(Validate.formattedString(value).isValid());
+
+        value = "cpe:2.3:a:miste*rpark:re\\\\:kyu:1:*:*:*:*:android:*:*:*";
+        assertFalse(Validate.formattedString(value).isValid());
+
+        value = "cpe:2.3:a:misterpark:re?kyu:1:*:*:*:*:android:*:*:*";
+        assertFalse(Validate.formattedString(value).isValid());
+
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu::*:*:*:*:android:*:*:*";
+        assertFalse(Validate.formattedString(value).isValid());
+
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:**:*:*:*:android:*:*";
+        assertFalse(Validate.formattedString(value).isValid());
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:**:*:*:android:*:*";
+        assertFalse(Validate.formattedString(value).isValid());
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:**:*:android:*:*";
+        assertFalse(Validate.formattedString(value).isValid());
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:**:android:*:*";
+        assertFalse(Validate.formattedString(value).isValid());
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:and?roid:*:*";
+        assertFalse(Validate.formattedString(value).isValid());
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:**:*";
+        assertFalse(Validate.formattedString(value).isValid());
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:**";
+        assertFalse(Validate.formattedString(value).isValid());
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*:**";
+        assertFalse(Validate.formattedString(value).isValid());
     }
 
     /**
@@ -220,15 +180,34 @@ public class ValidateTest {
     public void testCpeUri() {
         exception = ExpectedException.none();
         String value = "cpe:/a:jlike_project:jlike:1.0::~~~joomla%21~~";
-        assertTrue(Validate.cpeUri(value));
+        assertTrue(Validate.cpeUri(value).isValid());
 
         value = "cpe:/a:jlike_project:*:1.0::~~~joomla%21~~";
-        assertFalse(Validate.cpeUri(value));
+        assertFalse(Validate.cpeUri(value).isValid());
 
         value = "cpe:/a:jlike_project::1.0::~~~joomla%21~~";
-        assertTrue(Validate.cpeUri(value));
+        assertTrue(Validate.cpeUri(value).isValid());
 
         value = "cpe:/a:vendor:product:version:update:edition:language:toomany";
-        assertFalse(Validate.cpeUri(value));
+        assertFalse(Validate.cpeUri(value).isValid());
+    }
+    
+    /**
+     * Test of cpe method, of class Validate.
+     */
+    @Test
+    public void testCpe() {
+        exception = ExpectedException.none();
+        String value = "cpe:/a:jlike_project:jlike:1.0::~~~joomla%21~~";
+        assertTrue(Validate.cpe(value).isValid());
+        
+        value = "cpe:/a:jlike_pro**ject:jlike:1.0::~~~joomla%21~~";
+        assertFalse(Validate.cpe(value).isValid());
+        
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        assertTrue(Validate.cpe(value).isValid());
+        
+        value = "cpe:2.3:a:\\\\-:re\\\\:kyu:1:*:*:*:*:android:*:*:*";
+        assertFalse(Validate.cpe(value).isValid());
     }
 }

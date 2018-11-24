@@ -17,19 +17,13 @@
  */
 package us.springett.parsers.cpe;
 
-import us.springett.parsers.cpe.exceptions.CpeValidationException;
 import us.springett.parsers.cpe.exceptions.CpeParsingException;
-import org.junit.After;
-import org.junit.AfterClass;
 import us.springett.parsers.cpe.values.Part;
 import us.springett.parsers.cpe.values.BindValue;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import us.springett.parsers.cpe.util.Validate;
 
 /**
  * Test the CPE Builder.
@@ -40,22 +34,6 @@ public class CpeBuilderTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     /**
      * Test of part method, of class CpeBuilder.

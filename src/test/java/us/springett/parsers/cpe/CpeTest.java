@@ -20,13 +20,138 @@ package us.springett.parsers.cpe;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import us.springett.parsers.cpe.exceptions.CpeEncodingException;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
 
 /**
  *
  * @author Jeremy Long
  */
 public class CpeTest {
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testConstructorError() throws Exception {
+        exception.expect(CpeValidationException.class);
+        Cpe instance = new Cpe(Part.ANY, "ve*ndor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+    }
+
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testConstructorError1() throws Exception {
+        exception.expect(CpeValidationException.class);
+        Cpe instance = new Cpe(Part.ANY, "vendor", "pro*duct", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+    }
+
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testConstructorError2() throws Exception {
+        exception.expect(CpeValidationException.class);
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "ver*sion", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+    }
+
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testConstructorError3() throws Exception {
+        exception.expect(CpeValidationException.class);
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "upd*ate",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+    }
+
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testConstructorError4() throws Exception {
+        exception.expect(CpeValidationException.class);
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edit*ion", "language", "swEdition", "targetSw", "targetHw", "other");
+    }
+
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testConstructorError5() throws Exception {
+        exception.expect(CpeValidationException.class);
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "lang*uage", "swEdition", "targetSw", "targetHw", "other");
+    }
+
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testConstructorError6() throws Exception {
+        exception.expect(CpeValidationException.class);
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdi*tion", "targetSw", "targetHw", "other");
+    }
+
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testConstructorError7() throws Exception {
+        exception.expect(CpeValidationException.class);
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "tar*getSw", "targetHw", "other");
+    }
+
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testConstructorError8() throws Exception {
+        exception.expect(CpeValidationException.class);
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targ*etHw", "other");
+    }
+
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testConstructorError9() throws Exception {
+        exception.expect(CpeValidationException.class);
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "ot*her");
+    }
 
     /**
      * Test of getPart method, of class Cpe.
@@ -202,12 +327,6 @@ public class CpeTest {
         assertEquals(expResult, result);
 
         instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
-                "edition", "language", "", "targetSw", "targetHw", "other");
-        expResult = "cpe:/*:vendor:product:version:update:~edition~~targetSw~targetHw~other:language";
-        result = instance.toCpe22Uri();
-        assertEquals(expResult, result);
-
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "*", "targetSw", "targetHw", "other");
         expResult = "cpe:/*:vendor:product:version:update:~edition~~targetSw~targetHw~other:language";
         result = instance.toCpe22Uri();
@@ -220,31 +339,13 @@ public class CpeTest {
         assertEquals(expResult, result);
 
         instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
-                "edition", "language", "swEdition", "", "targetHw", "other");
-        expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~~targetHw~other:language";
-        result = instance.toCpe22Uri();
-        assertEquals(expResult, result);
-
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "*", "other");
         expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~targetSw~~other:language";
         result = instance.toCpe22Uri();
         assertEquals(expResult, result);
 
         instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
-                "edition", "language", "swEdition", "targetSw", "", "other");
-        expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~targetSw~~other:language";
-        result = instance.toCpe22Uri();
-        assertEquals(expResult, result);
-
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "*");
-        expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~targetSw~targetHw~:language";
-        result = instance.toCpe22Uri();
-        assertEquals(expResult, result);
-
-        instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
-                "edition", "language", "swEdition", "targetSw", "targetHw", "");
         expResult = "cpe:/*:vendor:product:version:update:~edition~swEdition~targetSw~targetHw~:language";
         result = instance.toCpe22Uri();
         assertEquals(expResult, result);

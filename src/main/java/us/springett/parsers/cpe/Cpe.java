@@ -22,6 +22,7 @@ import us.springett.parsers.cpe.util.FormatUtil;
 import java.io.Serializable;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.util.Status;
 import us.springett.parsers.cpe.util.Validate;
 
 /**
@@ -108,16 +109,7 @@ public class Cpe implements Serializable {
             String update, String edition, String language, String swEdition,
             String targetSw, String targetHw, String other) throws CpeValidationException {
 
-        Validate.component(vendor);
-        Validate.component(product);
-        Validate.component(version);
-        Validate.component(update);
-        Validate.component(edition);
-        Validate.component(language);
-        Validate.component(swEdition);
-        Validate.component(targetSw);
-        Validate.component(targetHw);
-        Validate.component(other);
+        validate(vendor, product, version, update, edition, language, swEdition, targetSw, targetHw, other);
         this.part = part;
         this.vendor = vendor;
         this.product = product;
@@ -129,6 +121,67 @@ public class Cpe implements Serializable {
         this.targetSw = targetSw;
         this.targetHw = targetHw;
         this.other = other;
+    }
+
+    /**
+     * Validates the CPE attributes.
+     *
+     * @param vendor1 the vendor
+     * @param product1 the product
+     * @param version1 the version
+     * @param update1 the update version
+     * @param edition1 the edition
+     * @param language1 the language
+     * @param swEdition1 the software edition
+     * @param targetSw1 the target software
+     * @param targetHw1 the target hardware
+     * @param other1 the other attribute
+     * @throws CpeValidationException thrown if one or more of the attributes
+     * are invalid
+     */
+    private void validate(String vendor1, String product1, String version1,
+            String update1, String edition1, String language1, String swEdition1,
+            String targetSw1, String targetHw1, String other1) throws CpeValidationException {
+        Status status = Validate.component(vendor1);
+        if (!status.isValid()) {
+            throw new CpeValidationException("Invalid vendor component: " + status.getMessage());
+        }
+        status = Validate.component(product1);
+        if (!status.isValid()) {
+            throw new CpeValidationException("Invalid product component: " + status.getMessage());
+        }
+        status = Validate.component(version1);
+        if (!status.isValid()) {
+            throw new CpeValidationException("Invalid version component: " + status.getMessage());
+        }
+        status = Validate.component(update1);
+        if (!status.isValid()) {
+            throw new CpeValidationException("Invalid update component: " + status.getMessage());
+        }
+        status = Validate.component(edition1);
+        if (!status.isValid()) {
+            throw new CpeValidationException("Invalid edition component: " + status.getMessage());
+        }
+        status = Validate.component(language1);
+        if (!status.isValid()) {
+            throw new CpeValidationException("Invalid language component: " + status.getMessage());
+        }
+        status = Validate.component(swEdition1);
+        if (!status.isValid()) {
+            throw new CpeValidationException("Invalid swEdition component: " + status.getMessage());
+        }
+        status = Validate.component(targetSw1);
+        if (!status.isValid()) {
+            throw new CpeValidationException("Invalid targetSw component: " + status.getMessage());
+        }
+        status = Validate.component(targetHw1);
+        if (!status.isValid()) {
+            throw new CpeValidationException("Invalid targetHw component: " + status.getMessage());
+        }
+        status = Validate.component(other1);
+        if (!status.isValid()) {
+            throw new CpeValidationException("Invalid other component: " + status.getMessage());
+        }
     }
 
     /**
