@@ -17,13 +17,24 @@
  */
 package us.springett.parsers.cpe.util;
 
+import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.internal.util.Cpe23PartIterator;
+import us.springett.parsers.cpe.values.Part;
 
 /**
  *
  * @author Jeremy Long
  */
 public final class Validate {
+
+    /**
+     * The CPE URI validation regular expression.
+     */
+    private static final Pattern CPE_URI = Pattern.compile("^[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9._~%-]*){0,6}$");
 
     /**
      * Private constructor for utility class.
@@ -62,5 +73,59 @@ public final class Validate {
                 }
             }
         }
+    }
+
+    /**
+     * Validates the formatted string against the CPE 2.3 specification.
+     *
+     * @param value the value to validate
+     * @return <code>true</code> if the provided value is a valid CPE 2.3
+     * formated string; otherwise <code>false</code>
+     */
+    public static boolean formatedString(String value) {
+        boolean result = true;
+        try {
+            Cpe23PartIterator instance = new Cpe23PartIterator(value);
+            //part
+            Part.getEnum(instance.next());
+            //vendor
+            Validate.component(instance.next());
+            //product
+            Validate.component(instance.next());
+            //version
+            Validate.component(instance.next());
+            //update
+            Validate.component(instance.next());
+            //edition
+            Validate.component(instance.next());
+            //language
+            Validate.component(instance.next());
+            //swEdition
+            Validate.component(instance.next());
+            //targetSw
+            Validate.component(instance.next());
+            //targetHw
+            Validate.component(instance.next());
+            //other
+            Validate.component(instance.next());
+            if (instance.hasNext()) {
+                return false;
+            }
+        } catch (CpeParsingException | CpeValidationException | NoSuchElementException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validates the CPE URI against the CPE 2.2 specification.
+     *
+     * @param value the value to validate
+     * @return <code>true</code> if the provided value is a valid CPE 2.2
+     * formated string; otherwise <code>false</code>
+     */
+    public static boolean cpeUri(String value) {
+        Matcher m = CPE_URI.matcher(value);
+        return m.matches();
     }
 }

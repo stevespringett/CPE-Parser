@@ -181,4 +181,54 @@ public class ValidateTest {
         String value = "*test*test*";
         Validate.component(value);
     }
+
+    /**
+     * Test of formatedString method, of class Validate.
+     */
+    @Test
+    public void testFormatedString() {
+        exception = ExpectedException.none();
+        String value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        assertTrue(Validate.formatedString(value));
+
+        value = "cpe:2.3:o:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        assertTrue(Validate.formatedString(value));
+
+        value = "cpe:2.3:h:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        assertTrue(Validate.formatedString(value));
+
+        value = "cpe:2.3:-:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        assertTrue(Validate.formatedString(value));
+
+        value = "cpe:2.3:*:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        assertTrue(Validate.formatedString(value));
+
+        value = "cpe:2.3:t:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        assertFalse(Validate.formatedString(value));
+
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*";
+        assertFalse(Validate.formatedString(value));
+
+        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*:*";
+        assertFalse(Validate.formatedString(value));
+    }
+
+    /**
+     * Test of cpeUri method, of class Validate.
+     */
+    @Test
+    public void testCpeUri() {
+        exception = ExpectedException.none();
+        String value = "cpe:/a:jlike_project:jlike:1.0::~~~joomla%21~~";
+        assertTrue(Validate.cpeUri(value));
+
+        value = "cpe:/a:jlike_project:*:1.0::~~~joomla%21~~";
+        assertFalse(Validate.cpeUri(value));
+
+        value = "cpe:/a:jlike_project::1.0::~~~joomla%21~~";
+        assertTrue(Validate.cpeUri(value));
+
+        value = "cpe:/a:vendor:product:version:update:edition:language:toomany";
+        assertFalse(Validate.cpeUri(value));
+    }
 }
