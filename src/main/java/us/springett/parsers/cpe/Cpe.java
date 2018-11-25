@@ -21,6 +21,7 @@ import us.springett.parsers.cpe.values.Part;
 import us.springett.parsers.cpe.util.Convert;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
@@ -383,6 +384,17 @@ public class Cpe implements Serializable {
         return hash;
     }
 
+    /**
+     * Determines if the CPE matches the given target CPE. This does not follow
+     * the CPE 2.3 Specification exactly as there are cases where undefined
+     * comparisons will result in either true or false. For instance, 'ANY' will
+     * match 'm+wild cards' and NA will return false when the target has 'm+wild
+     * cards'.
+     *
+     * @param target the target CPE to evaluate
+     * @return <code>true</code> if the CPE matches the target; otherwise
+     * <code>false</code>
+     */
     public boolean matches(Cpe target) {
         boolean result = true;
         result &= compareAttributes(this.part, target.part);
@@ -400,13 +412,33 @@ public class Cpe implements Serializable {
     }
 
     /**
+     * Determines if the target CPE matches the CPE. This does not follow the
+     * CPE 2.3 Specification exactly as there are cases where undefined
+     * comparisons will result in either true or false. For instance, 'ANY' will
+     * match 'm+wild cards' and NA will return false when the target has 'm+wild
+     * cards'.
+     *
+     * @param target the CPE to evaluate
+     * @return <code>true</code> if the target CPE matches CPE; otherwise
+     * <code>false</code>
+     */
+    public boolean matchedBy(Cpe target) {
+        return target.matches(this);
+    }
+
+    /**
      * This does not follow the spec precisely because ANY compared to NA is
      * classified as undefined by the spec; however, in this implementation ANY
      * will match NA and return true.
      *
-     * @param left
-     * @param right
-     * @return
+     * This will compare the left value to the right value and return true if
+     * the left matches the right. Note that it is possible that the right would
+     * not match the left value.
+     *
+     * @param left the left value to compare
+     * @param right the right value to compare
+     * @return <code>true</code> if the left value matches the right value;
+     * otherwise <code>false</code>
      */
     protected static boolean compareAttributes(Part left, Part right) {
         if (left == right) {
@@ -422,9 +454,14 @@ public class Cpe implements Serializable {
      * classified as undefined by the spec; however, in this implementation ANY
      * will match NA and return true.
      *
-     * @param left
-     * @param right
-     * @return
+     * This will compare the left value to the right value and return true if
+     * the left matches the right. Note that it is possible that the right would
+     * not match the left value.
+     *
+     * @param left the left value to compare
+     * @param right the right value to compare
+     * @return <code>true</code> if the left value matches the right value;
+     * otherwise <code>false</code>
      */
     protected static boolean compareAttributes(String left, String right) {
         if (left.equalsIgnoreCase(right)) {
@@ -444,14 +481,9 @@ public class Cpe implements Serializable {
             return false;
         }
         //10 11 14 17
-
-        return false;
-    }
-
-    
-
-    public boolean matchedBy(Cpe target) {
-        return target.matches(this);
+        Pattern p = Convert.wellFormedToPattern(left.toLowerCase());
+        Matcher m = p.matcher(right.toLowerCase());
+        return m.matches();
     }
 
     @Override

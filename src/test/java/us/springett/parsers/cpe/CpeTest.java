@@ -27,6 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.values.LogicalValue;
 
 /**
  *
@@ -387,26 +388,92 @@ public class CpeTest {
 
     /**
      * Test of matches method, of class Cpe.
+     *
+     * @throws java.lang.Exception thrown if there is an error
      */
     @Test
-    public void testMatches() {
-//        Cpe target = null;
-//        Cpe instance = null;
-//        boolean expResult = false;
-//        boolean result = instance.matches(target);
-//        assertEquals(expResult, result);
+    public void testMatches() throws Exception {
+        CpeBuilder builder = new CpeBuilder();
+        Cpe target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        Cpe instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        boolean expResult = true;
+        boolean result = instance.matches(target);
+        assertEquals(expResult, result);
+
+        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.1").build();
+        instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        expResult = false;
+        result = instance.matches(target);
+        assertEquals(expResult, result);
+
+        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        instance = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.ANY).version("4.0.0").build();
+        expResult = true;
+        result = instance.matches(target);
+        assertEquals(expResult, result);
+
+        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        instance = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.NA).version("4.0.0").build();
+        expResult = false;
+        result = instance.matches(target);
+        assertEquals(expResult, result);
+
+        target = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.NA).version("4.0.0").build();
+        instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        expResult = false;
+        result = instance.matches(target);
+        assertEquals(expResult, result);
+
+        target = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.ANY).version("4.0.0").build();
+        instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        expResult = false;
+        result = instance.matches(target);
+        assertEquals(expResult, result);
+
+        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        instance = builder.part(Part.APPLICATION).vendor("owasp").wfProduct("*check").version("4.0.0").build();
+        expResult = true;
+        result = instance.matches(target);
+        assertEquals(expResult, result);
+
+        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency").version("4.0.0").build();
+        instance = builder.part(Part.APPLICATION).vendor("owasp").wfProduct("*check").version("4.0.0").build();
+        expResult = false;
+        result = instance.matches(target);
+        assertEquals(expResult, result);
     }
 
     /**
      * Test of matchedBy method, of class Cpe.
+     *
+     * @throws java.lang.Exception thrown if there is an error
      */
     @Test
-    public void testMatchedBy() {
-//        Cpe target = null;
-//        Cpe instance = null;
-//        boolean expResult = false;
-//        boolean result = instance.matchedBy(target);
-//        assertEquals(expResult, result);
+    public void testMatchedBy() throws Exception {
+        CpeBuilder builder = new CpeBuilder();
+        Cpe target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        Cpe instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        boolean expResult = true;
+        boolean result = instance.matchedBy(target);
+        assertEquals(expResult, result);
+
+        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.1").build();
+        instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        expResult = false;
+        result = instance.matchedBy(target);
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testHashCode() throws Exception {
+        CpeBuilder builder = new CpeBuilder();
+        Cpe left = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        Cpe right = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+
+        int hashl = left.hashCode();
+        int hashr = right.hashCode();
+        assertEquals(left, right);
+
     }
 
     /**
@@ -425,11 +492,83 @@ public class CpeTest {
         boolean result = instance.equals(obj);
         assertEquals(expResult, result);
 
+        expResult = true;
+        obj = instance;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
         obj = new Cpe(Part.APPLICATION, "vendor", "product", "version", "update",
                 "edition", "language", "swEdition", "targetSw", "targetHw", "other");
-
         expResult = false;
         result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.ANY, "wrong", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.ANY, "vendor", "wrong", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.ANY, "vendor", "product", "wrong", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.ANY, "vendor", "product", "version", "wrong",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "wrong", "language", "swEdition", "targetSw", "targetHw", "other");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "wrong", "swEdition", "targetSw", "targetHw", "other");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "wrong", "targetSw", "targetHw", "other");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "wrong", "targetHw", "other");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "wrong", "other");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "wrong");
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        expResult = false;
+        result = instance.equals("test");
+        assertEquals(expResult, result);
+
+        expResult = false;
+        result = instance.equals(null);
         assertEquals(expResult, result);
     }
 
@@ -457,7 +596,7 @@ public class CpeTest {
         assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.OPERATING_SYSTEM));
         assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.NA));
         assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.ANY));
-        
+
         assertTrue(Cpe.compareAttributes(Part.ANY, Part.ANY));
         assertTrue(Cpe.compareAttributes(Part.ANY, Part.APPLICATION));
         assertTrue(Cpe.compareAttributes(Part.ANY, Part.OPERATING_SYSTEM));
@@ -477,5 +616,11 @@ public class CpeTest {
     @Test
     public void testCompareAttributes_String_String() {
         assertTrue(Cpe.compareAttributes("a", "a"));
+        assertTrue(Cpe.compareAttributes("a", "A"));
+        assertTrue(Cpe.compareAttributes("abc?", "abcd"));
+        assertTrue(Cpe.compareAttributes("abc\\:def", "abc\\:def"));
+        assertFalse(Cpe.compareAttributes("abc", "abcdef"));
+        assertTrue(Cpe.compareAttributes("abc*", "abcdef"));
+        assertFalse(Cpe.compareAttributes("abc..", "abcdef"));
     }
 }

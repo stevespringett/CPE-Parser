@@ -17,10 +17,16 @@
  */
 package us.springett.parsers.cpe.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.junit.After;
+import org.junit.AfterClass;
 import us.springett.parsers.cpe.values.LogicalValue;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
@@ -30,10 +36,26 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
  *
  * @author Jeremy Long
  */
-public class FormatUtilTest {
+public class ConvertTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
 
     /**
      * Test of toWellFormed method, of class Convert.
@@ -126,7 +148,7 @@ public class FormatUtilTest {
      * formed
      */
     @Test
-    public void testTransformWfsToCpeUriComponent() throws CpeEncodingException {
+    public void testWellFormedToCpeUri() throws CpeEncodingException {
         exception = ExpectedException.none();
 
         String value = null;
@@ -186,7 +208,7 @@ public class FormatUtilTest {
     }
 
     @Test
-    public void testTransformWfsToCpeUriComponentException() throws CpeEncodingException {
+    public void testWellFormedToCpeUriException() throws CpeEncodingException {
         exception.expect(CpeEncodingException.class);
 
         String value = "test\\";
@@ -194,7 +216,7 @@ public class FormatUtilTest {
     }
 
     @Test
-    public void testTransformWfsToCpeUriComponentException2() throws CpeEncodingException {
+    public void testWellFormedToCpeUriException2() throws CpeEncodingException {
         exception.expect(CpeEncodingException.class);
 
         String value = "test:";
@@ -205,7 +227,7 @@ public class FormatUtilTest {
      * Test of wellFormedToCpeUri method, of class Convert.
      */
     @Test
-    public void testTransformWfsToCpeUriComponentPart() {
+    public void testWellFormedToCpeUri_Part() {
         exception = ExpectedException.none();
 
         Part value = null;
@@ -220,7 +242,7 @@ public class FormatUtilTest {
      * @exception CpeEncodingException thrown if the URI is malformed
      */
     @Test
-    public void testTransformCpeUriComponentToWfs() throws CpeEncodingException {
+    public void testCpeUriToWellFormed() throws CpeEncodingException {
         exception = ExpectedException.none();
 
         String value = null;
@@ -270,7 +292,7 @@ public class FormatUtilTest {
     }
 
     @Test
-    public void testTransformCpeUriComponentToWfsException() throws CpeEncodingException {
+    public void testCpeUriToWellFormedException() throws CpeEncodingException {
         exception.expect(CpeEncodingException.class);
 
         String value = "test%";
@@ -278,7 +300,7 @@ public class FormatUtilTest {
     }
 
     @Test
-    public void testTransformCpeUriComponentToWfsException2() throws CpeEncodingException {
+    public void testCpeUriToWellFormedException2() throws CpeEncodingException {
         exception.expect(CpeEncodingException.class);
 
         String value = "test:";
@@ -289,7 +311,7 @@ public class FormatUtilTest {
      * Test of wellFormedToFS method, of class Convert.
      */
     @Test
-    public void testTransformWfsToFS() {
+    public void testWellFormedToFS() {
         exception = ExpectedException.none();
 
         String value = null;
@@ -328,7 +350,7 @@ public class FormatUtilTest {
      * Test of wellFormedToFS method, of class Convert.
      */
     @Test
-    public void testTransformWfsToFSPart() {
+    public void testWellFormedToFS_Part() {
         exception = ExpectedException.none();
 
         Part value = null;
@@ -341,7 +363,7 @@ public class FormatUtilTest {
      * Test of fsToWellFormed method, of class Convert.
      */
     @Test
-    public void testTransformFsToWfs() {
+    public void testFsToWellFormed() {
         exception = ExpectedException.none();
 
         String value = null;
@@ -368,5 +390,42 @@ public class FormatUtilTest {
         expResult = "visual\\_c\\+\\+";
         result = Convert.fsToWellFormed(value);
         assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of wellFormedToPattern method, of class Convert.
+     */
+    @Test
+    public void testWellFormedToPattern() {
+
+        String value = "abc";
+        Pattern expResult = Pattern.compile("abc");
+        Pattern result = Convert.wellFormedToPattern(value);
+        assertEquals(expResult.toString(), result.toString());
+
+        value = "?abc?";
+        expResult = Pattern.compile(".abc.");
+        result = Convert.wellFormedToPattern(value);
+        assertEquals(expResult.toString(), result.toString());
+        
+        value = "*?abc?*";
+        expResult = Pattern.compile(".*.abc..*");
+        result = Convert.wellFormedToPattern(value);
+        assertEquals(expResult.toString(), result.toString());
+        
+        
+        value = "test\\:pattern";
+        expResult = Pattern.compile("test\\\\\\:pattern");
+        result = Convert.wellFormedToPattern(value);
+        assertEquals(expResult.toString(), result.toString());
+        
+//        String test = "test123a\\*bc\\[\\]";
+//        Matcher m = expResult.matcher(test);
+//        assertTrue(m.matches());
+        value = "*???a\\*bc\\[\\]";
+        expResult = Pattern.compile(".*...a\\\\\\*bc\\\\\\[\\\\\\]");
+        result = Convert.wellFormedToPattern(value);
+        assertEquals(expResult.toString(), result.toString());
+
     }
 }

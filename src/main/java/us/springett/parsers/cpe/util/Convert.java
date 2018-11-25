@@ -243,23 +243,24 @@ public final class Convert {
         return value.replaceAll("([._-])", "\\\\$1").replaceAll("\\\\(\\\\[^._-])", "$1");
     }
 
-    protected Pattern wellFormedToPattern(String value) {
+    /**
+     * Converts a well formed string into a regular expression pattern.
+     *
+     * @param value the well formed string to convert
+     * @return the generated pattern object
+     */
+    public static Pattern wellFormedToPattern(String value) {
         StringBuilder sb = new StringBuilder(value.length() + 4);
         for (int x = 0; x < value.length(); x++) {
-
             if (value.charAt(x) == '*') {
                 sb.append(".*");
             } else if (value.charAt(x) == '?') {
                 sb.append(".");
             } else if (value.charAt(x) == '\\' && (x + 1) < value.length()) {
-                sb.append('\\').append(value.charAt(x++)).append(value.charAt(x));
-                //must escape any backslashes again.
-                if (value.charAt(x++) == '\\') {
-                    sb.append('\\');
-                }
-            } else if (('a' >= value.charAt(x) && value.charAt(x) <= 'z')
-                    || ('Z' >= value.charAt(x) && value.charAt(x) <= 'Z')
-                    || ('0' >= value.charAt(x) && value.charAt(x) <= '9')) {
+                sb.append('\\').append(value.charAt(x++)).append('\\').append(value.charAt(x));
+            } else if ((value.charAt(x) >= 'a' && value.charAt(x) <= 'z')
+                    || (value.charAt(x) >= 'A' && value.charAt(x) <= 'Z')
+                    || (value.charAt(x) >= '0' && value.charAt(x) <= '9')) {
                 sb.append(value.charAt(x));
             } else {
                 sb.append('\\').append(value.charAt(x));
