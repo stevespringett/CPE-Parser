@@ -621,6 +621,6 @@ public class CpeTest {
         assertTrue(Cpe.compareAttributes("abc\\:def", "abc\\:def"));
         assertFalse(Cpe.compareAttributes("abc", "abcdef"));
         assertTrue(Cpe.compareAttributes("abc*", "abcdef"));
-        assertFalse(Cpe.compareAttributes("abc..", "abcdef"));
+        assertFalse(Cpe.compareAttributes("abc??", "abcdef"));
     }
 }

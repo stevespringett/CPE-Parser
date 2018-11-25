@@ -464,6 +464,10 @@ public class Cpe implements Serializable {
      * otherwise <code>false</code>
      */
     protected static boolean compareAttributes(String left, String right) {
+        //the numbers below come from the CPE Matching standard
+        //Table 6-2: Enumeration of Attribute Comparison Set Relations
+        //https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir7696.pdf
+
         if (left.equalsIgnoreCase(right)) {
             //1 6 9
             return true;
@@ -481,9 +485,32 @@ public class Cpe implements Serializable {
             return false;
         }
         //10 11 14 17
-        Pattern p = Convert.wellFormedToPattern(left.toLowerCase());
-        Matcher m = p.matcher(right.toLowerCase());
-        return m.matches();
+        if (containsSpecialCharacter(left)) {
+            Pattern p = Convert.wellFormedToPattern(left.toLowerCase());
+            Matcher m = p.matcher(right.toLowerCase());
+            return m.matches();
+        }
+        return false;
+    }
+
+    /**
+     * Determines if the string has an unquoted special character.
+     *
+     * @param value the string to check
+     * @return <code>true</code> if the string contains an unquoted special
+     * character; otherwise <code>false</code>
+     */
+    private static boolean containsSpecialCharacter(String value) {
+        for (int x = 0; x < value.length(); x++) {
+            char c = value.charAt(x);
+            if (c == '?' || c == '*') {
+                return true;
+            } else if (c == '\\') {
+                //skip the next character because it is quoted
+                x += 1;
+            }
+        }
+        return false;
     }
 
     @Override
