@@ -97,7 +97,7 @@ public final class CpeParser {
             }
             return cb.build();
         } catch (CpeValidationException | CpeEncodingException ex) {
-            throw new CpeParsingException(ex.getMessage(), ex);
+            throw new CpeParsingException(ex.getMessage());
         }
     }
 
@@ -136,7 +136,7 @@ public final class CpeParser {
                 cb.wfEdition(Convert.cpeUriToWellFormed(edition));
             }
         } catch (CpeEncodingException ex) {
-            throw new CpeParsingException(ex.getMessage(), ex);
+            throw new CpeParsingException(ex.getMessage());
         }
     }
 
@@ -174,7 +174,7 @@ public final class CpeParser {
         try {
             return cb.build();
         } catch (CpeValidationException ex) {
-            throw new CpeParsingException(ex.getMessage(), ex);
+            throw new CpeParsingException(ex.getMessage());
         }
     }
 }
