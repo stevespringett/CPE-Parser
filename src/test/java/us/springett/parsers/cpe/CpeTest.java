@@ -17,9 +17,13 @@
  */
 package us.springett.parsers.cpe;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
@@ -32,6 +36,22 @@ public class CpeTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
 
     /**
      * Test of constructor, of class Cpe.
@@ -363,5 +383,99 @@ public class CpeTest {
         String expResult = "cpe:2.3:*:vendor:product:version:update:edition:language:swEdition:targetSw:targetHw:other";
         String result = instance.toCpe23FS();
         assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of matches method, of class Cpe.
+     */
+    @Test
+    public void testMatches() {
+//        Cpe target = null;
+//        Cpe instance = null;
+//        boolean expResult = false;
+//        boolean result = instance.matches(target);
+//        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of matchedBy method, of class Cpe.
+     */
+    @Test
+    public void testMatchedBy() {
+//        Cpe target = null;
+//        Cpe instance = null;
+//        boolean expResult = false;
+//        boolean result = instance.matchedBy(target);
+//        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of equals method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testEquals() throws Exception {
+        Object obj = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+
+        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        boolean expResult = true;
+        boolean result = instance.equals(obj);
+        assertEquals(expResult, result);
+
+        obj = new Cpe(Part.APPLICATION, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+
+        expResult = false;
+        result = instance.equals(obj);
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of toString method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testToString() throws Exception {
+        Cpe instance = new Cpe(Part.APPLICATION, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        String expResult = "cpe:2.3:a:vendor:product:version:update:edition:language:swEdition:targetSw:targetHw:other";
+        String result = instance.toString();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of compareAttributes method, of class Cpe.
+     */
+    @Test
+    public void testCompareAttributes_Part_Part() {
+        assertTrue(Cpe.compareAttributes(Part.APPLICATION, Part.APPLICATION));
+        assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.HARDWARE_DEVICE));
+        assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.OPERATING_SYSTEM));
+        assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.NA));
+        assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.ANY));
+        
+        assertTrue(Cpe.compareAttributes(Part.ANY, Part.ANY));
+        assertTrue(Cpe.compareAttributes(Part.ANY, Part.APPLICATION));
+        assertTrue(Cpe.compareAttributes(Part.ANY, Part.OPERATING_SYSTEM));
+        assertTrue(Cpe.compareAttributes(Part.ANY, Part.HARDWARE_DEVICE));
+        assertTrue(Cpe.compareAttributes(Part.ANY, Part.NA));
+
+        assertTrue(Cpe.compareAttributes(Part.NA, Part.NA));
+        assertFalse(Cpe.compareAttributes(Part.NA, Part.ANY));
+        assertFalse(Cpe.compareAttributes(Part.NA, Part.APPLICATION));
+        assertFalse(Cpe.compareAttributes(Part.NA, Part.HARDWARE_DEVICE));
+        assertFalse(Cpe.compareAttributes(Part.NA, Part.OPERATING_SYSTEM));
+    }
+
+    /**
+     * Test of compareAttributes method, of class Cpe.
+     */
+    @Test
+    public void testCompareAttributes_String_String() {
+        assertTrue(Cpe.compareAttributes("a", "a"));
     }
 }

@@ -83,7 +83,7 @@ public enum Status {
     private final String message;
 
     /**
-     * Constructs a new bind value.
+     * Constructs a new status value.
      *
      * @param valid a boolean indicating whether or not the status is considered
      * valid.

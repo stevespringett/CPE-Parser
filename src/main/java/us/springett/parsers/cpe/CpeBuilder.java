@@ -19,9 +19,9 @@ package us.springett.parsers.cpe;
 
 import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
-import us.springett.parsers.cpe.util.FormatUtil;
+import us.springett.parsers.cpe.util.Convert;
 import us.springett.parsers.cpe.values.Part;
-import us.springett.parsers.cpe.values.BindValue;
+import us.springett.parsers.cpe.values.LogicalValue;
 
 /**
  * A builder for CPE objects.
@@ -87,16 +87,16 @@ public class CpeBuilder {
      */
     private void reset() {
         part = Part.ANY;
-        vendor = BindValue.ANY.getAbbreviation();
-        product = BindValue.ANY.getAbbreviation();
-        version = BindValue.ANY.getAbbreviation();
-        update = BindValue.ANY.getAbbreviation();
-        edition = BindValue.ANY.getAbbreviation();
-        language = BindValue.ANY.getAbbreviation();
-        swEdition = BindValue.ANY.getAbbreviation();
-        targetSw = BindValue.ANY.getAbbreviation();
-        targetHw = BindValue.ANY.getAbbreviation();
-        other = BindValue.ANY.getAbbreviation();
+        vendor = LogicalValue.ANY.getAbbreviation();
+        product = LogicalValue.ANY.getAbbreviation();
+        version = LogicalValue.ANY.getAbbreviation();
+        update = LogicalValue.ANY.getAbbreviation();
+        edition = LogicalValue.ANY.getAbbreviation();
+        language = LogicalValue.ANY.getAbbreviation();
+        swEdition = LogicalValue.ANY.getAbbreviation();
+        targetSw = LogicalValue.ANY.getAbbreviation();
+        targetHw = LogicalValue.ANY.getAbbreviation();
+        other = LogicalValue.ANY.getAbbreviation();
     }
 
     /**
@@ -139,7 +139,7 @@ public class CpeBuilder {
      * @return the builder
      */
     public CpeBuilder vendor(final String vendor) {
-        this.vendor = FormatUtil.toWellFormed(vendor);
+        this.vendor = Convert.toWellFormed(vendor);
         return this;
     }
 
@@ -152,7 +152,7 @@ public class CpeBuilder {
      * @return the builder
      */
     public CpeBuilder product(final String product) {
-        this.product = FormatUtil.toWellFormed(product);
+        this.product = Convert.toWellFormed(product);
         return this;
     }
 
@@ -165,7 +165,7 @@ public class CpeBuilder {
      * @return the builder
      */
     public CpeBuilder version(final String version) {
-        this.version = FormatUtil.toWellFormed(version);
+        this.version = Convert.toWellFormed(version);
         return this;
     }
 
@@ -178,7 +178,7 @@ public class CpeBuilder {
      * @return the builder
      */
     public CpeBuilder update(final String update) {
-        this.update = FormatUtil.toWellFormed(update);
+        this.update = Convert.toWellFormed(update);
         return this;
     }
 
@@ -191,7 +191,7 @@ public class CpeBuilder {
      * @return the builder
      */
     public CpeBuilder edition(final String edition) {
-        this.edition = FormatUtil.toWellFormed(edition);
+        this.edition = Convert.toWellFormed(edition);
         return this;
     }
 
@@ -204,7 +204,7 @@ public class CpeBuilder {
      * @return the builder
      */
     public CpeBuilder language(final String language) {
-        this.language = FormatUtil.toWellFormed(language);
+        this.language = Convert.toWellFormed(language);
         return this;
     }
 
@@ -217,7 +217,7 @@ public class CpeBuilder {
      * @return the builder
      */
     public CpeBuilder swEdition(final String swEdition) {
-        this.swEdition = FormatUtil.toWellFormed(swEdition);
+        this.swEdition = Convert.toWellFormed(swEdition);
         return this;
     }
 
@@ -230,7 +230,7 @@ public class CpeBuilder {
      * @return the builder
      */
     public CpeBuilder targetSw(final String targetSw) {
-        this.targetSw = FormatUtil.toWellFormed(targetSw);
+        this.targetSw = Convert.toWellFormed(targetSw);
         return this;
     }
 
@@ -243,7 +243,7 @@ public class CpeBuilder {
      * @return the builder
      */
     public CpeBuilder targetHw(final String targetHw) {
-        this.targetHw = FormatUtil.toWellFormed(targetHw);
+        this.targetHw = Convert.toWellFormed(targetHw);
         return this;
     }
 
@@ -256,7 +256,7 @@ public class CpeBuilder {
      * @return the builder
      */
     public CpeBuilder other(final String other) {
-        this.other = FormatUtil.toWellFormed(other);
+        this.other = Convert.toWellFormed(other);
         return this;
     }
 
@@ -265,10 +265,10 @@ public class CpeBuilder {
      * Sets the vendor for the CPE entry.</p>
      * <pre>cpe:2.3:[part]:<b>[vendor]</b>:[product]:[version]:[update]:[edition]:[language]:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
      *
-     * @param vendor the bind value of NA or ANY
+     * @param vendor the logical value of NA or ANY
      * @return the builder
      */
-    public CpeBuilder vendor(final BindValue vendor) {
+    public CpeBuilder vendor(final LogicalValue vendor) {
         this.vendor = vendor.getAbbreviation();
         return this;
     }
@@ -279,10 +279,10 @@ public class CpeBuilder {
      * <pre>cpe:2.3:[part]:[vendor]:<b>[product]</b>:[version]:[update]:[edition]:[language]:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
      *
      *
-     * @param product the bind value of NA or ANY
+     * @param product the logical value of NA or ANY
      * @return the builder
      */
-    public CpeBuilder product(final BindValue product) {
+    public CpeBuilder product(final LogicalValue product) {
         this.product = product.getAbbreviation();
         return this;
     }
@@ -292,10 +292,10 @@ public class CpeBuilder {
      * Sets the version for the CPE entry.</p>
      * <pre>cpe:2.3:[part]:[vendor]:[product]:<b>[version]</b>:[update]:[edition]:[language]:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
      *
-     * @param version the bind value of NA or ANY
+     * @param version the logical value of NA or ANY
      * @return the builder
      */
-    public CpeBuilder version(final BindValue version) {
+    public CpeBuilder version(final LogicalValue version) {
         this.version = version.getAbbreviation();
         return this;
     }
@@ -305,10 +305,10 @@ public class CpeBuilder {
      * Sets the update version for the CPE entry.</p>
      * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:<b>[update]</b>:[edition]:[language]:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
      *
-     * @param update the bind value of NA or ANY
+     * @param update the logical value of NA or ANY
      * @return the builder
      */
-    public CpeBuilder update(final BindValue update) {
+    public CpeBuilder update(final LogicalValue update) {
         this.update = update.getAbbreviation();
         return this;
     }
@@ -318,10 +318,10 @@ public class CpeBuilder {
      * Sets the edition for the CPE entry.</p>
      * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:<b>[edition]</b>:[language]:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
      *
-     * @param edition the bind value of NA or ANY
+     * @param edition the logical value of NA or ANY
      * @return the builder
      */
-    public CpeBuilder edition(final BindValue edition) {
+    public CpeBuilder edition(final LogicalValue edition) {
         this.edition = edition.getAbbreviation();
         return this;
     }
@@ -331,10 +331,10 @@ public class CpeBuilder {
      * Sets the language for the CPE entry.</p>
      * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:[edition]:<b>[language]</b>:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
      *
-     * @param language the bind value of NA or ANY
+     * @param language the logical value of NA or ANY
      * @return the builder
      */
-    public CpeBuilder language(final BindValue language) {
+    public CpeBuilder language(final LogicalValue language) {
         this.language = language.getAbbreviation();
         return this;
     }
@@ -344,10 +344,10 @@ public class CpeBuilder {
      * Sets the software edition for the CPE entry.</p>
      * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:[edition]:[language]:<b>[sw_edition]</b>:[target_sw]:[target_hw]:[other]</pre>
      *
-     * @param swEdition the bind value of NA or ANY
+     * @param swEdition the logical value of NA or ANY
      * @return the builder
      */
-    public CpeBuilder swEdition(final BindValue swEdition) {
+    public CpeBuilder swEdition(final LogicalValue swEdition) {
         this.swEdition = swEdition.getAbbreviation();
         return this;
     }
@@ -357,10 +357,10 @@ public class CpeBuilder {
      * Sets the target software environment for the CPE entry.</p>
      * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:[edition]:[language]:[sw_edition]:<b>[target_sw]</b>:[target_hw]:[other]</pre>
      *
-     * @param targetSw the bind value of NA or ANY
+     * @param targetSw the logical value of NA or ANY
      * @return the builder
      */
-    public CpeBuilder targetSw(final BindValue targetSw) {
+    public CpeBuilder targetSw(final LogicalValue targetSw) {
         this.targetSw = targetSw.getAbbreviation();
         return this;
     }
@@ -370,10 +370,10 @@ public class CpeBuilder {
      * Sets the target hardware environment for the CPE entry.</p>
      * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:[edition]:[language]:[sw_edition]:[target_sw]:<b>[target_hw]</b>:[other]</pre>
      *
-     * @param targetHw the bind value of NA or ANY
+     * @param targetHw the logical value of NA or ANY
      * @return the builder
      */
-    public CpeBuilder targetHw(final BindValue targetHw) {
+    public CpeBuilder targetHw(final LogicalValue targetHw) {
         this.targetHw = targetHw.getAbbreviation();
         return this;
     }
@@ -383,10 +383,10 @@ public class CpeBuilder {
      * Sets the other component for the CPE entry.</p>
      * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:[edition]:[language]:[sw_edition]:[target_sw]:[target_hw]:<b>[other]</b></pre>
      *
-     * @param other the bind value of NA or ANY
+     * @param other the logical value of NA or ANY
      * @return the builder
      */
-    public CpeBuilder other(final BindValue other) {
+    public CpeBuilder other(final LogicalValue other) {
         this.other = other.getAbbreviation();
         return this;
     }

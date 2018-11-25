@@ -17,7 +17,7 @@
  */
 package us.springett.parsers.cpe.util;
 
-import us.springett.parsers.cpe.values.BindValue;
+import us.springett.parsers.cpe.values.LogicalValue;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -36,91 +36,91 @@ public class FormatUtilTest {
     public ExpectedException exception = ExpectedException.none();
 
     /**
-     * Test of toWellFormed method, of class FormatUtil.
+     * Test of toWellFormed method, of class Convert.
      */
     @Test
     public void testToWellFormed() {
         exception = ExpectedException.none();
         String value = "test";
         String expResult = "test";
-        String result = FormatUtil.toWellFormed(value);
+        String result = Convert.toWellFormed(value);
         assertEquals(expResult, result);
 
         value = "te$st";
         expResult = "te\\$st";
-        result = FormatUtil.toWellFormed(value);
+        result = Convert.toWellFormed(value);
         assertEquals(expResult, result);
 
         value = "test_value";
         expResult = "test\\_value";
-        result = FormatUtil.toWellFormed(value);
+        result = Convert.toWellFormed(value);
         assertEquals(expResult, result);
 
         value = "test-value";
         expResult = "test\\-value";
-        result = FormatUtil.toWellFormed(value);
+        result = Convert.toWellFormed(value);
         assertEquals(expResult, result);
 
         value = "test.value";
         expResult = "test\\.value";
-        result = FormatUtil.toWellFormed(value);
+        result = Convert.toWellFormed(value);
         assertEquals(expResult, result);
 
         value = null;
-        expResult = BindValue.ANY.getAbbreviation();
-        result = FormatUtil.toWellFormed(value);
+        expResult = LogicalValue.ANY.getAbbreviation();
+        result = Convert.toWellFormed(value);
         assertEquals(expResult, result);
 
-        value = BindValue.ANY.getAbbreviation();
+        value = LogicalValue.ANY.getAbbreviation();
         expResult = "*";
-        result = FormatUtil.toWellFormed(value);
+        result = Convert.toWellFormed(value);
         assertEquals(expResult, result);
 
-        value = BindValue.NA.getAbbreviation();
+        value = LogicalValue.NA.getAbbreviation();
         expResult = "-";
-        result = FormatUtil.toWellFormed(value);
+        result = Convert.toWellFormed(value);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of fromWellFormed method, of class FormatUtil.
+     * Test of fromWellFormed method, of class Convert.
      */
     @Test
     public void testFromWellFormed() {
         exception = ExpectedException.none();
         String value = "test";
         String expResult = "test";
-        String result = FormatUtil.fromWellFormed(value);
+        String result = Convert.fromWellFormed(value);
         assertEquals(expResult, result);
 
         value = "te\\$st";
         expResult = "te$st";
-        result = FormatUtil.fromWellFormed(value);
+        result = Convert.fromWellFormed(value);
         assertEquals(expResult, result);
 
         value = "test_value";
         expResult = "test_value";
-        result = FormatUtil.fromWellFormed(value);
+        result = Convert.fromWellFormed(value);
         assertEquals(expResult, result);
 
         value = "test-value";
         expResult = "test-value";
-        result = FormatUtil.fromWellFormed(value);
+        result = Convert.fromWellFormed(value);
         assertEquals(expResult, result);
 
         value = "test.value";
         expResult = "test.value";
-        result = FormatUtil.fromWellFormed(value);
+        result = Convert.fromWellFormed(value);
         assertEquals(expResult, result);
 
         value = null;
         expResult = "*";
-        result = FormatUtil.fromWellFormed(value);
+        result = Convert.fromWellFormed(value);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of transformWfsToCpeUriComponent method, of class FormatUtil.
+     * Test of wellFormedToCpeUri method, of class Convert.
      *
      * @exception CpeEncodingException thrown if the CPE component is not well
      * formed
@@ -131,57 +131,57 @@ public class FormatUtilTest {
 
         String value = null;
         String expResult = "";
-        String result = FormatUtil.transformWfsToCpeUriComponent(value);
+        String result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
 
         value = "*";
         expResult = "";
-        result = FormatUtil.transformWfsToCpeUriComponent(value);
+        result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
 
         value = "-";
         expResult = "-";
-        result = FormatUtil.transformWfsToCpeUriComponent(value);
+        result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
 
         value = "\\~";
         expResult = "%7e";
-        result = FormatUtil.transformWfsToCpeUriComponent(value);
+        result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
 
         value = "\\.";
         expResult = ".";
-        result = FormatUtil.transformWfsToCpeUriComponent(value);
+        result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
 
         value = "\\-";
         expResult = "-";
-        result = FormatUtil.transformWfsToCpeUriComponent(value);
+        result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
 
         value = "\\_";
         expResult = "_";
-        result = FormatUtil.transformWfsToCpeUriComponent(value);
+        result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
 
         value = "V2\\.2";
         expResult = "V2.2";
-        result = FormatUtil.transformWfsToCpeUriComponent(value);
+        result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
 
         value = "test*";
         expResult = "test%02";
-        result = FormatUtil.transformWfsToCpeUriComponent(value);
+        result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
 
         value = "test?";
         expResult = "test%01";
-        result = FormatUtil.transformWfsToCpeUriComponent(value);
+        result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
 
         value = "visual\\_c\\+\\+";
         expResult = "visual_c%2b%2b";
-        result = FormatUtil.transformWfsToCpeUriComponent(value);
+        result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
     }
 
@@ -190,7 +190,7 @@ public class FormatUtilTest {
         exception.expect(CpeEncodingException.class);
 
         String value = "test\\";
-        FormatUtil.transformWfsToCpeUriComponent(value);
+        Convert.wellFormedToCpeUri(value);
     }
 
     @Test
@@ -198,11 +198,11 @@ public class FormatUtilTest {
         exception.expect(CpeEncodingException.class);
 
         String value = "test:";
-        FormatUtil.transformWfsToCpeUriComponent(value);
+        Convert.wellFormedToCpeUri(value);
     }
 
     /**
-     * Test of transformWfsToCpeUriComponent method, of class FormatUtil.
+     * Test of wellFormedToCpeUri method, of class Convert.
      */
     @Test
     public void testTransformWfsToCpeUriComponentPart() {
@@ -210,12 +210,12 @@ public class FormatUtilTest {
 
         Part value = null;
         String expResult = "*";
-        String result = FormatUtil.encodeCpe22Component(value);
+        String result = Convert.wellFormedToCpeUri(value);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of transformCpeUriComponentToWfs method, of class FormatUtil.
+     * Test of cpeUriToWellFormed method, of class Convert.
      *
      * @exception CpeEncodingException thrown if the URI is malformed
      */
@@ -225,47 +225,47 @@ public class FormatUtilTest {
 
         String value = null;
         String expResult = "*";
-        String result = FormatUtil.transformCpeUriComponentToWfs(value);
+        String result = Convert.cpeUriToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "%01";
         expResult = "?";
-        result = FormatUtil.transformCpeUriComponentToWfs(value);
+        result = Convert.cpeUriToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "%02";
         expResult = "*";
-        result = FormatUtil.transformCpeUriComponentToWfs(value);
+        result = Convert.cpeUriToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "-";
         expResult = "-";
-        result = FormatUtil.transformCpeUriComponentToWfs(value);
+        result = Convert.cpeUriToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "test-";
         expResult = "test\\-";
-        result = FormatUtil.transformCpeUriComponentToWfs(value);
+        result = Convert.cpeUriToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "test_";
         expResult = "test\\_";
-        result = FormatUtil.transformCpeUriComponentToWfs(value);
+        result = Convert.cpeUriToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "test.";
         expResult = "test\\.";
-        result = FormatUtil.transformCpeUriComponentToWfs(value);
+        result = Convert.cpeUriToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "2.22";
         expResult = "2\\.22";
-        result = FormatUtil.transformCpeUriComponentToWfs(value);
+        result = Convert.cpeUriToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "visual_c%2b%2b";
         expResult = "visual\\_c\\+\\+";
-        result = FormatUtil.transformCpeUriComponentToWfs(value);
+        result = Convert.cpeUriToWellFormed(value);
         assertEquals(expResult, result);
     }
 
@@ -274,7 +274,7 @@ public class FormatUtilTest {
         exception.expect(CpeEncodingException.class);
 
         String value = "test%";
-        FormatUtil.transformCpeUriComponentToWfs(value);
+        Convert.cpeUriToWellFormed(value);
     }
 
     @Test
@@ -282,91 +282,91 @@ public class FormatUtilTest {
         exception.expect(CpeEncodingException.class);
 
         String value = "test:";
-        FormatUtil.transformCpeUriComponentToWfs(value);
+        Convert.cpeUriToWellFormed(value);
     }
 
     /**
-     * Test of transfromWfsToFS method, of class FormatUtil.
+     * Test of wellFormedToFS method, of class Convert.
      */
     @Test
-    public void testTransfromWfsToFS() {
+    public void testTransformWfsToFS() {
         exception = ExpectedException.none();
 
         String value = null;
         String expResult = "*";
-        String result = FormatUtil.transfromWfsToFS(value);
+        String result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
 
         value = "";
         expResult = "*";
-        result = FormatUtil.transfromWfsToFS(value);
+        result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
 
         value = "*";
         expResult = "*";
-        result = FormatUtil.transfromWfsToFS(value);
+        result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
 
         value = "-";
         expResult = "-";
-        result = FormatUtil.transfromWfsToFS(value);
+        result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
 
         value = "visual_c\\+\\+";
         //TODO - is the quoting of the underscore correct
         expResult = "visual_c\\\\+\\\\+";
-        result = FormatUtil.transfromWfsToFS(value);
+        result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
 
         value = "test\\:";
         expResult = "test\\\\:";
-        result = FormatUtil.transfromWfsToFS(value);
+        result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of transfromWfsToFS method, of class FormatUtil.
+     * Test of wellFormedToFS method, of class Convert.
      */
     @Test
-    public void testTransfromWfsToFSPart() {
+    public void testTransformWfsToFSPart() {
         exception = ExpectedException.none();
 
         Part value = null;
         String expResult = "*";
-        String result = FormatUtil.encodeCpe23Component(value);
+        String result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
     }
 
     /**
-     * Test of transfromFsToWfs method, of class FormatUtil.
+     * Test of fsToWellFormed method, of class Convert.
      */
     @Test
-    public void testTransfromFsToWfs() {
+    public void testTransformFsToWfs() {
         exception = ExpectedException.none();
 
         String value = null;
         String expResult = "*";
-        String result = FormatUtil.transfromFsToWfs(value);
+        String result = Convert.fsToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "";
         expResult = "*";
-        result = FormatUtil.transfromFsToWfs(value);
+        result = Convert.fsToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "*";
         expResult = "*";
-        result = FormatUtil.transfromFsToWfs(value);
+        result = Convert.fsToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "-";
         expResult = "-";
-        result = FormatUtil.transfromFsToWfs(value);
+        result = Convert.fsToWellFormed(value);
         assertEquals(expResult, result);
 
         value = "visual_c\\\\+\\\\+";
         expResult = "visual\\_c\\+\\+";
-        result = FormatUtil.transfromFsToWfs(value);
+        result = Convert.fsToWellFormed(value);
         assertEquals(expResult, result);
     }
 }

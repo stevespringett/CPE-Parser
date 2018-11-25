@@ -51,7 +51,7 @@ public enum Part {
     NA("-");
 
     /**
-     * The abbreviation for the bind value.
+     * The abbreviation for the logical value.
      */
     private final String abbreviation;
 

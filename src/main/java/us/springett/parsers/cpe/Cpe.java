@@ -18,12 +18,15 @@
 package us.springett.parsers.cpe;
 
 import us.springett.parsers.cpe.values.Part;
-import us.springett.parsers.cpe.util.FormatUtil;
+import us.springett.parsers.cpe.util.Convert;
 import java.io.Serializable;
+import java.util.Objects;
+import java.util.regex.Pattern;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
 import us.springett.parsers.cpe.util.Status;
 import us.springett.parsers.cpe.util.Validate;
+import us.springett.parsers.cpe.values.LogicalValue;
 
 /**
  * Object representation of a Common Platform Enumeration (CPE).
@@ -87,8 +90,9 @@ public class Cpe implements Serializable {
      * Constructs a new immutable CPE object that represents the Well Form Named
      * defined in the CPE 2.3 specification. Specifying <code>null</code> will
      * be set to the default
-     * {@link us.springett.parsers.cpe.values.BindValue#ANY}. All values passed
-     * in must be well formed (i.e. special characters quoted with a backslash).
+     * {@link us.springett.parsers.cpe.values.LogicalValue#ANY}. All values
+     * passed in must be well formed (i.e. special characters quoted with a
+     * backslash).
      *
      * @see <a href="https://cpe.mitre.org/specification/">CPE 2.3</a>
      * @param part the type of entry: application, operating system, or hardware
@@ -203,7 +207,7 @@ public class Cpe implements Serializable {
      * @return the vendor for the CPE entry
      */
     public String getVendor() {
-        return FormatUtil.fromWellFormed(vendor);
+        return Convert.fromWellFormed(vendor);
     }
 
     /**
@@ -214,7 +218,7 @@ public class Cpe implements Serializable {
      * @return the product for the CPE entry
      */
     public String getProduct() {
-        return FormatUtil.fromWellFormed(product);
+        return Convert.fromWellFormed(product);
     }
 
     /**
@@ -225,7 +229,7 @@ public class Cpe implements Serializable {
      * @return the version for the CPE entry
      */
     public String getVersion() {
-        return FormatUtil.fromWellFormed(version);
+        return Convert.fromWellFormed(version);
     }
 
     /**
@@ -236,7 +240,7 @@ public class Cpe implements Serializable {
      * @return the update for the CPE entry
      */
     public String getUpdate() {
-        return FormatUtil.fromWellFormed(update);
+        return Convert.fromWellFormed(update);
     }
 
     /**
@@ -247,7 +251,7 @@ public class Cpe implements Serializable {
      * @return the edition for the CPE entry
      */
     public String getEdition() {
-        return FormatUtil.fromWellFormed(edition);
+        return Convert.fromWellFormed(edition);
     }
 
     /**
@@ -258,7 +262,7 @@ public class Cpe implements Serializable {
      * @return the language for the CPE entry
      */
     public String getLanguage() {
-        return FormatUtil.fromWellFormed(language);
+        return Convert.fromWellFormed(language);
     }
 
     /**
@@ -269,7 +273,7 @@ public class Cpe implements Serializable {
      * @return the software edition for the CPE entry
      */
     public String getSwEdition() {
-        return FormatUtil.fromWellFormed(swEdition);
+        return Convert.fromWellFormed(swEdition);
     }
 
     /**
@@ -280,7 +284,7 @@ public class Cpe implements Serializable {
      * @return the target software environment for the CPE entry.
      */
     public String getTargetSw() {
-        return FormatUtil.fromWellFormed(targetSw);
+        return Convert.fromWellFormed(targetSw);
     }
 
     /**
@@ -291,7 +295,7 @@ public class Cpe implements Serializable {
      * @return the target hardware environment for the CPE entry
      */
     public String getTargetHw() {
-        return FormatUtil.fromWellFormed(targetHw);
+        return Convert.fromWellFormed(targetHw);
     }
 
     /**
@@ -302,7 +306,7 @@ public class Cpe implements Serializable {
      * @return the other component for the CPE entry
      */
     public String getOther() {
-        return FormatUtil.fromWellFormed(other);
+        return Convert.fromWellFormed(other);
     }
 
     /**
@@ -313,11 +317,11 @@ public class Cpe implements Serializable {
      */
     public String toCpe22Uri() throws CpeEncodingException {
         StringBuilder sb = new StringBuilder("cpe:/");
-        sb.append(FormatUtil.encodeCpe22Component(part)).append(":");
-        sb.append(FormatUtil.transformWfsToCpeUriComponent(vendor)).append(":");
-        sb.append(FormatUtil.transformWfsToCpeUriComponent(product)).append(":");
-        sb.append(FormatUtil.transformWfsToCpeUriComponent(version)).append(":");
-        sb.append(FormatUtil.transformWfsToCpeUriComponent(update)).append(":");
+        sb.append(Convert.wellFormedToCpeUri(part)).append(":");
+        sb.append(Convert.wellFormedToCpeUri(vendor)).append(":");
+        sb.append(Convert.wellFormedToCpeUri(product)).append(":");
+        sb.append(Convert.wellFormedToCpeUri(version)).append(":");
+        sb.append(Convert.wellFormedToCpeUri(update)).append(":");
         //pack the extra fields from CPE 2.3 into the edition field if present
         //when outputing to 2.2 format
         if (!((swEdition.isEmpty() || "*".equals(swEdition))
@@ -325,20 +329,20 @@ public class Cpe implements Serializable {
                 && (targetHw.isEmpty() || "*".equals(targetHw))
                 && (other.isEmpty() || "*".equals(other)))) {
             sb.append("~")
-                    .append(FormatUtil.transformWfsToCpeUriComponent(edition))
+                    .append(Convert.wellFormedToCpeUri(edition))
                     .append("~")
-                    .append(FormatUtil.transformWfsToCpeUriComponent(swEdition))
+                    .append(Convert.wellFormedToCpeUri(swEdition))
                     .append("~")
-                    .append(FormatUtil.transformWfsToCpeUriComponent(targetSw))
+                    .append(Convert.wellFormedToCpeUri(targetSw))
                     .append("~")
-                    .append(FormatUtil.transformWfsToCpeUriComponent(targetHw))
+                    .append(Convert.wellFormedToCpeUri(targetHw))
                     .append("~")
-                    .append(FormatUtil.transformWfsToCpeUriComponent(other))
+                    .append(Convert.wellFormedToCpeUri(other))
                     .append(":");
         } else {
-            sb.append(FormatUtil.transformWfsToCpeUriComponent(edition)).append(":");
+            sb.append(Convert.wellFormedToCpeUri(edition)).append(":");
         }
-        sb.append(FormatUtil.transformWfsToCpeUriComponent(language));
+        sb.append(Convert.wellFormedToCpeUri(language));
         return sb.toString().replaceAll("[:]*$", "");
     }
 
@@ -349,17 +353,153 @@ public class Cpe implements Serializable {
      */
     public String toCpe23FS() {
         return String.format("cpe:2.3:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s",
-                FormatUtil.encodeCpe23Component(part),
-                FormatUtil.transfromWfsToFS(vendor),
-                FormatUtil.transfromWfsToFS(product),
-                FormatUtil.transfromWfsToFS(version),
-                FormatUtil.transfromWfsToFS(update),
-                FormatUtil.transfromWfsToFS(edition),
-                FormatUtil.transfromWfsToFS(language),
-                FormatUtil.transfromWfsToFS(swEdition),
-                FormatUtil.transfromWfsToFS(targetSw),
-                FormatUtil.transfromWfsToFS(targetHw),
-                FormatUtil.transfromWfsToFS(other));
+                Convert.wellFormedToFS(part),
+                Convert.wellFormedToFS(vendor),
+                Convert.wellFormedToFS(product),
+                Convert.wellFormedToFS(version),
+                Convert.wellFormedToFS(update),
+                Convert.wellFormedToFS(edition),
+                Convert.wellFormedToFS(language),
+                Convert.wellFormedToFS(swEdition),
+                Convert.wellFormedToFS(targetSw),
+                Convert.wellFormedToFS(targetHw),
+                Convert.wellFormedToFS(other));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.part);
+        hash = 97 * hash + Objects.hashCode(this.vendor);
+        hash = 97 * hash + Objects.hashCode(this.product);
+        hash = 97 * hash + Objects.hashCode(this.version);
+        hash = 97 * hash + Objects.hashCode(this.update);
+        hash = 97 * hash + Objects.hashCode(this.edition);
+        hash = 97 * hash + Objects.hashCode(this.language);
+        hash = 97 * hash + Objects.hashCode(this.swEdition);
+        hash = 97 * hash + Objects.hashCode(this.targetSw);
+        hash = 97 * hash + Objects.hashCode(this.targetHw);
+        hash = 97 * hash + Objects.hashCode(this.other);
+        return hash;
+    }
+
+    public boolean matches(Cpe target) {
+        boolean result = true;
+        result &= compareAttributes(this.part, target.part);
+        result &= compareAttributes(this.vendor, target.vendor);
+        result &= compareAttributes(this.product, target.product);
+        result &= compareAttributes(this.version, target.version);
+        result &= compareAttributes(this.update, target.update);
+        result &= compareAttributes(this.edition, target.edition);
+        result &= compareAttributes(this.language, target.language);
+        result &= compareAttributes(this.swEdition, target.swEdition);
+        result &= compareAttributes(this.targetSw, target.targetSw);
+        result &= compareAttributes(this.targetHw, target.targetHw);
+        result &= compareAttributes(this.other, target.other);
+        return result;
+    }
+
+    /**
+     * This does not follow the spec precisely because ANY compared to NA is
+     * classified as undefined by the spec; however, in this implementation ANY
+     * will match NA and return true.
+     *
+     * @param left
+     * @param right
+     * @return
+     */
+    protected static boolean compareAttributes(Part left, Part right) {
+        if (left == right) {
+            return true;
+        } else if (left == Part.ANY) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This does not follow the spec precisely because ANY compared to NA is
+     * classified as undefined by the spec; however, in this implementation ANY
+     * will match NA and return true.
+     *
+     * @param left
+     * @param right
+     * @return
+     */
+    protected static boolean compareAttributes(String left, String right) {
+        if (left.equalsIgnoreCase(right)) {
+            //1 6 9
+            return true;
+        } else if (LogicalValue.ANY.getAbbreviation().equals(left)) {
+            //2 3 4
+            return true;
+        } else if (LogicalValue.NA.getAbbreviation().equals(left)) {
+            //5 7 8
+            return false;
+        } else if (LogicalValue.NA.getAbbreviation().equals(right)) {
+            //12 16
+            return false;
+        } else if (LogicalValue.ANY.getAbbreviation().equals(right)) {
+            //13 15
+            return false;
+        }
+        //10 11 14 17
+
+        return false;
+    }
+
+    
+
+    public boolean matchedBy(Cpe target) {
+        return target.matches(this);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Cpe compareTo = (Cpe) obj;
+        if (!Objects.equals(this.vendor, compareTo.vendor)) {
+            return false;
+        }
+        if (!Objects.equals(this.product, compareTo.product)) {
+            return false;
+        }
+        if (!Objects.equals(this.version, compareTo.version)) {
+            return false;
+        }
+        if (!Objects.equals(this.update, compareTo.update)) {
+            return false;
+        }
+        if (!Objects.equals(this.edition, compareTo.edition)) {
+            return false;
+        }
+        if (!Objects.equals(this.language, compareTo.language)) {
+            return false;
+        }
+        if (!Objects.equals(this.swEdition, compareTo.swEdition)) {
+            return false;
+        }
+        if (!Objects.equals(this.targetSw, compareTo.targetSw)) {
+            return false;
+        }
+        if (!Objects.equals(this.targetHw, compareTo.targetHw)) {
+            return false;
+        }
+        if (!Objects.equals(this.other, compareTo.other)) {
+            return false;
+        }
+        if (this.part != compareTo.part) {
+            return false;
+        }
+        return true;
     }
 
     @Override

@@ -310,7 +310,7 @@ public class CpeParserTest {
      * @throws CpeParsingException thrown if there is a parsing error
      */
     @Test
-    public void testParseBindCycle() throws Exception {
+    public void testParseBindUnbindCycle() throws Exception {
         exception = ExpectedException.none();
 
         String initial = "cpe:2.3:a:embarcadero:embarcadero_c\\\\+\\\\+builder_xe6:20.0.15596.9843:*:*:en:*:*:*:other";

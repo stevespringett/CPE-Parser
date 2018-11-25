@@ -74,15 +74,13 @@ public class Cpe23PartIteratorTest {
      */
     @Test
     public void testNext() throws CpeParsingException {
-        Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:pocoproject:poco_c\\\\+\\\\+_libraries:1.4.5:*:*:*:*:*:*:*");
-        String[] expResults = {"a", "pocoproject:poco_c++_libraries", "1.4.5", "*", "*", "*", "*", "*", "*", "*"};
-        String expResult = "a";
-        String result = instance.next();
-        assertEquals(expResult, result);
+        Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:poco\\\\:project:poco_c\\\\+\\\\+_libraries:1.4.5:u\\\\\\:*:*:*:*:*:*");
+        String[] expResults = {"a", "poco\\\\:project", "poco_c\\\\+\\\\+_libraries", "1.4.5", "u\\\\\\", "*", "*", "*", "*", "*", "*"};
 
-        expResult = "pocoproject";
-        result = instance.next();
-        assertEquals(expResult, result);
+        for (String expResult : expResults) {
+            String result = instance.next();
+            assertEquals(expResult, result);
+        }
     }
 
 }

@@ -19,7 +19,7 @@ package us.springett.parsers.cpe;
 
 import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import us.springett.parsers.cpe.values.Part;
-import us.springett.parsers.cpe.values.BindValue;
+import us.springett.parsers.cpe.values.LogicalValue;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -246,10 +246,10 @@ public class CpeBuilderTest {
      * @throws Exception thrown if there is an error
      */
     @Test
-    public void testVendor_BindValue() throws Exception {
+    public void testVendor_LogicalValue() throws Exception {
         exception = ExpectedException.none();
 
-        BindValue vendor = BindValue.NA;
+        LogicalValue vendor = LogicalValue.NA;
         CpeBuilder instance = new CpeBuilder();
         String expResult = "-";
         Cpe result = instance.vendor(vendor).build();
@@ -262,10 +262,10 @@ public class CpeBuilderTest {
      * @throws Exception thrown if there is an error
      */
     @Test
-    public void testProduct_BindValue() throws Exception {
+    public void testProduct_LogicalValue() throws Exception {
         exception = ExpectedException.none();
 
-        BindValue product = BindValue.NA;
+        LogicalValue product = LogicalValue.NA;
         CpeBuilder instance = new CpeBuilder();
         String expResult = "-";
         Cpe result = instance.product(product).build();
@@ -278,10 +278,10 @@ public class CpeBuilderTest {
      * @throws Exception thrown if there is an error
      */
     @Test
-    public void testVersion_BindValue() throws Exception {
+    public void testVersion_LogicalValue() throws Exception {
         exception = ExpectedException.none();
 
-        BindValue version = BindValue.NA;
+        LogicalValue version = LogicalValue.NA;
         CpeBuilder instance = new CpeBuilder();
         String expResult = "-";
         Cpe result = instance.version(version).build();
@@ -294,10 +294,10 @@ public class CpeBuilderTest {
      * @throws Exception thrown if there is an error
      */
     @Test
-    public void testUpdate_BindValue() throws Exception {
+    public void testUpdate_LogicalValue() throws Exception {
         exception = ExpectedException.none();
 
-        BindValue update = BindValue.NA;
+        LogicalValue update = LogicalValue.NA;
         CpeBuilder instance = new CpeBuilder();
         String expResult = "-";
         Cpe result = instance.update(update).build();
@@ -310,10 +310,10 @@ public class CpeBuilderTest {
      * @throws Exception thrown if there is an error
      */
     @Test
-    public void testEdition_BindValue() throws Exception {
+    public void testEdition_LogicalValue() throws Exception {
         exception = ExpectedException.none();
 
-        BindValue edition = BindValue.NA;
+        LogicalValue edition = LogicalValue.NA;
         CpeBuilder instance = new CpeBuilder();
         String expResult = "-";
         Cpe result = instance.edition(edition).build();
@@ -326,10 +326,10 @@ public class CpeBuilderTest {
      * @throws Exception thrown if there is an error
      */
     @Test
-    public void testLanguage_BindValue() throws Exception {
+    public void testLanguage_LogicalValue() throws Exception {
         exception = ExpectedException.none();
 
-        BindValue language = BindValue.NA;
+        LogicalValue language = LogicalValue.NA;
         CpeBuilder instance = new CpeBuilder();
         String expResult = "-";
         Cpe result = instance.language(language).build();
@@ -342,10 +342,10 @@ public class CpeBuilderTest {
      * @throws Exception thrown if there is an error
      */
     @Test
-    public void testSwEdition_BindValue() throws Exception {
+    public void testSwEdition_LogicalValue() throws Exception {
         exception = ExpectedException.none();
 
-        BindValue swEdition = BindValue.NA;
+        LogicalValue swEdition = LogicalValue.NA;
         CpeBuilder instance = new CpeBuilder();
         String expResult = "-";
         Cpe result = instance.swEdition(swEdition).build();
@@ -358,10 +358,10 @@ public class CpeBuilderTest {
      * @throws Exception thrown if there is an error
      */
     @Test
-    public void testTargetSw_BindValue() throws Exception {
+    public void testTargetSw_LogicalValue() throws Exception {
         exception = ExpectedException.none();
 
-        BindValue targetSw = BindValue.NA;
+        LogicalValue targetSw = LogicalValue.NA;
         CpeBuilder instance = new CpeBuilder();
         String expResult = "-";
         Cpe result = instance.targetSw(targetSw).build();
@@ -374,10 +374,10 @@ public class CpeBuilderTest {
      * @throws Exception thrown if there is an error
      */
     @Test
-    public void testTargetHw_BindValue() throws Exception {
+    public void testTargetHw_LogicalValue() throws Exception {
         exception = ExpectedException.none();
 
-        BindValue targetHw = BindValue.NA;
+        LogicalValue targetHw = LogicalValue.NA;
         CpeBuilder instance = new CpeBuilder();
         String expResult = "-";
         Cpe result = instance.targetHw(targetHw).build();
@@ -390,10 +390,10 @@ public class CpeBuilderTest {
      * @throws Exception thrown if there is an error
      */
     @Test
-    public void testOther_BindValue() throws Exception {
+    public void testOther_LogicalValue() throws Exception {
         exception = ExpectedException.none();
 
-        BindValue other = BindValue.NA;
+        LogicalValue other = LogicalValue.NA;
         CpeBuilder instance = new CpeBuilder();
         String expResult = "-";
         Cpe result = instance.other(other).build();

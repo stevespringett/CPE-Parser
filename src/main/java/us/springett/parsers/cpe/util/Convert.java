@@ -19,7 +19,8 @@ package us.springett.parsers.cpe.util;
 
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 import java.io.UnsupportedEncodingException;
-import us.springett.parsers.cpe.values.BindValue;
+import java.util.regex.Pattern;
+import us.springett.parsers.cpe.values.LogicalValue;
 import us.springett.parsers.cpe.values.Part;
 
 /**
@@ -27,7 +28,7 @@ import us.springett.parsers.cpe.values.Part;
  *
  * @author Jeremy Long
  */
-public final class FormatUtil {
+public final class Convert {
 
     /**
      * Hexadecimal character sequence used for encoding.
@@ -37,14 +38,14 @@ public final class FormatUtil {
     /**
      * Private constructor for utility class.
      */
-    private FormatUtil() {
+    private Convert() {
 
     }
 
     /**
      * Transforms the given string into a "well formed string". A well formed
      * string has all non-alphanumeric characters escaped with a backslash. If a
-     * <code>null</code> value is passed in the default {@link BindValue#ANY}
+     * <code>null</code> value is passed in the default {@link LogicalValue#ANY}
      * will be returned.
      *
      * @param value the string to format
@@ -52,10 +53,10 @@ public final class FormatUtil {
      */
     public static String toWellFormed(String value) {
         if (value == null) {
-            return BindValue.ANY.getAbbreviation();
+            return LogicalValue.ANY.getAbbreviation();
         }
-        if (BindValue.ANY.getAbbreviation().equals(value)
-                || BindValue.NA.getAbbreviation().equals(value)) {
+        if (LogicalValue.ANY.getAbbreviation().equals(value)
+                || LogicalValue.NA.getAbbreviation().equals(value)) {
             return value;
         }
         return value.replaceAll("([^0-9A-Za-z])", "\\\\$1");
@@ -71,7 +72,7 @@ public final class FormatUtil {
      */
     public static String fromWellFormed(String value) {
         if (value == null) {
-            return BindValue.ANY.getAbbreviation();
+            return LogicalValue.ANY.getAbbreviation();
         }
         return value.replaceAll("\\\\([^0-9A-Za-z])", "$1");
     }
@@ -84,7 +85,7 @@ public final class FormatUtil {
      * @param value the value to encode
      * @return the encoded value
      */
-    public static String encodeCpe22Component(Part value) {
+    public static String wellFormedToCpeUri(Part value) {
         if (value == null) {
             return Part.ANY.getAbbreviation();
         }
@@ -102,11 +103,11 @@ public final class FormatUtil {
      * @throws CpeEncodingException thrown if the string provided is not well
      * formed
      */
-    public static String transformWfsToCpeUriComponent(String wellFormed) throws CpeEncodingException {
-        if (wellFormed == null || wellFormed.isEmpty() || BindValue.ANY.getAbbreviation().equals(wellFormed)) {
+    public static String wellFormedToCpeUri(String wellFormed) throws CpeEncodingException {
+        if (wellFormed == null || wellFormed.isEmpty() || LogicalValue.ANY.getAbbreviation().equals(wellFormed)) {
             return "";
         }
-        if (BindValue.NA.getAbbreviation().equals(wellFormed)) {
+        if (LogicalValue.NA.getAbbreviation().equals(wellFormed)) {
             return wellFormed;
         }
         try {
@@ -146,18 +147,18 @@ public final class FormatUtil {
 
     /**
      * CPE URI decodes the value into a well formed string. If the value is NULL
-     * or an empty string then a the BindValue.ANY ('*') is returned.
+     * or an empty string then a the LogicalValue.ANY ('*') is returned.
      *
      * @param value the CPE URI encoded string to convert
      * @return the well formed string representation of the given value
      * @throws CpeEncodingException thrown if the string provided is not well
      * formed
      */
-    public static String transformCpeUriComponentToWfs(String value) throws CpeEncodingException {
-        if (value == null || value.isEmpty() || BindValue.ANY.getAbbreviation().equals(value)) {
-            return BindValue.ANY.getAbbreviation();
-        } else if (BindValue.NA.getAbbreviation().equals(value)) {
-            return BindValue.NA.getAbbreviation();
+    public static String cpeUriToWellFormed(String value) throws CpeEncodingException {
+        if (value == null || value.isEmpty() || LogicalValue.ANY.getAbbreviation().equals(value)) {
+            return LogicalValue.ANY.getAbbreviation();
+        } else if (LogicalValue.NA.getAbbreviation().equals(value)) {
+            return LogicalValue.NA.getAbbreviation();
         }
         try {
             byte[] bytes = value.toLowerCase().getBytes("UTF-8");
@@ -201,9 +202,9 @@ public final class FormatUtil {
      * @param value the component value to encode
      * @return the formatted string
      */
-    public static String encodeCpe23Component(Part value) {
+    public static String wellFormedToFS(Part value) {
         if (value == null) {
-            return BindValue.ANY.getAbbreviation();
+            return LogicalValue.ANY.getAbbreviation();
         }
         return value.getAbbreviation();
     }
@@ -215,11 +216,11 @@ public final class FormatUtil {
      * @param value the component value to encode
      * @return the formatted string
      */
-    public static String transfromWfsToFS(String value) {
+    public static String wellFormedToFS(String value) {
         if (value == null || value.isEmpty()) {
-            return BindValue.ANY.getAbbreviation();
+            return LogicalValue.ANY.getAbbreviation();
         }
-        if (BindValue.ANY.getAbbreviation().equals(value) || BindValue.NA.getAbbreviation().equals(value)) {
+        if (LogicalValue.ANY.getAbbreviation().equals(value) || LogicalValue.NA.getAbbreviation().equals(value)) {
             return value;
         }
         return value.replaceAll("\\\\([._-])", "$1").replaceAll("(\\\\[^._-])", "\\\\$1");
@@ -232,13 +233,38 @@ public final class FormatUtil {
      * @param value the component value to transform
      * @return the formatted string
      */
-    public static String transfromFsToWfs(String value) {
+    public static String fsToWellFormed(String value) {
         if (value == null || value.isEmpty()) {
-            return BindValue.ANY.getAbbreviation();
+            return LogicalValue.ANY.getAbbreviation();
         }
-        if (BindValue.ANY.getAbbreviation().equals(value) || BindValue.NA.getAbbreviation().equals(value)) {
+        if (LogicalValue.ANY.getAbbreviation().equals(value) || LogicalValue.NA.getAbbreviation().equals(value)) {
             return value;
         }
         return value.replaceAll("([._-])", "\\\\$1").replaceAll("\\\\(\\\\[^._-])", "$1");
+    }
+
+    protected Pattern wellFormedToPattern(String value) {
+        StringBuilder sb = new StringBuilder(value.length() + 4);
+        for (int x = 0; x < value.length(); x++) {
+
+            if (value.charAt(x) == '*') {
+                sb.append(".*");
+            } else if (value.charAt(x) == '?') {
+                sb.append(".");
+            } else if (value.charAt(x) == '\\' && (x + 1) < value.length()) {
+                sb.append('\\').append(value.charAt(x++)).append(value.charAt(x));
+                //must escape any backslashes again.
+                if (value.charAt(x++) == '\\') {
+                    sb.append('\\');
+                }
+            } else if (('a' >= value.charAt(x) && value.charAt(x) <= 'z')
+                    || ('Z' >= value.charAt(x) && value.charAt(x) <= 'Z')
+                    || ('0' >= value.charAt(x) && value.charAt(x) <= '9')) {
+                sb.append(value.charAt(x));
+            } else {
+                sb.append('\\').append(value.charAt(x));
+            }
+        }
+        return Pattern.compile(sb.toString());
     }
 }

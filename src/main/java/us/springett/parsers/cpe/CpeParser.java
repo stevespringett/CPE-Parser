@@ -21,7 +21,7 @@ import us.springett.parsers.cpe.exceptions.CpeValidationException;
 import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import java.util.NoSuchElementException;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
-import us.springett.parsers.cpe.util.FormatUtil;
+import us.springett.parsers.cpe.util.Convert;
 import us.springett.parsers.cpe.internal.util.Cpe23PartIterator;
 
 /**
@@ -78,22 +78,22 @@ public final class CpeParser {
         try {
             cb.part(parts[1].substring(1));
             if (parts.length > 2) {
-                cb.wfVendor(FormatUtil.transformCpeUriComponentToWfs(parts[2]));
+                cb.wfVendor(Convert.cpeUriToWellFormed(parts[2]));
             }
             if (parts.length > 3) {
-                cb.wfProduct(FormatUtil.transformCpeUriComponentToWfs(parts[3]));
+                cb.wfProduct(Convert.cpeUriToWellFormed(parts[3]));
             }
             if (parts.length > 4) {
-                cb.wfVersion(FormatUtil.transformCpeUriComponentToWfs(parts[4]));
+                cb.wfVersion(Convert.cpeUriToWellFormed(parts[4]));
             }
             if (parts.length > 5) {
-                cb.wfUpdate(FormatUtil.transformCpeUriComponentToWfs(parts[5]));
+                cb.wfUpdate(Convert.cpeUriToWellFormed(parts[5]));
             }
             if (parts.length > 6) {
                 unpackEdition(parts[6], cb);
             }
             if (parts.length > 7) {
-                cb.wfLanguage(FormatUtil.transformCpeUriComponentToWfs(parts[7]));
+                cb.wfLanguage(Convert.cpeUriToWellFormed(parts[7]));
             }
             return cb.build();
         } catch (CpeValidationException | CpeEncodingException ex) {
@@ -118,22 +118,22 @@ public final class CpeParser {
             if (edition.startsWith("~")) {
                 String[] unpacked = edition.split("~");
                 if (unpacked.length > 1) {
-                    cb.wfEdition(FormatUtil.transformCpeUriComponentToWfs(unpacked[1]));
+                    cb.wfEdition(Convert.cpeUriToWellFormed(unpacked[1]));
                 }
                 if (unpacked.length > 2) {
-                    cb.wfSwEdition(FormatUtil.transformCpeUriComponentToWfs(unpacked[2]));
+                    cb.wfSwEdition(Convert.cpeUriToWellFormed(unpacked[2]));
                 }
                 if (unpacked.length > 3) {
-                    cb.wfTargetSw(FormatUtil.transformCpeUriComponentToWfs(unpacked[3]));
+                    cb.wfTargetSw(Convert.cpeUriToWellFormed(unpacked[3]));
                 }
                 if (unpacked.length > 4) {
-                    cb.wfTargetHw(FormatUtil.transformCpeUriComponentToWfs(unpacked[4]));
+                    cb.wfTargetHw(Convert.cpeUriToWellFormed(unpacked[4]));
                 }
                 if (unpacked.length > 5) {
-                    cb.wfOther(FormatUtil.transformCpeUriComponentToWfs(unpacked[5]));
+                    cb.wfOther(Convert.cpeUriToWellFormed(unpacked[5]));
                 }
             } else {
-                cb.wfEdition(FormatUtil.transformCpeUriComponentToWfs(edition));
+                cb.wfEdition(Convert.cpeUriToWellFormed(edition));
             }
         } catch (CpeEncodingException ex) {
             throw new CpeParsingException(ex.getMessage(), ex);
@@ -155,16 +155,16 @@ public final class CpeParser {
         Cpe23PartIterator cpe = new Cpe23PartIterator(cpeString);
         try {
             cb.part(cpe.next());
-            cb.wfVendor(FormatUtil.transfromFsToWfs(cpe.next()));
-            cb.wfProduct(FormatUtil.transfromFsToWfs(cpe.next()));
-            cb.wfVersion(FormatUtil.transfromFsToWfs(cpe.next()));
-            cb.wfUpdate(FormatUtil.transfromFsToWfs(cpe.next()));
-            cb.wfEdition(FormatUtil.transfromFsToWfs(cpe.next()));
-            cb.wfLanguage(FormatUtil.transfromFsToWfs(cpe.next()));
-            cb.wfSwEdition(FormatUtil.transfromFsToWfs(cpe.next()));
-            cb.wfTargetSw(FormatUtil.transfromFsToWfs(cpe.next()));
-            cb.wfTargetHw(FormatUtil.transfromFsToWfs(cpe.next()));
-            cb.wfOther(FormatUtil.transfromFsToWfs(cpe.next()));
+            cb.wfVendor(Convert.fsToWellFormed(cpe.next()));
+            cb.wfProduct(Convert.fsToWellFormed(cpe.next()));
+            cb.wfVersion(Convert.fsToWellFormed(cpe.next()));
+            cb.wfUpdate(Convert.fsToWellFormed(cpe.next()));
+            cb.wfEdition(Convert.fsToWellFormed(cpe.next()));
+            cb.wfLanguage(Convert.fsToWellFormed(cpe.next()));
+            cb.wfSwEdition(Convert.fsToWellFormed(cpe.next()));
+            cb.wfTargetSw(Convert.fsToWellFormed(cpe.next()));
+            cb.wfTargetHw(Convert.fsToWellFormed(cpe.next()));
+            cb.wfOther(Convert.fsToWellFormed(cpe.next()));
         } catch (NoSuchElementException ex) {
             throw new CpeParsingException("Invalid CPE (too few components): " + cpeString);
         }
