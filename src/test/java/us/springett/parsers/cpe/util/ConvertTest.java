@@ -18,14 +18,10 @@
 package us.springett.parsers.cpe.util;
 
 import java.util.regex.Pattern;
-import org.junit.After;
-import org.junit.AfterClass;
 import us.springett.parsers.cpe.values.LogicalValue;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
@@ -38,22 +34,6 @@ public class ConvertTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     /**
      * Test of toWellFormed method, of class Convert.
