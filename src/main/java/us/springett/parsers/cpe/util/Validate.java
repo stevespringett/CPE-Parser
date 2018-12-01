@@ -98,75 +98,75 @@ public final class Validate {
             try {
                 instance = new Cpe23PartIterator(value);
             } catch (CpeParsingException ex) {
-                LOG.warn("The CPE is invalid as it is not in the formatted string format", ex);
+                LOG.warn("The CPE (" + value + ") is invalid as it is not in the formatted string format");
                 return Status.INVALID;
             }
             try {
                 //part
                 Part.getEnum(instance.next());
             } catch (CpeParsingException ex) {
-                LOG.warn("The CPE is invalid as it has an invalid part attribute", ex);
+                LOG.warn("The CPE (" + value + ") is invalid as it has an invalid part attribute");
                 return Status.INVALID_PART;
             }
             Status status;
             //vendor
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE has an invalid vendor - " + status.getMessage());
+                LOG.warn("The CPE (" + value + ") has an invalid vendor - " + status.getMessage());
                 return status;
             }
             //product
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE has an invalid product - " + status.getMessage());
+                LOG.warn("The CPE (" + value + ") has an invalid product - " + status.getMessage());
                 return status;
             }
             //version
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE has an version vendor - " + status.getMessage());
+                LOG.warn("The CPE (" + value + ") has an version vendor - " + status.getMessage());
                 return status;
             }
             //update
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE has an invalid update - " + status.getMessage());
+                LOG.warn("The CPE (" + value + ") has an invalid update - " + status.getMessage());
                 return status;
             }
             //edition
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE has an invalid edition - " + status.getMessage());
+                LOG.warn("The CPE (" + value + ") has an invalid edition - " + status.getMessage());
                 return status;
             }
             //language
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE has an invalid language - " + status.getMessage());
+                LOG.warn("The CPE (" + value + ") has an invalid language - " + status.getMessage());
                 return status;
             }
             //swEdition
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE has an invalid swEdition - " + status.getMessage());
+                LOG.warn("The CPE (" + value + ") has an invalid swEdition - " + status.getMessage());
                 return status;
             }
             //targetSw
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE has an invalid targetSw - " + status.getMessage());
+                LOG.warn("The CPE (" + value + ") has an invalid targetSw - " + status.getMessage());
                 return status;
             }
             //targetHw
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE has an invalid targetHw - " + status.getMessage());
+                LOG.warn("The CPE (" + value + ") has an invalid targetHw - " + status.getMessage());
                 return status;
             }
             //other
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE has an invalid other attribute - " + status.getMessage());
+                LOG.warn("The CPE (" + value + ") has an invalid other attribute - " + status.getMessage());
                 return status;
             }
             if (instance.hasNext()) {

@@ -21,6 +21,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -28,8 +30,26 @@ import org.junit.rules.ExpectedException;
  */
 public class ValidateTest {
 
+    /**
+     * A reference to the logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(ValidateTest.class);
+
     @Rule
     public ExpectedException exception = ExpectedException.none();
+
+    public void logBeginWarning(String test) {
+        LOG.warn("---------------------------------------------------------");
+        LOG.warn("Begin validation test: " + test);
+        LOG.warn("The following warnings are intentional valiation failures");
+        LOG.warn("---------------------------------------------------------");
+    }
+
+    public void logEndWarning(String test) {
+        LOG.warn("---------------------------------------------------------");
+        LOG.warn("End validation test: " + test);
+        LOG.warn("---------------------------------------------------------");
+    }
 
     /**
      * Test of component method, of class Validate.
@@ -119,6 +139,9 @@ public class ValidateTest {
     @Test
     public void testFormattedString() {
         exception = ExpectedException.none();
+
+        logBeginWarning("testFormattedString");
+
         String value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";
         assertTrue(Validate.formattedString(value).isValid());
 
@@ -171,6 +194,8 @@ public class ValidateTest {
         assertFalse(Validate.formattedString(value).isValid());
         value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:*:**";
         assertFalse(Validate.formattedString(value).isValid());
+
+        logEndWarning("testFormattedString");
     }
 
     /**
@@ -191,23 +216,28 @@ public class ValidateTest {
         value = "cpe:/a:vendor:product:version:update:edition:language:toomany";
         assertFalse(Validate.cpeUri(value).isValid());
     }
-    
+
     /**
      * Test of cpe method, of class Validate.
      */
     @Test
     public void testCpe() {
         exception = ExpectedException.none();
+
+        logBeginWarning("testCPE()");
+
         String value = "cpe:/a:jlike_project:jlike:1.0::~~~joomla%21~~";
         assertTrue(Validate.cpe(value).isValid());
-        
+
         value = "cpe:/a:jlike_pro**ject:jlike:1.0::~~~joomla%21~~";
         assertFalse(Validate.cpe(value).isValid());
-        
+
         value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";
         assertTrue(Validate.cpe(value).isValid());
-        
+
         value = "cpe:2.3:a:\\-:re\\:kyu:1:*:*:*:*:android:*:*:*";
         assertFalse(Validate.cpe(value).isValid());
+
+        logEndWarning("testCPE()");
     }
 }
