@@ -394,52 +394,52 @@ public class CpeTest {
     @Test
     public void testMatches() throws Exception {
         CpeBuilder builder = new CpeBuilder();
-        Cpe target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        Cpe cpe = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
         Cpe instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
         boolean expResult = true;
-        boolean result = instance.matches(target);
+        boolean result = instance.matches(cpe);
         assertEquals(expResult, result);
 
-        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.1").build();
+        cpe = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.1").build();
         instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
         expResult = false;
-        result = instance.matches(target);
+        result = instance.matches(cpe);
         assertEquals(expResult, result);
 
-        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        cpe = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
         instance = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.ANY).version("4.0.0").build();
         expResult = true;
-        result = instance.matches(target);
+        result = instance.matches(cpe);
         assertEquals(expResult, result);
 
-        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        cpe = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
         instance = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.NA).version("4.0.0").build();
         expResult = false;
-        result = instance.matches(target);
+        result = instance.matches(cpe);
         assertEquals(expResult, result);
 
-        target = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.NA).version("4.0.0").build();
+        cpe = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.NA).version("4.0.0").build();
         instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
         expResult = false;
-        result = instance.matches(target);
+        result = instance.matches(cpe);
         assertEquals(expResult, result);
 
-        target = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.ANY).version("4.0.0").build();
+        cpe = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.ANY).version("4.0.0").build();
         instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
         expResult = false;
-        result = instance.matches(target);
+        result = instance.matches(cpe);
         assertEquals(expResult, result);
 
-        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        cpe = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
         instance = builder.part(Part.APPLICATION).vendor("owasp").wfProduct("*check").version("4.0.0").build();
         expResult = true;
-        result = instance.matches(target);
+        result = instance.matches(cpe);
         assertEquals(expResult, result);
 
-        target = builder.part(Part.APPLICATION).vendor("owasp").product("dependency").version("4.0.0").build();
+        cpe = builder.part(Part.APPLICATION).vendor("owasp").product("dependency").version("4.0.0").build();
         instance = builder.part(Part.APPLICATION).vendor("owasp").wfProduct("*check").version("4.0.0").build();
         expResult = false;
-        result = instance.matches(target);
+        result = instance.matches(cpe);
         assertEquals(expResult, result);
     }
 
