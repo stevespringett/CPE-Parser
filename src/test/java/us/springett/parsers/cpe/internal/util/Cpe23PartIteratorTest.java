@@ -39,7 +39,7 @@ public class Cpe23PartIteratorTest {
      */
     @Test
     public void testHasNext() throws CpeParsingException {
-        Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:pocoproject:poco_c\\\\+\\\\+_libraries:1.4.5:*:*:*:*:*:*:*");
+        Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:pocoproject:poco_c\\+\\+_libraries:1.4.5:*:*:*:*:*:*:*");
         boolean expResult = true;
         boolean result = instance.hasNext();
         assertEquals(expResult, result);
@@ -74,13 +74,12 @@ public class Cpe23PartIteratorTest {
      */
     @Test
     public void testNext() throws CpeParsingException {
-        Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:poco\\\\:project:poco_c\\\\+\\\\+_libraries:1.4.5:u\\\\\\:*:*:*:*:*:*");
-        String[] expResults = {"a", "poco\\\\:project", "poco_c\\\\+\\\\+_libraries", "1.4.5", "u\\\\\\", "*", "*", "*", "*", "*", "*"};
+        Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:poco\\:project:poco_c\\+\\+_libraries:1.4.5:u\\\\:*:*:*:*:*:*");
+        String[] expResults = {"a", "poco\\:project", "poco_c\\+\\+_libraries", "1.4.5", "u\\\\", "*", "*", "*", "*", "*", "*"};
 
         for (String expResult : expResults) {
             String result = instance.next();
             assertEquals(expResult, result);
         }
     }
-
 }

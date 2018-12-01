@@ -119,57 +119,57 @@ public class ValidateTest {
     @Test
     public void testFormattedString() {
         exception = ExpectedException.none();
-        String value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        String value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";
         assertTrue(Validate.formattedString(value).isValid());
 
-        value = "cpe:2.3:o:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        value = "cpe:2.3:o:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";
         assertTrue(Validate.formattedString(value).isValid());
 
-        value = "cpe:2.3:h:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        value = "cpe:2.3:h:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";
         assertTrue(Validate.formattedString(value).isValid());
 
-        value = "cpe:2.3:-:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        value = "cpe:2.3:-:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";
         assertTrue(Validate.formattedString(value).isValid());
 
-        value = "cpe:2.3:*:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        value = "cpe:2.3:*:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";
         assertTrue(Validate.formattedString(value).isValid());
 
-        value = "cpe:2.3:t:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        value = "cpe:2.3:t:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";
         assertFalse(Validate.formattedString(value).isValid());
 
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*";
         assertFalse(Validate.formattedString(value).isValid());
 
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*:*";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:*:*";
         assertFalse(Validate.formattedString(value).isValid());
 
-        value = "cpe:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*:*";
+        value = "cpe:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:*:*";
         assertFalse(Validate.formattedString(value).isValid());
 
-        value = "cpe:2.3:a:miste*rpark:re\\\\:kyu:1:*:*:*:*:android:*:*:*";
+        value = "cpe:2.3:a:miste*rpark:re\\:kyu:1:*:*:*:*:android:*:*:*";
         assertFalse(Validate.formattedString(value).isValid());
 
         value = "cpe:2.3:a:misterpark:re?kyu:1:*:*:*:*:android:*:*:*";
         assertFalse(Validate.formattedString(value).isValid());
 
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu::*:*:*:*:android:*:*:*";
+        value = "cpe:2.3:a:misterpark:re\\:kyu::*:*:*:*:android:*:*:*";
         assertFalse(Validate.formattedString(value).isValid());
 
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:**:*:*:*:android:*:*";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:**:*:*:*:android:*:*";
         assertFalse(Validate.formattedString(value).isValid());
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:**:*:*:android:*:*";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:**:*:*:android:*:*";
         assertFalse(Validate.formattedString(value).isValid());
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:**:*:android:*:*";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:**:*:android:*:*";
         assertFalse(Validate.formattedString(value).isValid());
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:**:android:*:*";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:**:android:*:*";
         assertFalse(Validate.formattedString(value).isValid());
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:and?roid:*:*";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:and?roid:*:*";
         assertFalse(Validate.formattedString(value).isValid());
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:**:*";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:**:*";
         assertFalse(Validate.formattedString(value).isValid());
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:**";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:**";
         assertFalse(Validate.formattedString(value).isValid());
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*:**";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:*:**";
         assertFalse(Validate.formattedString(value).isValid());
     }
 
@@ -204,10 +204,10 @@ public class ValidateTest {
         value = "cpe:/a:jlike_pro**ject:jlike:1.0::~~~joomla%21~~";
         assertFalse(Validate.cpe(value).isValid());
         
-        value = "cpe:2.3:a:misterpark:re\\\\:kyu:1:*:*:*:*:android:*:*";
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";
         assertTrue(Validate.cpe(value).isValid());
         
-        value = "cpe:2.3:a:\\\\-:re\\\\:kyu:1:*:*:*:*:android:*:*:*";
+        value = "cpe:2.3:a:\\-:re\\:kyu:1:*:*:*:*:android:*:*:*";
         assertFalse(Validate.cpe(value).isValid());
     }
 }

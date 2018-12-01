@@ -17,7 +17,6 @@
  */
 package us.springett.parsers.cpe.util;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -30,7 +29,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
-import us.springett.parsers.cpe.exceptions.CpeValidationException;
 
 /**
  *
@@ -336,12 +334,27 @@ public class ConvertTest {
 
         value = "visual_c\\+\\+";
         //TODO - is the quoting of the underscore correct
-        expResult = "visual_c\\\\+\\\\+";
+        expResult = "visual_c\\+\\+";
         result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
 
         value = "test\\:";
-        expResult = "test\\\\:";
+        expResult = "test\\:";
+        result = Convert.wellFormedToFS(value);
+        assertEquals(expResult, result);
+        
+        value = "1\\.2\\.3";
+        expResult = "1.2.3";
+        result = Convert.wellFormedToFS(value);
+        assertEquals(expResult, result);
+        
+        value = "1\\-3";
+        expResult = "1-3";
+        result = Convert.wellFormedToFS(value);
+        assertEquals(expResult, result);
+        
+        value = "1\\_3";
+        expResult = "1_3";
         result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
     }
@@ -386,7 +399,7 @@ public class ConvertTest {
         result = Convert.fsToWellFormed(value);
         assertEquals(expResult, result);
 
-        value = "visual_c\\\\+\\\\+";
+        value = "visual_c\\+\\+";
         expResult = "visual\\_c\\+\\+";
         result = Convert.fsToWellFormed(value);
         assertEquals(expResult, result);
