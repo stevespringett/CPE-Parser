@@ -407,8 +407,8 @@ public class ConvertTest {
         assertEquals(expResult.toString(), result.toString());
         
         
-        value = "test\\:pattern";
-        expResult = Pattern.compile("test\\\\\\:pattern");
+        value = "test\\:Pattern1";
+        expResult = Pattern.compile("test\\\\\\:Pattern1");
         result = Convert.wellFormedToPattern(value);
         assertEquals(expResult.toString(), result.toString());
         

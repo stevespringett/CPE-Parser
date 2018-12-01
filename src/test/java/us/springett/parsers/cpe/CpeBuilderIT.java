@@ -41,6 +41,8 @@ public class CpeBuilderIT {
      *
      * @throws CpeParsingException thrown if there is a parsing error
      * @throws java.text.ParseException thrown if there is a parsing error
+     * @throws us.springett.parsers.cpe.exceptions.CpeValidationException thrown if there is a parsing error
+     * @throws us.springett.parsers.cpe.exceptions.CpeEncodingException thrown if there is a parsing error
      */
     @Test
     public void testBuild() throws CpeParsingException, ParseException, CpeValidationException, CpeEncodingException {
