@@ -20,14 +20,14 @@ package us.springett.parsers.cpe;
 import java.text.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
-import static org.junit.Assert.*;
 import org.mitre.cpe.common.LogicalValue;
 import org.mitre.cpe.common.WellFormedName;
 import org.mitre.cpe.naming.CPENameBinder;
 import org.mitre.cpe.naming.CPENameUnbinder;
-import us.springett.parsers.cpe.util.FormatUtil;
+import us.springett.parsers.cpe.exceptions.CpeEncodingException;
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.util.Convert;
 
 /**
  * Test the CPE Builder.
@@ -40,16 +40,17 @@ public class CpeBuilderIT {
      * Test of part method, of class CpeBuilder.
      *
      * @throws CpeParsingException thrown if there is a parsing error
+     * @throws java.text.ParseException thrown if there is a parsing error
      */
     @Test
-    public void testBuild() throws CpeParsingException, ParseException {
+    public void testBuild() throws CpeParsingException, ParseException, CpeValidationException, CpeEncodingException {
         testReferenceImpl("a", "some:vendor", "product++", "1.0.0", "beta?", "*", "*", "*", "*", "*", "*");
         testReferenceImpl("o", "microsoft", "windows_8", "-", "-", "x64", "*", "*", "*", "*", "*");
     }
 
     private void testReferenceImpl(String part, String vendor, String product,
             String version, String update, String edition, String language,
-            String sw_edition, String target_sw, String target_hw, String other) throws ParseException, CpeParsingException {
+            String sw_edition, String target_sw, String target_hw, String other) throws ParseException, CpeParsingException, CpeValidationException, CpeEncodingException {
 
         WellFormedName wfn = new WellFormedName(toWellFormed(part),
                 toWellFormed(vendor), toWellFormed(product),
@@ -78,7 +79,7 @@ public class CpeBuilderIT {
         if ("-".equals(value)) {
             return new LogicalValue("NA");
         }
-        return FormatUtil.toWellFormed(value);
+        return Convert.toWellFormed(value);
     }
 
     @Test
@@ -86,7 +87,7 @@ public class CpeBuilderIT {
         CPENameBinder cpeBinder = new CPENameBinder();
         CPENameUnbinder cpeUnbinder = new CPENameUnbinder();
 
-        String original = "cpe:2.3:a:embarcadero:embarcadero_c\\\\+\\\\+builder_xe6:20.0.15596.9843:*:*:*:*:*:*:*";
+        String original = "cpe:2.3:a:embarcadero:embarcadero_c\\+\\+builder_xe6:20.0.15596.9843:*:*:*:*:*:*:*";
 
         String cpeString = original;
 

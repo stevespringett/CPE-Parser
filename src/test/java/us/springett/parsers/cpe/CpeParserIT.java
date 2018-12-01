@@ -23,7 +23,8 @@ import org.junit.Test;
 import org.mitre.cpe.common.LogicalValue;
 import org.mitre.cpe.common.WellFormedName;
 import org.mitre.cpe.naming.CPENameUnbinder;
-import us.springett.parsers.cpe.util.FormatUtil;
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
+import us.springett.parsers.cpe.util.Convert;
 
 public class CpeParserIT {
 
@@ -43,11 +44,11 @@ public class CpeParserIT {
     @Test
     public void testParse() throws Exception {
         compareReferenceImpl("cpe:/a:pocoproject:poco_c%2b%2b_libraries:1.4.5");
-        compareReferenceImpl("cpe:2.3:a:pocoproject:poco_c\\\\+\\\\+_libraries:1.4.5:*:*:*:*:*:*:*");
+        compareReferenceImpl("cpe:2.3:a:pocoproject:poco_c\\+\\+_libraries:1.4.5:*:*:*:*:*:*:*");
         compareReferenceImpl("cpe:/a:vendor:prod%7duct:1.0.0");
         compareReferenceImpl("cpe:/a:adobe:flash_player:::~~~chrome~~");
         compareReferenceImpl("cpe:2.3:a:adobe:flash_player:*:*:*:*:*:chrome:*:*");
-        compareReferenceImpl("cpe:2.3:a:some\\\\:vendor:c\\\\+\\\\+:*:*:*:*:*:chrome:*:*");
+        compareReferenceImpl("cpe:2.3:a:some\\:vendor:c\\+\\+:*:*:*:*:*:chrome:*:*");
     }
 
     private void compareReferenceImpl(String cpeString) throws ParseException, CpeParsingException {
@@ -83,33 +84,30 @@ public class CpeParserIT {
             }
             return "-";
         } else if (wfn instanceof String) {
-            result = FormatUtil.fromWellFormed((String) wfn);
+            result = Convert.fromWellFormed((String) wfn);
         } else {
-            result = FormatUtil.fromWellFormed(wfn.toString());
+            result = Convert.fromWellFormed(wfn.toString());
         }
 
         //There is a bug in the unbindFS in the reference implementation.
         //See the showBugInReferenceImpl test case below to show the defect
         //in the reference implementation.
         if (is23) {
-            result = FormatUtil.fromWellFormed(result);
+            result = Convert.fromWellFormed(result);
         }
         return result;
     }
 
     @Test
-    public void showBugInReferenceImpl() throws ParseException {
+    public void testReferenceImpl() throws ParseException {
         //the following two CPE strings are identical and are from CVE-2014-0350
         String cpeString22 = "cpe:/a:pocoproject:poco_c%2b%2b_libraries:1.4.5";
-        String cpeString23 = "cpe:2.3:a:pocoproject:poco_c\\\\+\\\\+_libraries:1.4.5:*:*:*:*:*:*:*";
+        String cpeString23 = "cpe:2.3:a:pocoproject:poco_c\\+\\+_libraries:1.4.5:*:*:*:*:*:*:*";
 
         CPENameUnbinder cpeUnbinder = new CPENameUnbinder();
         WellFormedName wfn22 = cpeUnbinder.unbindURI(cpeString22);
         WellFormedName wfn23 = cpeUnbinder.unbindFS(cpeString23);
 
-        //This is wrong - these should be equal
-        Assert.assertNotEquals(wfn22.get("product"), wfn23.get("product"));
-        //Hack solution - this includes an extra un-binding
-        Assert.assertEquals(wfn22.get("product"), FormatUtil.fromWellFormed((String) wfn23.get("product")));
+        Assert.assertEquals(wfn22.get("product"), wfn23.get("product"));
     }
 }
