@@ -47,6 +47,10 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- Dependency Versions -->
+        <slf4j.version>1.7.25</slf4j.version>
+        <junit.version>4.12</junit.version>
+        <logback.classic.version>1.2.3</logback.classic.version>
         <!-- Maven Plugin Versions -->
         <maven.javadoc.plugin.version>3.0.1</maven.javadoc.plugin.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
@@ -63,7 +67,6 @@
         <maven.site.plugin.version>3.7.1</maven.site.plugin.version>
         <maven.project.info.reports.plugin.version>3.0.0</maven.project.info.reports.plugin.version>
         <maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
-        <maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
     </properties>
 
     <scm>
@@ -96,9 +99,20 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.classic.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -146,23 +160,6 @@
                 <version>${maven.surefire.plugin.version}</version>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven.failsafe.plugin.version}</version>
-                <configuration>
-                    <failIfNoTests>true</failIfNoTests>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <phase>verify</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>${com.github.spotbugs.plugin.version}</version>
@@ -205,9 +202,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
-                <configuration>
-                    <excludePackageNames>org.mitre.cpe</excludePackageNames>
-                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -252,18 +246,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
                 <version>${maven.jxr.plugin.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/org/mitre/**/*.java</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven.checkstyle.plugin.version}</version>
                 <configuration>
-                    <excludes>**/org/mitre/**/*.java</excludes>
                     <configLocation>${basedir}/src/config/checkstyle.xml</configLocation>
                 </configuration>
             </plugin>
@@ -271,9 +259,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
-                <configuration>
-                    <excludePackageNames>org.mitre.cpe</excludePackageNames>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

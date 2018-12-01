@@ -17,12 +17,11 @@
  */
 package us.springett.parsers.cpe.internal.util;
 
-import us.springett.parsers.cpe.CpeParsingException;
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import org.junit.Test;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import static org.junit.Assert.*;
-
 
 /**
  *
@@ -40,7 +39,7 @@ public class Cpe23PartIteratorTest {
      */
     @Test
     public void testHasNext() throws CpeParsingException {
-        Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:pocoproject:poco_c\\\\+\\\\+_libraries:1.4.5:*:*:*:*:*:*:*");
+        Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:pocoproject:poco_c\\+\\+_libraries:1.4.5:*:*:*:*:*:*:*");
         boolean expResult = true;
         boolean result = instance.hasNext();
         assertEquals(expResult, result);
@@ -66,8 +65,8 @@ public class Cpe23PartIteratorTest {
     public void testConstructorException1() throws CpeParsingException {
         exception.expect(CpeParsingException.class);
         Cpe23PartIterator instance = new Cpe23PartIterator(null);
-    }    
-    
+    }
+
     /**
      * Test of next method, of class Cpe23PartIterator.
      *
@@ -75,15 +74,12 @@ public class Cpe23PartIteratorTest {
      */
     @Test
     public void testNext() throws CpeParsingException {
-        Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:pocoproject:poco_c\\\\+\\\\+_libraries:1.4.5:*:*:*:*:*:*:*");
-        String[] expResults = {"a","pocoproject:poco_c++_libraries","1.4.5","*","*","*","*","*","*","*"};
-        String expResult = "a";
-        String result = instance.next();
-        assertEquals(expResult, result);
-        
-        expResult = "pocoproject";
-        result = instance.next();
-        assertEquals(expResult, result);
-    }
+        Cpe23PartIterator instance = new Cpe23PartIterator("cpe:2.3:a:poco\\:project:poco_c\\+\\+_libraries:1.4.5:u\\\\:*:*:*:*:*:*");
+        String[] expResults = {"a", "poco\\:project", "poco_c\\+\\+_libraries", "1.4.5", "u\\\\", "*", "*", "*", "*", "*", "*"};
 
+        for (String expResult : expResults) {
+            String result = instance.next();
+            assertEquals(expResult, result);
+        }
+    }
 }

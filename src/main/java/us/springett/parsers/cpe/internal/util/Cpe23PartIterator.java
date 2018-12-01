@@ -19,7 +19,7 @@ package us.springett.parsers.cpe.internal.util;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import us.springett.parsers.cpe.CpeParsingException;
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
 
 /**
  * A utility that will tokenize and iterate over a CPE v2.3 string and return
@@ -64,8 +64,11 @@ public class Cpe23PartIterator implements Iterator<String> {
         }
         int end;
         for (end = pos; end < cpe.length(); end++) {
-            if (cpe.charAt(end) == ':' && cpe.charAt(end - 1) != '\\') {
+            if (cpe.charAt(end) == ':') {
                 break;
+            }
+            if (cpe.charAt(end) == '\\' && (end + 1) < cpe.length()) {
+                end += 1;
             }
         }
         String part = cpe.substring(pos, end);

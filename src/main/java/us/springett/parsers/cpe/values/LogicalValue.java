@@ -22,7 +22,7 @@ package us.springett.parsers.cpe.values;
  *
  * @author Jeremy Long
  */
-public enum BindValue {
+public enum LogicalValue {
     /**
      * Match ANY: '*'.
      */
@@ -33,23 +33,23 @@ public enum BindValue {
     NA("-");
 
     /**
-     * The abbreviation for the bind value.
+     * The abbreviation for the logical value.
      */
     private final String abbreviation;
 
     /**
-     * Constructs a new bind value.
+     * Constructs a new logical value.
      *
-     * @param abbreviation the abbreviation for the bind value
+     * @param abbreviation the abbreviation for the logical value
      */
-    BindValue(String abbreviation) {
+    LogicalValue(String abbreviation) {
         this.abbreviation = abbreviation;
     }
 
     /**
-     * Gets the component abbreviation for the bind value.
+     * Gets the component abbreviation for the logical value.
      *
-     * @return the component abbreviation for the bind value
+     * @return the component abbreviation for the logical value
      */
     public String getAbbreviation() {
         return abbreviation;

@@ -17,6 +17,7 @@
  */
 package us.springett.parsers.cpe;
 
+import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -31,6 +32,7 @@ public class CpeParserTest {
 
     /**
      * Test the Parse method.
+     *
      * @throws CpeParsingException thrown if there is a parsing error
      */
     @Test
@@ -74,13 +76,14 @@ public class CpeParserTest {
 
     /**
      * Test the parse23 method.
+     *
      * @throws CpeParsingException thrown if there is a parsing error
      */
     @Test
     public void testParse23() throws CpeParsingException {
         exception = ExpectedException.none();
 
-        Cpe cpe = CpeParser.parse23("cpe:2.3:a:hiox_india:guest_book:4.0:*:*:*:*:*:*:*");
+        Cpe cpe = CpeParser.parse23("cpe:2.3:a:hiox_india:guest_book:4.0:*:*:*:*:*:*:?");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("hiox_india", cpe.getVendor());
         Assert.assertEquals("guest_book", cpe.getProduct());
@@ -91,9 +94,9 @@ public class CpeParserTest {
         Assert.assertEquals("*", cpe.getSwEdition());
         Assert.assertEquals("*", cpe.getTargetSw());
         Assert.assertEquals("*", cpe.getTargetHw());
-        Assert.assertEquals("*", cpe.getOther());
+        Assert.assertEquals("?", cpe.getOther());
 
-        cpe = CpeParser.parse23("cpe:2.3:a:test\\\\::guest_book:4.0:*:*:*:*:*:*:*");
+        cpe = CpeParser.parse23("cpe:2.3:a:test\\::guest_book:4.0:*:*:*:*:*:*:*");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("test:", cpe.getVendor());
         Assert.assertEquals("guest_book", cpe.getProduct());
@@ -105,20 +108,35 @@ public class CpeParserTest {
         Assert.assertEquals("*", cpe.getTargetSw());
         Assert.assertEquals("*", cpe.getTargetHw());
         Assert.assertEquals("*", cpe.getOther());
+        
+        
+        cpe = CpeParser.parse23("cpe:2.3:a:jenkins:pipeline\\:build_step:*:*:*:*:*:jenkins:*:*");
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("jenkins", cpe.getVendor());
+        Assert.assertEquals("pipeline:build_step", cpe.getProduct());
+        Assert.assertEquals("*", cpe.getVersion());
+        Assert.assertEquals("*", cpe.getUpdate());
+        Assert.assertEquals("*", cpe.getEdition());
+        Assert.assertEquals("*", cpe.getLanguage());
+        Assert.assertEquals("*", cpe.getSwEdition());
+        Assert.assertEquals("jenkins", cpe.getTargetSw());
+        Assert.assertEquals("*", cpe.getTargetHw());
+        Assert.assertEquals("*", cpe.getOther());
     }
 
     /**
      * Test of parse22 method, of class CpeParser.
-     * @throws CpeParsingException thrown if there is a parsing error
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testParse22() throws CpeParsingException {
+    public void testParse22() throws Exception {
         exception = ExpectedException.none();
 
-        Cpe cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:?:beta::c%2b%2b");
+        Cpe cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:%01:beta::c%2b%2b");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("microsoft", cpe.getVendor());
-        Assert.assertEquals("internet_explorer", cpe.getProduct());
+        Assert.assertEquals("internet_explorer????", cpe.getProduct());
         Assert.assertEquals("?", cpe.getVersion());
         Assert.assertEquals("beta", cpe.getUpdate());
         Assert.assertEquals("*", cpe.getEdition());
@@ -128,10 +146,10 @@ public class CpeParserTest {
         Assert.assertEquals("*", cpe.getTargetHw());
         Assert.assertEquals("*", cpe.getOther());
 
-        cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:?");
+        cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:%01");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("microsoft", cpe.getVendor());
-        Assert.assertEquals("internet_explorer", cpe.getProduct());
+        Assert.assertEquals("internet_explorer????", cpe.getProduct());
         Assert.assertEquals("?", cpe.getVersion());
         Assert.assertEquals("*", cpe.getUpdate());
         Assert.assertEquals("*", cpe.getEdition());
@@ -144,7 +162,7 @@ public class CpeParserTest {
         cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("microsoft", cpe.getVendor());
-        Assert.assertEquals("internet_explorer", cpe.getProduct());
+        Assert.assertEquals("internet_explorer????", cpe.getProduct());
         Assert.assertEquals("*", cpe.getVersion());
         Assert.assertEquals("*", cpe.getUpdate());
         Assert.assertEquals("*", cpe.getEdition());
@@ -183,9 +201,11 @@ public class CpeParserTest {
 
     /**
      * Test of unpackEdition method, of class CpeParser.
+     *
+     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testUnpackEdition() {
+    public void testUnpackEdition() throws Exception {
         exception = ExpectedException.none();
 
         CpeBuilder cb = new CpeBuilder();
@@ -296,6 +316,26 @@ public class CpeParserTest {
         assertEquals("chrome", cpe.getTargetSw());
         assertEquals("*", cpe.getTargetHw());
         assertEquals("*", cpe.getOther());
+    }
+
+    /**
+     * Test the parsing and binding cycles to ensure everything stays the same.
+     *
+     * @throws CpeParsingException thrown if there is a parsing error
+     */
+    @Test
+    public void testParseBindUnbindCycle() throws Exception {
+        exception = ExpectedException.none();
+
+        String initial = "cpe:2.3:a:embarcadero:embarcadero_c\\+\\+builder_xe6:20.0.15596.9843:*:*:en:*:*:*:other";
+        String cpeString = initial;
+        for (int x = 0; x < 10; x++) {
+            Cpe cpe = CpeParser.parse(cpeString);
+            cpeString = cpe.toCpe22Uri();
+            cpe = CpeParser.parse(cpeString);
+            cpeString = cpe.toCpe23FS();
+        }
+        Assert.assertEquals(initial, cpeString);
     }
 
     @Test
