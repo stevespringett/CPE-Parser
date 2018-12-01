@@ -28,13 +28,6 @@ import us.springett.parsers.cpe.util.Convert;
 
 public class CpeParserIT {
 
-    /**
-     * Flag indicating if a CPE 2.3 Format String is being parsed in the test
-     * case. If it is, an extra un-binding must be done due to a bug in the
-     * reference implementation. See the showBugInReferenceImpl test case below
-     * for a detailed example.
-     */
-    private boolean is23 = false;
 
     /**
      * Test the Parse method.
@@ -59,8 +52,8 @@ public class CpeParserIT {
             wfn = cpeUnbinder.unbindURI(cpeString);
         } else {
             wfn = cpeUnbinder.unbindFS(cpeString);
-            is23 = true;
         }
+        
         Assert.assertEquals(fromWFN(wfn.get("part")), cpe.getPart().getAbbreviation());
         Assert.assertEquals(fromWFN(wfn.get("vendor")), cpe.getVendor());
         Assert.assertEquals(fromWFN(wfn.get("product")), cpe.getProduct());
@@ -87,13 +80,6 @@ public class CpeParserIT {
             result = Convert.fromWellFormed((String) wfn);
         } else {
             result = Convert.fromWellFormed(wfn.toString());
-        }
-
-        //There is a bug in the unbindFS in the reference implementation.
-        //See the showBugInReferenceImpl test case below to show the defect
-        //in the reference implementation.
-        if (is23) {
-            result = Convert.fromWellFormed(result);
         }
         return result;
     }
