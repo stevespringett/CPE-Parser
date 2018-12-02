@@ -115,8 +115,8 @@ public final class CpeParser {
             return;
         }
         try {
+            String[] unpacked = edition.split("~");
             if (edition.startsWith("~")) {
-                String[] unpacked = edition.split("~");
                 if (unpacked.length > 1) {
                     cb.wfEdition(Convert.cpeUriToWellFormed(unpacked[1]));
                 }
@@ -131,6 +131,9 @@ public final class CpeParser {
                 }
                 if (unpacked.length > 5) {
                     cb.wfOther(Convert.cpeUriToWellFormed(unpacked[5]));
+                }
+                if (unpacked.length > 6) {
+                    throw new CpeParsingException("Invalid packed edition");
                 }
             } else {
                 cb.wfEdition(Convert.cpeUriToWellFormed(edition));

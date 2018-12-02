@@ -182,6 +182,10 @@ public class ValidateTest {
         assertFalse(Validate.formattedString(value).isValid());
         value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:**:*:*:android:*:*";
         assertFalse(Validate.formattedString(value).isValid());
+
+        value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:and?roid:*:*";
+        assertFalse(Validate.formattedString(value).isValid());
+
         value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:**:*:android:*:*";
         assertFalse(Validate.formattedString(value).isValid());
         value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:**:android:*:*";
@@ -213,7 +217,44 @@ public class ValidateTest {
         value = "cpe:/a:jlike_project::1.0::~~~joomla%21~~";
         assertTrue(Validate.cpeUri(value).isValid());
 
+        value = "cpe:/a:jlike_project::1.0::~~~joomla%21~~~";
+        assertFalse(Validate.cpeUri(value).isValid());
+
         value = "cpe:/a:vendor:product:version:update:edition:language:toomany";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:~e~swe~tsw~thw~o:language";
+        assertTrue(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:~e*e~swe~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:~e~s*we~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:~e~swe~ts*w~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:~e~swe~tsw~t*hw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:vendor:product:version:update:~e~swe~tsw~thw~o*o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/t:jlike_project::1.0::~~~joomla%21~~";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:jli%01ke_project::1.0::~~~joomla%21~~";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:jlike_project:%02%02:1.0::~~~joomla%21~~";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:jlike_project::1.%01.0::~~~joomla%21~~";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:jlike_project::1.0::%02%02";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:jlike_project::1.0::~~~joomla%21~~:%02%02";
         assertFalse(Validate.cpeUri(value).isValid());
     }
 
@@ -229,7 +270,7 @@ public class ValidateTest {
         String value = "cpe:/a:jlike_project:jlike:1.0::~~~joomla%21~~";
         assertTrue(Validate.cpe(value).isValid());
 
-        value = "cpe:/a:jlike_pro**ject:jlike:1.0::~~~joomla%21~~";
+        value = "cpe:/a:jlike_pro%01ject:jlike:1.0::~~~joomla%21~~";
         assertFalse(Validate.cpe(value).isValid());
 
         value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";

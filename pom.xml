@@ -67,6 +67,7 @@
         <maven.site.plugin.version>3.7.1</maven.site.plugin.version>
         <maven.project.info.reports.plugin.version>3.0.0</maven.project.info.reports.plugin.version>
         <maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
+        <maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
     </properties>
 
     <scm>
@@ -115,6 +116,12 @@
             <version>${logback.classic.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.8</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
     <build>
@@ -158,6 +165,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.failsafe.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
@@ -287,6 +306,20 @@
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>${com.github.spotbugs.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <id>tests</id>
+                        <reports>
+                            <report>report-only</report>
+                            <report>failsafe-report-only</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
         </plugins>
     </reporting>
