@@ -208,6 +208,8 @@ public class ValidateTest {
     @Test
     public void testCpeUri() {
         exception = ExpectedException.none();
+
+        logBeginWarning("testCpeUri");
         String value = "cpe:/a:jlike_project:jlike:1.0::~~~joomla%21~~";
         assertTrue(Validate.cpeUri(value).isValid());
 
@@ -256,6 +258,8 @@ public class ValidateTest {
 
         value = "cpe:/a:jlike_project::1.0::~~~joomla%21~~:%02%02";
         assertFalse(Validate.cpeUri(value).isValid());
+
+        logEndWarning("testCpeUri");
     }
 
     /**

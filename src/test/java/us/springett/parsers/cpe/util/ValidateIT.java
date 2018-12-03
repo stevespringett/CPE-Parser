@@ -15,11 +15,14 @@
  */
 package us.springett.parsers.cpe.util;
 
+import ch.qos.logback.classic.LoggerContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -28,6 +31,12 @@ import org.junit.Test;
 public class ValidateIT {
 
     private static final Pattern CPE_FS = Pattern.compile("cpe:2\\.3:[aho\\*\\-](:(((\\?*|\\*?)([a-zA-Z0-9\\-\\._]|(\\\\[\\\\\\*\\?!\"#$$%&'\\(\\)\\+,/:;<=>@\\[\\]\\^`\\{\\|}~]))+(\\?*|\\*?))|[\\*\\-])){5}(:(([a-zA-Z]{2,3}(-([a-zA-Z]{2}|[0-9]{3}))?)|[\\*\\-]))(:(((\\?*|\\*?)([a-zA-Z0-9\\-\\._]|(\\\\[\\\\\\*\\?!\"#$$%&'\\(\\)\\+,/:;<=>@\\[\\]\\^`\\{\\|}~]))+(\\?*|\\*?))|[\\*\\-])){4}");
+
+    @Before
+    public void setUp() {
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        context.stop();
+    }
 
     private Status referenceValidate(String value) {
         Matcher m = CPE_FS.matcher(value);
