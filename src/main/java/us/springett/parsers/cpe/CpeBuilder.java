@@ -85,7 +85,7 @@ public class CpeBuilder {
     /**
      * Resets the CPE Builder to a clean state.
      */
-    private void reset() {
+    protected void reset() {
         part = Part.ANY;
         vendor = LogicalValue.ANY.getAbbreviation();
         product = LogicalValue.ANY.getAbbreviation();
@@ -544,6 +544,105 @@ public class CpeBuilder {
     public CpeBuilder wfOther(final String other) {
         this.other = other;
         return this;
+    }
+
+    /**
+     * Get the value of part.
+     *
+     * @return the value of part
+     */
+    protected Part getPart() {
+        return part;
+    }
+
+    /**
+     * Get the value of vendor.
+     *
+     * @return the value of vendor
+     */
+    protected String getVendor() {
+        return vendor;
+    }
+
+    /**
+     * Get the value of product.
+     *
+     * @return the value of product
+     */
+    protected String getProduct() {
+        return product;
+    }
+
+    /**
+     * Get the value of version.
+     *
+     * @return the value of version
+     */
+    protected String getVersion() {
+        return version;
+    }
+
+    /**
+     * Get the value of update.
+     *
+     * @return the value of update
+     */
+    protected String getUpdate() {
+        return update;
+    }
+
+    /**
+     * Get the value of edition.
+     *
+     * @return the value of edition
+     */
+    protected String getEdition() {
+        return edition;
+    }
+
+    /**
+     * Get the value of language.
+     *
+     * @return the value of language
+     */
+    protected String getLanguage() {
+        return language;
+    }
+
+    /**
+     * Get the value of swEdition.
+     *
+     * @return the value of swEdition
+     */
+    protected String getSwEdition() {
+        return swEdition;
+    }
+
+    /**
+     * Get the value of targetSw.
+     *
+     * @return the value of targetSw
+     */
+    protected String getTargetSw() {
+        return targetSw;
+    }
+
+    /**
+     * Get the value of targetHw.
+     *
+     * @return the value of targetHw
+     */
+    protected String getTargetHw() {
+        return targetHw;
+    }
+
+    /**
+     * Get the value of other.
+     *
+     * @return the value of other
+     */
+    protected String getOther() {
+        return other;
     }
 
     /**
