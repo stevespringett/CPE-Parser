@@ -223,7 +223,8 @@ public final class Convert {
         if (LogicalValue.ANY.getAbbreviation().equals(value) || LogicalValue.NA.getAbbreviation().equals(value)) {
             return value;
         }
-        return value.replaceAll("\\\\([._-])", "$1").replaceAll("(\\\\[^._-])", "\\\\$1");
+        //unquote '.', '_', and '-'
+        return value.replaceAll("\\\\([._-])", "$1");
     }
 
     /**
@@ -240,7 +241,7 @@ public final class Convert {
         if (LogicalValue.ANY.getAbbreviation().equals(value) || LogicalValue.NA.getAbbreviation().equals(value)) {
             return value;
         }
-        return value.replaceAll("([._-])", "\\\\$1").replaceAll("\\\\(\\\\[^._-])", "$1");
+        return value.replaceAll("([._-])", "\\\\$1");
     }
 
     /**

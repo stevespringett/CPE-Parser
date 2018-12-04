@@ -17,20 +17,14 @@
  */
 package us.springett.parsers.cpe.util;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.junit.After;
-import org.junit.AfterClass;
 import us.springett.parsers.cpe.values.LogicalValue;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
-import us.springett.parsers.cpe.exceptions.CpeValidationException;
 
 /**
  *
@@ -40,22 +34,6 @@ public class ConvertTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     /**
      * Test of toWellFormed method, of class Convert.
@@ -336,12 +314,27 @@ public class ConvertTest {
 
         value = "visual_c\\+\\+";
         //TODO - is the quoting of the underscore correct
-        expResult = "visual_c\\\\+\\\\+";
+        expResult = "visual_c\\+\\+";
         result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
 
         value = "test\\:";
-        expResult = "test\\\\:";
+        expResult = "test\\:";
+        result = Convert.wellFormedToFS(value);
+        assertEquals(expResult, result);
+        
+        value = "1\\.2\\.3";
+        expResult = "1.2.3";
+        result = Convert.wellFormedToFS(value);
+        assertEquals(expResult, result);
+        
+        value = "1\\-3";
+        expResult = "1-3";
+        result = Convert.wellFormedToFS(value);
+        assertEquals(expResult, result);
+        
+        value = "1\\_3";
+        expResult = "1_3";
         result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
     }
@@ -386,7 +379,7 @@ public class ConvertTest {
         result = Convert.fsToWellFormed(value);
         assertEquals(expResult, result);
 
-        value = "visual_c\\\\+\\\\+";
+        value = "visual_c\\+\\+";
         expResult = "visual\\_c\\+\\+";
         result = Convert.fsToWellFormed(value);
         assertEquals(expResult, result);
@@ -414,8 +407,8 @@ public class ConvertTest {
         assertEquals(expResult.toString(), result.toString());
         
         
-        value = "test\\:pattern";
-        expResult = Pattern.compile("test\\\\\\:pattern");
+        value = "test\\:Pattern1";
+        expResult = Pattern.compile("test\\\\\\:Pattern1");
         result = Convert.wellFormedToPattern(value);
         assertEquals(expResult.toString(), result.toString());
         

@@ -96,7 +96,7 @@ public class CpeParserTest {
         Assert.assertEquals("*", cpe.getTargetHw());
         Assert.assertEquals("?", cpe.getOther());
 
-        cpe = CpeParser.parse23("cpe:2.3:a:test\\\\::guest_book:4.0:*:*:*:*:*:*:*");
+        cpe = CpeParser.parse23("cpe:2.3:a:test\\::guest_book:4.0:*:*:*:*:*:*:*");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("test:", cpe.getVendor());
         Assert.assertEquals("guest_book", cpe.getProduct());
@@ -106,6 +106,20 @@ public class CpeParserTest {
         Assert.assertEquals("*", cpe.getLanguage());
         Assert.assertEquals("*", cpe.getSwEdition());
         Assert.assertEquals("*", cpe.getTargetSw());
+        Assert.assertEquals("*", cpe.getTargetHw());
+        Assert.assertEquals("*", cpe.getOther());
+        
+        
+        cpe = CpeParser.parse23("cpe:2.3:a:jenkins:pipeline\\:build_step:*:*:*:*:*:jenkins:*:*");
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("jenkins", cpe.getVendor());
+        Assert.assertEquals("pipeline:build_step", cpe.getProduct());
+        Assert.assertEquals("*", cpe.getVersion());
+        Assert.assertEquals("*", cpe.getUpdate());
+        Assert.assertEquals("*", cpe.getEdition());
+        Assert.assertEquals("*", cpe.getLanguage());
+        Assert.assertEquals("*", cpe.getSwEdition());
+        Assert.assertEquals("jenkins", cpe.getTargetSw());
         Assert.assertEquals("*", cpe.getTargetHw());
         Assert.assertEquals("*", cpe.getOther());
     }
@@ -313,7 +327,7 @@ public class CpeParserTest {
     public void testParseBindUnbindCycle() throws Exception {
         exception = ExpectedException.none();
 
-        String initial = "cpe:2.3:a:embarcadero:embarcadero_c\\\\+\\\\+builder_xe6:20.0.15596.9843:*:*:en:*:*:*:other";
+        String initial = "cpe:2.3:a:embarcadero:embarcadero_c\\+\\+builder_xe6:20.0.15596.9843:*:*:en:*:*:*:other";
         String cpeString = initial;
         for (int x = 0; x < 10; x++) {
             Cpe cpe = CpeParser.parse(cpeString);

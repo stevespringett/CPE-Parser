@@ -67,8 +67,8 @@ public class Cpe23PartIterator implements Iterator<String> {
             if (cpe.charAt(end) == ':') {
                 break;
             }
-            if (cpe.charAt(end) == '\\' && (end + 2) < cpe.length() && cpe.charAt(end + 1) == '\\') {
-                end += 2;
+            if (cpe.charAt(end) == '\\' && (end + 1) < cpe.length()) {
+                end += 1;
             }
         }
         String part = cpe.substring(pos, end);
