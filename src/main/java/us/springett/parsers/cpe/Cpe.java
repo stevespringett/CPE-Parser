@@ -110,7 +110,7 @@ public class Cpe implements Serializable {
      * @throws CpeValidationException thrown if one of the CPE entries is
      * invalid
      */
-    Cpe(Part part, String vendor, String product, String version,
+    public Cpe(Part part, String vendor, String product, String version,
             String update, String edition, String language, String swEdition,
             String targetSw, String targetHw, String other) throws CpeValidationException {
 
