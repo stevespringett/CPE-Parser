@@ -33,54 +33,47 @@ public class CpeBuilder {
     /**
      * The part type of the CPE.
      */
-    private Part part;
+    private Part part = Part.ANY;
     /**
      * The vendor component of the CPE.
      */
-    private String vendor;
+    private String vendor = LogicalValue.ANY.getAbbreviation();
     /**
      * The product component of the CPE.
      */
-    private String product;
+    private String product = LogicalValue.ANY.getAbbreviation();
     /**
      * The version component of the CPE.
      */
-    private String version;
+    private String version = LogicalValue.ANY.getAbbreviation();
     /**
      * The update component of the CPE.
      */
-    private String update;
+    private String update = LogicalValue.ANY.getAbbreviation();
     /**
      * The edition component of the CPE.
      */
-    private String edition;
+    private String edition = LogicalValue.ANY.getAbbreviation();
     /**
      * The language component of the CPE.
      */
-    private String language;
+    private String language = LogicalValue.ANY.getAbbreviation();
     /**
      * The swEdition component of the CPE. Introduced with CPE 2.3.
      */
-    private String swEdition;
+    private String swEdition = LogicalValue.ANY.getAbbreviation();
     /**
      * The targetSw component of the CPE. Introduced with CPE 2.3.
      */
-    private String targetSw;
+    private String targetSw = LogicalValue.ANY.getAbbreviation();
     /**
      * The targetHw component of the CPE. Introduced with CPE 2.3.
      */
-    private String targetHw;
+    private String targetHw = LogicalValue.ANY.getAbbreviation();
     /**
      * The other component of the CPE. Introduced with CPE 2.3.
      */
-    private String other;
-
-    /**
-     * Constructs a new CPE Builder.
-     */
-    public CpeBuilder() {
-        reset();
-    }
+    private String other = LogicalValue.ANY.getAbbreviation();
 
     /**
      * Resets the CPE Builder to a clean state.
