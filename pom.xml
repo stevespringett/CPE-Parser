@@ -116,12 +116,6 @@
             <version>${logback.classic.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.8</version>
-            <type>jar</type>
-        </dependency>
     </dependencies>
 
     <build>

@@ -19,7 +19,6 @@ package us.springett.parsers.cpe.util;
 
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
@@ -247,7 +246,7 @@ public final class Validate {
                 }
             }
             if (parts.length > 5) {
-                if ("*".equals(parts[4])) {
+                if ("*".equals(parts[5])) {
                     LOG.warn("The CPE (" + value + ") has an invalid update - asterisk");
                     return Status.INVALID;
                 }
@@ -259,7 +258,7 @@ public final class Validate {
             }
             if (parts.length > 6) {
                 if (parts[6].startsWith("~")) {
-                    if (StringUtils.countMatches(parts[6], '~') != 5) {
+                    if (countCharacter(parts[6], '~') != 5) {
                         LOG.warn("The CPE (" + value + ") has an invalid packed edition - too many entries");
                         return Status.INVALID;
                     }
@@ -347,6 +346,17 @@ public final class Validate {
             return Status.INVALID;
         }
         return Status.VALID;
+    }
+
+    /**
+     * Counts the number of times the char c is contained in the value.
+     *
+     * @param value the string to search
+     * @param c the character to count
+     * @return the number of times the char c is contained in the value
+     */
+    private static long countCharacter(String value, char c) {
+        return value.chars().filter(s -> s == c).count();
     }
 
     /**

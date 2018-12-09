@@ -467,13 +467,162 @@ public class CpeTest {
     @Test
     public void testHashCode() throws Exception {
         CpeBuilder builder = new CpeBuilder();
-        Cpe left = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
-        Cpe right = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        Cpe instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
 
-        int hashl = left.hashCode();
-        int hashr = right.hashCode();
-        assertEquals(left, right);
+        assertEquals(instance.hashCode(), instance.hashCode());
 
+    }
+
+    /**
+     * Test of compareTo method, of class Cpe.
+     *
+     * @throws Exception thrown if there is an error
+     */
+    @Test
+    public void testCompareTo() throws Exception {
+        Cpe instance = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        Cpe obj = instance;
+        int expResult = 0;
+        int result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 0;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 1;
+        obj = new Cpe(Part.APPLICATION, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.OPERATING_SYSTEM, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "avendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "zvendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "aproduct", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "zproduct", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "aversion", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "zversion", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "aupdate",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "zupdate",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "aedition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "zedition", "language", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "alanguage", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "zlanguage", "swEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "language", "aswEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "language", "zswEdition", "targetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "atargetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "ztargetSw", "targetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = 1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "atargetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "ztargetHw", "other");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+        expResult = 1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "aother");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
+
+        expResult = -1;
+        obj = new Cpe(Part.HARDWARE_DEVICE, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "zother");
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
     }
 
     /**

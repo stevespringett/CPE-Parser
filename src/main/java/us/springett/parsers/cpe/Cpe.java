@@ -34,7 +34,7 @@ import us.springett.parsers.cpe.values.LogicalValue;
  *
  * @author Jeremy Long
  */
-public class Cpe implements Serializable {
+public class Cpe implements Comparable<Cpe>, Serializable {
 
     private static final long serialVersionUID = 5446537216395895498L;
 
@@ -564,6 +564,91 @@ public class Cpe implements Serializable {
     @Override
     public String toString() {
         return toCpe23FS();
+    }
+
+    /**
+     * CompareTo is used for sorting, this does not implement any CPE Matching
+     * rules.
+     *
+     * @param o the CPE to compare
+     * @return the sort order
+     */
+    @Override
+    public int compareTo(Cpe o) {
+        final int before = -1;
+        final int equal = 0;
+        final int after = 1;
+
+        if (this == o) {
+            return equal;
+        }
+        int r = part.getAbbreviation().compareTo(o.part.getAbbreviation());
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        r = vendor.compareTo(o.vendor);
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        r = product.compareTo(o.product);
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        r = version.compareTo(o.version);
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        r = update.compareTo(o.update);
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        r = edition.compareTo(o.edition);
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        r = language.compareTo(o.language);
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        r = swEdition.compareTo(o.swEdition);
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        r = targetSw.compareTo(o.targetSw);
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        r = targetHw.compareTo(o.targetHw);
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        r = other.compareTo(o.other);
+        if (r < 0) {
+            return before;
+        } else if (r > 0) {
+            return after;
+        }
+        return equal;
     }
 
 }
