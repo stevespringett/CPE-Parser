@@ -623,6 +623,14 @@ public class CpeTest {
                 "edition", "language", "swEdition", "targetSw", "targetHw", "zother");
         result = instance.compareTo(obj);
         assertEquals(expResult, result);
+
+        expResult = -1;
+        CpeBuilder builder = new CpeBuilder();
+
+        instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("3.0.0").build();
+        obj = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
+        result = instance.compareTo(obj);
+        assertEquals(expResult, result);
     }
 
     /**
@@ -771,5 +779,63 @@ public class CpeTest {
         assertFalse(Cpe.compareAttributes("abc", "abcdef"));
         assertTrue(Cpe.compareAttributes("abc*", "abcdef"));
         assertFalse(Cpe.compareAttributes("abc??", "abcdef"));
+    }
+
+    /**
+     * Test of compareVersions method, of class Cpe.
+     */
+    @Test
+    public void testCompareVersions() {
+        String left = "2.1.10";
+        String right = "2.1.10";
+        assertTrue(Cpe.compareVersions(left, right) == 0);
+
+        left = "2.1";
+        right = "2.1.10";
+        assertTrue(Cpe.compareVersions(left, right) < 0);
+
+        left = "2.1.10";
+        right = "2.1";
+        assertTrue(Cpe.compareVersions(left, right) > 0);
+
+        left = "2.1.42";
+        right = "2.3.21";
+        assertTrue(Cpe.compareVersions(left, right) < 0);
+
+        left = "2.1.10";
+        right = "2.1.10-186";
+        assertTrue(Cpe.compareVersions(left, right) < 0);
+
+        left = "10.01";
+        right = "10.1";
+        assertTrue(Cpe.compareVersions(left, right) < 0);
+
+        left = "10.1";
+        right = "10.01";
+        assertTrue(Cpe.compareVersions(left, right) > 0);
+
+        left = "5.1.23a";
+        right = "5.1.23a";
+        assertTrue(Cpe.compareVersions(left, right) == 0);
+
+        left = "5.1.23a";
+        right = "5.1.23b";
+        assertTrue(Cpe.compareVersions(left, right) < 0);
+
+        left = "5.1.23b";
+        right = "5.1.23a";
+        assertTrue(Cpe.compareVersions(left, right) > 0);
+
+        left = "5.1.9223372036854775807152";
+        right = "5.1.932";
+        assertTrue(Cpe.compareVersions(left, right) < 0);
+
+        left = "5.1.932";
+        right = "5.1.9223372036854775807152";
+        assertTrue(Cpe.compareVersions(left, right) > 0);
+
+        left = "alpha";
+        right = "alpha";
+        assertTrue(Cpe.compareVersions(left, right) == 0);
     }
 }

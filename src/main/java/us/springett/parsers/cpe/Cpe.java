@@ -20,6 +20,8 @@ package us.springett.parsers.cpe;
 import us.springett.parsers.cpe.values.Part;
 import us.springett.parsers.cpe.util.Convert;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,8 +35,10 @@ import us.springett.parsers.cpe.values.LogicalValue;
  * Object representation of a Common Platform Enumeration (CPE).
  *
  * @author Jeremy Long
+ * @param <E> The subclass of Cpe so that the Comparable Interface can be
+ * overriden
  */
-public class Cpe implements Comparable<Cpe>, Serializable {
+public class Cpe<E extends Cpe> implements Comparable<E>, Serializable {
 
     private static final long serialVersionUID = 5446537216395895498L;
 
@@ -600,7 +604,7 @@ public class Cpe implements Comparable<Cpe>, Serializable {
         } else if (r > 0) {
             return after;
         }
-        r = version.compareTo(o.version);
+        r = compareVersions(version, o.version);
         if (r < 0) {
             return before;
         } else if (r > 0) {
@@ -649,6 +653,111 @@ public class Cpe implements Comparable<Cpe>, Serializable {
             return after;
         }
         return equal;
+    }
+
+    /**
+     * Compare version numbers to obtain the correct ordering.
+     *
+     * @param left the left hand version for comparison
+     * @param right the right hand version for comparison
+     * @return <code>-1</code> if left is before the right; <code>0</code> if
+     * the left and right are equal;<code>1</code> if left is after the right
+     */
+    protected static int compareVersions(String left, String right) {
+        int result = 0;
+        //while the strings are well formed - the backslashes will be in the exact
+        //same location in equal strings - for version numbers the cost of conversion
+        //should not be incurred
+        //final List<String> subLeft = splitVersion(Convert.fromWellFormed(left));
+        //final List<String> subRight = splitVersion(Convert.fromWellFormed(right));
+        final List<String> subLeft = splitVersion(left);
+        final List<String> subRight = splitVersion(right);
+        final int subMax = (subLeft.size() <= subRight.size()) ? subLeft.size() : subRight.size();
+        for (int x = 0; result == 0 && x < subMax; x++) {
+            if (isPositiveInteger(subLeft.get(x)) && isPositiveInteger(subRight.get(x))) {
+                try {
+                    result = Long.valueOf(subLeft.get(x)).compareTo(Long.valueOf(subRight.get(x)));
+                } catch (NumberFormatException ex) {
+                    //infeasible path - unless one of the values is larger then a long?
+                    if (!subLeft.get(x).equalsIgnoreCase(subRight.get(x))) {
+                        result = subLeft.get(x).compareTo(subRight.get(x));
+                    }
+                }
+            } else {
+                result = subLeft.get(x).compareTo(subRight.get(x));
+            }
+            if (result != 0) {
+                return result;
+            }
+        }
+
+        if (subLeft.size() > subRight.size()) {
+            result = 1;
+        }
+        if (subRight.size() > subLeft.size()) {
+            result = -1;
+        }
+
+        return result;
+    }
+
+    /**
+     * Method that split versions for '.', '|', ':' and '-". Then if a token
+     * start with a number and then contains letters, it will split it too. For
+     * example "12a" is split into ["12", "a"]. This is done to support correct
+     * comparison of "5.0.3a", "5.0.9" and "5.0.30".
+     *
+     * @param s the string to split
+     * @return an Array of String containing the tokens to be compared
+     */
+    private static List<String> splitVersion(String s) {
+        //TODO improve performance by removing regex.
+        final Pattern pattern = Pattern.compile("^([\\d]+?)(.*)$");
+        final String[] splitString = s.split("(\\.|:-)");
+
+        final List<String> res = new ArrayList<>();
+        for (String token : splitString) {
+            if (token.matches("^[\\d]+?[A-z]+")) {
+                final Matcher matcher = pattern.matcher(token);
+                matcher.find();
+                final String g1 = matcher.group(1);
+                final String g2 = matcher.group(2);
+
+                res.add(g1);
+                res.add(g2);
+            } else {
+                res.add(token);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Determines if the string passed in is a positive integer. To be counted
+     * as a positive integer, the string must only contain 0-9 and must not have
+     * any leading zeros (though "0" is a valid positive integer).
+     *
+     * @param str the string to test
+     * @return true if the string only contains 0-9, otherwise false.
+     */
+    private static boolean isPositiveInteger(final String str) {
+        if (str == null || str.isEmpty()) {
+            return false;
+        }
+
+        // numbers with leading zeros should not be treated as numbers
+        // (e.g. when comparing "01" <-> "1")
+        if (str.charAt(0) == '0' && str.length() > 1) {
+            return false;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            final char c = str.charAt(i);
+            if (c < '0' || c > '9') {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
