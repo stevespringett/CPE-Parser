@@ -98,6 +98,16 @@ public class ConvertTest {
         result = Convert.fromWellFormed(value);
         assertEquals(expResult, result);
 
+        value = "c\\+\\+";
+        expResult = "c++";
+        result = Convert.fromWellFormed(value);
+        assertEquals(expResult, result);
+
+        value = "\\\\test";
+        expResult = "\\test";
+        result = Convert.fromWellFormed(value);
+        assertEquals(expResult, result);
+
         value = "test_value";
         expResult = "test_value";
         result = Convert.fromWellFormed(value);
@@ -322,17 +332,17 @@ public class ConvertTest {
         expResult = "test\\:";
         result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
-        
+
         value = "1\\.2\\.3";
         expResult = "1.2.3";
         result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
-        
+
         value = "1\\-3";
         expResult = "1-3";
         result = Convert.wellFormedToFS(value);
         assertEquals(expResult, result);
-        
+
         value = "1\\_3";
         expResult = "1_3";
         result = Convert.wellFormedToFS(value);
@@ -400,18 +410,17 @@ public class ConvertTest {
         expResult = Pattern.compile(".abc.");
         result = Convert.wellFormedToPattern(value);
         assertEquals(expResult.toString(), result.toString());
-        
+
         value = "*?abc?*";
         expResult = Pattern.compile(".*.abc..*");
         result = Convert.wellFormedToPattern(value);
         assertEquals(expResult.toString(), result.toString());
-        
-        
+
         value = "test\\:Pattern1";
         expResult = Pattern.compile("test\\\\\\:Pattern1");
         result = Convert.wellFormedToPattern(value);
         assertEquals(expResult.toString(), result.toString());
-        
+
 //        String test = "test123a\\*bc\\[\\]";
 //        Matcher m = expResult.matcher(test);
 //        assertTrue(m.matches());
