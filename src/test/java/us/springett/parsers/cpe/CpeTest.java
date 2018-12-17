@@ -17,6 +17,9 @@
  */
 package us.springett.parsers.cpe;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import us.springett.parsers.cpe.values.Part;
@@ -473,6 +476,19 @@ public class CpeTest {
 
     }
 
+    @Test
+    public void testSort() throws Exception {
+        List<Cpe> instance = new ArrayList<>();
+        CpeBuilder builder = new CpeBuilder();
+        instance.add(builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build());
+        instance.add(builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("3.0.0").build());
+        instance.add(builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("5.0.0").build());
+        instance.add(builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("1.0.0").build());
+        assertEquals("1.0.0", instance.get(3).getVersion());
+        Collections.sort(instance);
+
+    }
+
     /**
      * Test of compareTo method, of class Cpe.
      *
@@ -627,9 +643,9 @@ public class CpeTest {
         expResult = -1;
         CpeBuilder builder = new CpeBuilder();
 
-        instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("3.0.0").build();
+        Cpe instance2 = (Cpe) builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("3.0.0").build();
         obj = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
-        result = instance.compareTo(obj);
+        result = instance2.compareTo(obj);
         assertEquals(expResult, result);
     }
 
