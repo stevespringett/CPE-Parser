@@ -430,4 +430,22 @@ public class ConvertTest {
         assertEquals(expResult.toString(), result.toString());
 
     }
+
+    @Test
+    public void testCpeUriToWellFormedLenient() throws Exception {
+        exception = ExpectedException.none();
+        String value = "te/st";
+        String expResult = "te\\/st";
+        String result = Convert.cpeUriToWellFormed(value, true);
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testCpeUriToWellFormedLenientException() throws Exception {
+        exception.expect(CpeEncodingException.class);
+        String value = "te/st";
+        String expResult = "te\\/st";
+        String result = Convert.cpeUriToWellFormed(value, false);
+        assertEquals(expResult, result);
+    }
 }

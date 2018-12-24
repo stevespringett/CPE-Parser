@@ -174,6 +174,21 @@ public final class Convert {
      * formed
      */
     public static String cpeUriToWellFormed(String value) throws CpeEncodingException {
+        return cpeUriToWellFormed(value, false);
+    }
+
+    /**
+     * CPE URI decodes the value into a well formed string. If the value is NULL
+     * or an empty string then a the LogicalValue.ANY ('*') is returned.
+     *
+     * @param value the CPE URI encoded string to convert
+     * @param lenient whether or not to enable lenient parsing of the CPE URI
+     * value
+     * @return the well formed string representation of the given value
+     * @throws CpeEncodingException thrown if the string provided is not well
+     * formed
+     */
+    public static String cpeUriToWellFormed(String value, boolean lenient) throws CpeEncodingException {
         if (value == null || value.isEmpty() || LogicalValue.ANY.getAbbreviation().equals(value)) {
             return LogicalValue.ANY.getAbbreviation();
         } else if (LogicalValue.NA.getAbbreviation().equals(value)) {
@@ -206,7 +221,11 @@ public final class Convert {
                             break;
                     }
                 } else {
-                    throw new CpeEncodingException("Invalid CPE URI component - unexpected characters");
+                    if (lenient) {
+                        sb.append('\\').append(c);
+                    } else {
+                        throw new CpeEncodingException("Invalid CPE URI component - unexpected characters");
+                    }
                 }
             }
             return sb.toString();

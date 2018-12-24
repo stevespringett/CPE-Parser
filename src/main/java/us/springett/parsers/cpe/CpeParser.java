@@ -39,7 +39,8 @@ public final class CpeParser {
     }
 
     /**
-     * Parses a CPE String into an object.
+     * Parses a CPE String into an object; the string can be formated as either
+     * a CPE 2.2 URI or CPE 2.3 Formatted String.
      *
      * @param cpeString the CPE string to parse
      * @return the CPE object represented by the given cpeString
@@ -49,7 +50,29 @@ public final class CpeParser {
         if (cpeString == null) {
             throw new CpeParsingException("CPE String is null and cannot be parsed");
         } else if (cpeString.regionMatches(0, "cpe:/", 0, 5)) {
-            return parse22(cpeString);
+            return parse22(cpeString, false);
+        } else if (cpeString.regionMatches(0, "cpe:2.3:", 0, 8)) {
+            return parse23(cpeString);
+        }
+        throw new CpeParsingException("The CPE string specified does not conform to the CPE 2.2 or 2.3 specification");
+    }
+
+    /**
+     * Parses a CPE String into an object with the option of parsing CPE 2.2 URI
+     * strings in lenient mode - allowing for CPE values that do not adhere to
+     * the specification.
+     *
+     * @param cpeString the CPE string to parse
+     * @param lenient when <code>true</code> the CPE 2.2 parser will put in
+     * lenient mode attempting to parse invalid CPE URI values.
+     * @return the CPE object represented by the given cpeString
+     * @throws CpeParsingException thrown if the cpeString is invalid
+     */
+    public static Cpe parse(String cpeString, boolean lenient) throws CpeParsingException {
+        if (cpeString == null) {
+            throw new CpeParsingException("CPE String is null and cannot be parsed");
+        } else if (cpeString.regionMatches(0, "cpe:/", 0, 5)) {
+            return parse22(cpeString, lenient);
         } else if (cpeString.regionMatches(0, "cpe:2.3:", 0, 8)) {
             return parse23(cpeString);
         }
@@ -64,6 +87,19 @@ public final class CpeParser {
      * @throws CpeParsingException thrown if the cpeString is invalid
      */
     protected static Cpe parse22(String cpeString) throws CpeParsingException {
+        return parse22(cpeString, false);
+    }
+
+    /**
+     * Parses a CPE 2.2 URI.
+     *
+     * @param cpeString the CPE string to parse
+     * @param lenient when <code>true</code> the parser will put in lenient mode
+     * attempting to parse invalid CPE values.
+     * @return the CPE object represented by the cpeString
+     * @throws CpeParsingException thrown if the cpeString is invalid
+     */
+    protected static Cpe parse22(String cpeString, boolean lenient) throws CpeParsingException {
         if (cpeString == null || cpeString.isEmpty()) {
             throw new CpeParsingException("CPE String is null ir enpty - unable to parse");
         }
@@ -78,22 +114,22 @@ public final class CpeParser {
         try {
             cb.part(parts[1].substring(1));
             if (parts.length > 2) {
-                cb.wfVendor(Convert.cpeUriToWellFormed(parts[2]));
+                cb.wfVendor(Convert.cpeUriToWellFormed(parts[2], lenient));
             }
             if (parts.length > 3) {
-                cb.wfProduct(Convert.cpeUriToWellFormed(parts[3]));
+                cb.wfProduct(Convert.cpeUriToWellFormed(parts[3], lenient));
             }
             if (parts.length > 4) {
-                cb.wfVersion(Convert.cpeUriToWellFormed(parts[4]));
+                cb.wfVersion(Convert.cpeUriToWellFormed(parts[4], lenient));
             }
             if (parts.length > 5) {
-                cb.wfUpdate(Convert.cpeUriToWellFormed(parts[5]));
+                cb.wfUpdate(Convert.cpeUriToWellFormed(parts[5], lenient));
             }
             if (parts.length > 6) {
-                unpackEdition(parts[6], cb);
+                unpackEdition(parts[6], cb, lenient);
             }
             if (parts.length > 7) {
-                cb.wfLanguage(Convert.cpeUriToWellFormed(parts[7]));
+                cb.wfLanguage(Convert.cpeUriToWellFormed(parts[7], lenient));
             }
             return cb.build();
         } catch (CpeValidationException | CpeEncodingException ex) {
@@ -108,9 +144,10 @@ public final class CpeParser {
      *
      * @param edition the edition string to unpack
      * @param cb a reference to the CPE Builder to unpack the edition into
+     * @param lenient whether or not to use lenient parsing
      * @throws CpeParsingException thrown if the edition value is invalid
      */
-    protected static void unpackEdition(String edition, CpeBuilder cb) throws CpeParsingException {
+    protected static void unpackEdition(String edition, CpeBuilder cb, boolean lenient) throws CpeParsingException {
         if (edition == null || edition.isEmpty()) {
             return;
         }
@@ -118,25 +155,25 @@ public final class CpeParser {
             String[] unpacked = edition.split("~");
             if (edition.startsWith("~")) {
                 if (unpacked.length > 1) {
-                    cb.wfEdition(Convert.cpeUriToWellFormed(unpacked[1]));
+                    cb.wfEdition(Convert.cpeUriToWellFormed(unpacked[1], lenient));
                 }
                 if (unpacked.length > 2) {
-                    cb.wfSwEdition(Convert.cpeUriToWellFormed(unpacked[2]));
+                    cb.wfSwEdition(Convert.cpeUriToWellFormed(unpacked[2], lenient));
                 }
                 if (unpacked.length > 3) {
-                    cb.wfTargetSw(Convert.cpeUriToWellFormed(unpacked[3]));
+                    cb.wfTargetSw(Convert.cpeUriToWellFormed(unpacked[3], lenient));
                 }
                 if (unpacked.length > 4) {
-                    cb.wfTargetHw(Convert.cpeUriToWellFormed(unpacked[4]));
+                    cb.wfTargetHw(Convert.cpeUriToWellFormed(unpacked[4], lenient));
                 }
                 if (unpacked.length > 5) {
-                    cb.wfOther(Convert.cpeUriToWellFormed(unpacked[5]));
+                    cb.wfOther(Convert.cpeUriToWellFormed(unpacked[5], lenient));
                 }
                 if (unpacked.length > 6) {
                     throw new CpeParsingException("Invalid packed edition");
                 }
             } else {
-                cb.wfEdition(Convert.cpeUriToWellFormed(edition));
+                cb.wfEdition(Convert.cpeUriToWellFormed(edition, lenient));
             }
         } catch (CpeEncodingException ex) {
             throw new CpeParsingException(ex.getMessage());
