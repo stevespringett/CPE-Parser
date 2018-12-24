@@ -59,7 +59,15 @@ public final class Convert {
                 || LogicalValue.NA.getAbbreviation().equals(value)) {
             return value;
         }
-        return value.replaceAll("([^0-9A-Za-z])", "\\\\$1");
+        //return value.replaceAll("([^0-9A-Za-z])", "\\\\$1");
+        StringBuffer buffer = new StringBuffer(value);
+        for (int x = 0; x < buffer.length(); x++) {
+            char c = buffer.charAt(x);
+            if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
+                buffer.insert(x++, '\\');
+            }
+        }
+        return buffer.toString();
     }
 
     /**
@@ -74,7 +82,18 @@ public final class Convert {
         if (value == null) {
             return LogicalValue.ANY.getAbbreviation();
         }
-        return value.replaceAll("\\\\([^0-9A-Za-z])", "$1");
+        //return value.replaceAll("\\\\([^0-9A-Za-z])", "$1");
+        StringBuffer buffer = new StringBuffer(value);
+        char p = ' ';
+        for (int x = 0; x < buffer.length() - 1; x++) {
+            char c = buffer.charAt(x);
+            if (c == '\\' && p != '\\') {
+                buffer.delete(x, x + 1);
+                x -= 1;
+            }
+            p = c;
+        }
+        return buffer.toString();
     }
 
     /**

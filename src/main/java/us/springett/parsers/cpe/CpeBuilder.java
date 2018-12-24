@@ -33,59 +33,52 @@ public class CpeBuilder {
     /**
      * The part type of the CPE.
      */
-    private Part part;
+    private Part part = Part.ANY;
     /**
      * The vendor component of the CPE.
      */
-    private String vendor;
+    private String vendor = LogicalValue.ANY.getAbbreviation();
     /**
      * The product component of the CPE.
      */
-    private String product;
+    private String product = LogicalValue.ANY.getAbbreviation();
     /**
      * The version component of the CPE.
      */
-    private String version;
+    private String version = LogicalValue.ANY.getAbbreviation();
     /**
      * The update component of the CPE.
      */
-    private String update;
+    private String update = LogicalValue.ANY.getAbbreviation();
     /**
      * The edition component of the CPE.
      */
-    private String edition;
+    private String edition = LogicalValue.ANY.getAbbreviation();
     /**
      * The language component of the CPE.
      */
-    private String language;
+    private String language = LogicalValue.ANY.getAbbreviation();
     /**
      * The swEdition component of the CPE. Introduced with CPE 2.3.
      */
-    private String swEdition;
+    private String swEdition = LogicalValue.ANY.getAbbreviation();
     /**
      * The targetSw component of the CPE. Introduced with CPE 2.3.
      */
-    private String targetSw;
+    private String targetSw = LogicalValue.ANY.getAbbreviation();
     /**
      * The targetHw component of the CPE. Introduced with CPE 2.3.
      */
-    private String targetHw;
+    private String targetHw = LogicalValue.ANY.getAbbreviation();
     /**
      * The other component of the CPE. Introduced with CPE 2.3.
      */
-    private String other;
-
-    /**
-     * Constructs a new CPE Builder.
-     */
-    public CpeBuilder() {
-        reset();
-    }
+    private String other = LogicalValue.ANY.getAbbreviation();
 
     /**
      * Resets the CPE Builder to a clean state.
      */
-    private void reset() {
+    protected void reset() {
         part = Part.ANY;
         vendor = LogicalValue.ANY.getAbbreviation();
         product = LogicalValue.ANY.getAbbreviation();
@@ -544,6 +537,105 @@ public class CpeBuilder {
     public CpeBuilder wfOther(final String other) {
         this.other = other;
         return this;
+    }
+
+    /**
+     * Get the value of part.
+     *
+     * @return the value of part
+     */
+    protected Part getPart() {
+        return part;
+    }
+
+    /**
+     * Get the value of vendor.
+     *
+     * @return the value of vendor
+     */
+    protected String getVendor() {
+        return vendor;
+    }
+
+    /**
+     * Get the value of product.
+     *
+     * @return the value of product
+     */
+    protected String getProduct() {
+        return product;
+    }
+
+    /**
+     * Get the value of version.
+     *
+     * @return the value of version
+     */
+    protected String getVersion() {
+        return version;
+    }
+
+    /**
+     * Get the value of update.
+     *
+     * @return the value of update
+     */
+    protected String getUpdate() {
+        return update;
+    }
+
+    /**
+     * Get the value of edition.
+     *
+     * @return the value of edition
+     */
+    protected String getEdition() {
+        return edition;
+    }
+
+    /**
+     * Get the value of language.
+     *
+     * @return the value of language
+     */
+    protected String getLanguage() {
+        return language;
+    }
+
+    /**
+     * Get the value of swEdition.
+     *
+     * @return the value of swEdition
+     */
+    protected String getSwEdition() {
+        return swEdition;
+    }
+
+    /**
+     * Get the value of targetSw.
+     *
+     * @return the value of targetSw
+     */
+    protected String getTargetSw() {
+        return targetSw;
+    }
+
+    /**
+     * Get the value of targetHw.
+     *
+     * @return the value of targetHw
+     */
+    protected String getTargetHw() {
+        return targetHw;
+    }
+
+    /**
+     * Get the value of other.
+     *
+     * @return the value of other
+     */
+    protected String getOther() {
+        return other;
     }
 
     /**

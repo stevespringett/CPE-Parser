@@ -20,6 +20,8 @@ package us.springett.parsers.cpe;
 import us.springett.parsers.cpe.values.Part;
 import us.springett.parsers.cpe.util.Convert;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,10 +36,12 @@ import us.springett.parsers.cpe.values.LogicalValue;
  *
  * @author Jeremy Long
  */
-public class Cpe implements Serializable {
+public class Cpe implements ICpe, Serializable {
 
-    private static final long serialVersionUID = 5446537216395895498L;
-
+    /**
+     * The serial version UID.
+     */
+    private static final long serialVersionUID = 545319492322631053L;
     /**
      * The part type of the CPE.
      */
@@ -110,7 +114,7 @@ public class Cpe implements Serializable {
      * @throws CpeValidationException thrown if one of the CPE entries is
      * invalid
      */
-    Cpe(Part part, String vendor, String product, String version,
+    public Cpe(Part part, String vendor, String product, String version,
             String update, String edition, String language, String swEdition,
             String targetSw, String targetHw, String other) throws CpeValidationException {
 
@@ -196,6 +200,7 @@ public class Cpe implements Serializable {
      *
      * @return the part for the CPE entry
      */
+    @Override
     public Part getPart() {
         return part;
     }
@@ -207,6 +212,7 @@ public class Cpe implements Serializable {
      *
      * @return the vendor for the CPE entry
      */
+    @Override
     public String getVendor() {
         return Convert.fromWellFormed(vendor);
     }
@@ -218,6 +224,7 @@ public class Cpe implements Serializable {
      *
      * @return the product for the CPE entry
      */
+    @Override
     public String getProduct() {
         return Convert.fromWellFormed(product);
     }
@@ -229,6 +236,7 @@ public class Cpe implements Serializable {
      *
      * @return the version for the CPE entry
      */
+    @Override
     public String getVersion() {
         return Convert.fromWellFormed(version);
     }
@@ -240,6 +248,7 @@ public class Cpe implements Serializable {
      *
      * @return the update for the CPE entry
      */
+    @Override
     public String getUpdate() {
         return Convert.fromWellFormed(update);
     }
@@ -251,6 +260,7 @@ public class Cpe implements Serializable {
      *
      * @return the edition for the CPE entry
      */
+    @Override
     public String getEdition() {
         return Convert.fromWellFormed(edition);
     }
@@ -262,6 +272,7 @@ public class Cpe implements Serializable {
      *
      * @return the language for the CPE entry
      */
+    @Override
     public String getLanguage() {
         return Convert.fromWellFormed(language);
     }
@@ -273,6 +284,7 @@ public class Cpe implements Serializable {
      *
      * @return the software edition for the CPE entry
      */
+    @Override
     public String getSwEdition() {
         return Convert.fromWellFormed(swEdition);
     }
@@ -284,6 +296,7 @@ public class Cpe implements Serializable {
      *
      * @return the target software environment for the CPE entry.
      */
+    @Override
     public String getTargetSw() {
         return Convert.fromWellFormed(targetSw);
     }
@@ -295,6 +308,7 @@ public class Cpe implements Serializable {
      *
      * @return the target hardware environment for the CPE entry
      */
+    @Override
     public String getTargetHw() {
         return Convert.fromWellFormed(targetHw);
     }
@@ -306,8 +320,131 @@ public class Cpe implements Serializable {
      *
      * @return the other component for the CPE entry
      */
+    @Override
     public String getOther() {
         return Convert.fromWellFormed(other);
+    }
+
+    /**
+     * <p>
+     * Gets the well formed formatted vendor for the CPE entry.</p>
+     * <pre>cpe:2.3:[part]:<b>[vendor]</b>:[product]:[version]:[update]:[edition]:[language]:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
+     *
+     * @return the vendor for the CPE entry
+     */
+    @Override
+    public String getWellFormedVendor() {
+        return vendor;
+    }
+
+    /**
+     * <p>
+     * Gets the well formed formatted product for the CPE entry.</p>
+     * <pre>cpe:2.3:[part]:[vendor]:<b>[product]</b>:[version]:[update]:[edition]:[language]:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
+     *
+     * @return the product for the CPE entry
+     */
+    @Override
+    public String getWellFormedProduct() {
+        return product;
+    }
+
+    /**
+     * <p>
+     * Gets the well formed formatted version for the CPE entry.</p>
+     * <pre>cpe:2.3:[part]:[vendor]:[product]:<b>[version]</b>:[update]:[edition]:[language]:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
+     *
+     * @return the version for the CPE entry
+     */
+    @Override
+    public String getWellFormedVersion() {
+        return version;
+    }
+
+    /**
+     * <p>
+     * Gets the well formed formatted update for the CPE entry.</p>
+     * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:<b>[update]</b>:[edition]:[language]:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
+     *
+     * @return the update for the CPE entry
+     */
+    @Override
+    public String getWellFormedUpdate() {
+        return update;
+    }
+
+    /**
+     * <p>
+     * Gets the well formed formatted edition for the CPE entry.</p>
+     * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:<b>[edition]</b>:[language]:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
+     *
+     * @return the edition for the CPE entry
+     */
+    @Override
+    public String getWellFormedEdition() {
+        return edition;
+    }
+
+    /**
+     * <p>
+     * Gets the well formed formatted language for the CPE entry.</p>
+     * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:[edition]:<b>[language]</b>:[sw_edition]:[target_sw]:[target_hw]:[other]</pre>
+     *
+     * @return the language for the CPE entry
+     */
+    @Override
+    public String getWellFormedLanguage() {
+        return language;
+    }
+
+    /**
+     * <p>
+     * Gets the well formed formatted software edition for the CPE entry.</p>
+     * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:[edition]:[language]:<b>[sw_edition]</b>:[target_sw]:[target_hw]:[other]</pre>
+     *
+     * @return the software edition for the CPE entry
+     */
+    @Override
+    public String getWellFormedSwEdition() {
+        return swEdition;
+    }
+
+    /**
+     * <p>
+     * Gets the well formed formatted target software environment for the CPE
+     * entry.</p>
+     * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:[edition]:[language]:[sw_edition]:<b>[target_sw]</b>:[target_hw]:[other]</pre>
+     *
+     * @return the target software environment for the CPE entry.
+     */
+    @Override
+    public String getWellFormedTargetSw() {
+        return targetSw;
+    }
+
+    /**
+     * <p>
+     * Gets the well formed formatted target hardware environment for the CPE
+     * entry.</p>
+     * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:[edition]:[language]:[sw_edition]:[target_sw]:<b>[target_hw]</b>:[other]</pre>
+     *
+     * @return the target hardware environment for the CPE entry
+     */
+    @Override
+    public String getWellFormedTargetHw() {
+        return targetHw;
+    }
+
+    /**
+     * <p>
+     * Gets the well formed formatted other component for the CPE entry.</p>
+     * <pre>cpe:2.3:[part]:[vendor]:[product]:[version]:[update]:[edition]:[language]:[sw_edition]:[target_sw]:[target_hw]:<b>[other]</b></pre>
+     *
+     * @return the other component for the CPE entry
+     */
+    @Override
+    public String getWellFormedOther() {
+        return other;
     }
 
     /**
@@ -316,6 +453,7 @@ public class Cpe implements Serializable {
      * @return the CPE 2.2 URI format of the CPE
      * @throws CpeEncodingException thrown if the CPE is not well formed
      */
+    @Override
     public String toCpe22Uri() throws CpeEncodingException {
         StringBuilder sb = new StringBuilder("cpe:/");
         sb.append(Convert.wellFormedToCpeUri(part)).append(":");
@@ -352,6 +490,7 @@ public class Cpe implements Serializable {
      *
      * @return the CPE 2.3 Formatted String
      */
+    @Override
     public String toCpe23FS() {
         return String.format("cpe:2.3:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s",
                 Convert.wellFormedToFS(part),
@@ -395,19 +534,20 @@ public class Cpe implements Serializable {
      * @return <code>true</code> if the CPE matches the target; otherwise
      * <code>false</code>
      */
-    public boolean matches(Cpe target) {
+    @Override
+    public boolean matches(ICpe target) {
         boolean result = true;
-        result &= compareAttributes(this.part, target.part);
-        result &= compareAttributes(this.vendor, target.vendor);
-        result &= compareAttributes(this.product, target.product);
-        result &= compareAttributes(this.version, target.version);
-        result &= compareAttributes(this.update, target.update);
-        result &= compareAttributes(this.edition, target.edition);
-        result &= compareAttributes(this.language, target.language);
-        result &= compareAttributes(this.swEdition, target.swEdition);
-        result &= compareAttributes(this.targetSw, target.targetSw);
-        result &= compareAttributes(this.targetHw, target.targetHw);
-        result &= compareAttributes(this.other, target.other);
+        result &= compareAttributes(this.part, target.getPart());
+        result &= compareAttributes(this.vendor, target.getWellFormedVendor());
+        result &= compareAttributes(this.product, target.getWellFormedProduct());
+        result &= compareAttributes(this.version, target.getWellFormedVersion());
+        result &= compareAttributes(this.update, target.getWellFormedUpdate());
+        result &= compareAttributes(this.edition, target.getWellFormedEdition());
+        result &= compareAttributes(this.language, target.getWellFormedLanguage());
+        result &= compareAttributes(this.swEdition, target.getWellFormedSwEdition());
+        result &= compareAttributes(this.targetSw, target.getWellFormedTargetSw());
+        result &= compareAttributes(this.targetHw, target.getWellFormedTargetHw());
+        result &= compareAttributes(this.other, target.getWellFormedOther());
         return result;
     }
 
@@ -422,7 +562,8 @@ public class Cpe implements Serializable {
      * @return <code>true</code> if the target CPE matches CPE; otherwise
      * <code>false</code>
      */
-    public boolean matchedBy(Cpe target) {
+    @Override
+    public boolean matchedBy(ICpe target) {
         return target.matches(this);
     }
 
@@ -566,4 +707,198 @@ public class Cpe implements Serializable {
         return toCpe23FS();
     }
 
+    /**
+     * CompareTo is used for sorting, this does not implement any CPE Matching
+     * rules.
+     *
+     * @param o the CPE to compare
+     * @return the sort order
+     */
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof ICpe) {
+            ICpe other = (ICpe) o;
+
+            final int before = -1;
+            final int equal = 0;
+            final int after = 1;
+
+            if (this == other) {
+                return equal;
+            }
+            int r = getPart().getAbbreviation().compareTo(other.getPart().getAbbreviation());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            r = getVendor().compareTo(other.getVendor());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            r = getProduct().compareTo(other.getProduct());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            r = compareVersions(getVersion(), other.getVersion());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            r = getUpdate().compareTo(other.getUpdate());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            r = getEdition().compareTo(other.getEdition());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            r = getLanguage().compareTo(other.getLanguage());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            r = getSwEdition().compareTo(other.getSwEdition());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            r = getTargetSw().compareTo(other.getTargetSw());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            r = getTargetHw().compareTo(other.getTargetHw());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            r = getOther().compareTo(other.getOther());
+            if (r < 0) {
+                return before;
+            } else if (r > 0) {
+                return after;
+            }
+            return equal;
+        }
+        throw new RuntimeException("Unable to compare " + o.getClass().getCanonicalName());
+    }
+
+    /**
+     * Compare version numbers to obtain the correct ordering.
+     *
+     * @param left the left hand version for comparison
+     * @param right the right hand version for comparison
+     * @return <code>-1</code> if left is before the right; <code>0</code> if
+     * the left and right are equal;<code>1</code> if left is after the right
+     */
+    protected static int compareVersions(String left, String right) {
+        int result = 0;
+        //while the strings are well formed - the backslashes will be in the exact
+        //same location in equal strings - for version numbers the cost of conversion
+        //should not be incurred
+        //final List<String> subLeft = splitVersion(Convert.fromWellFormed(left));
+        //final List<String> subRight = splitVersion(Convert.fromWellFormed(right));
+        final List<String> subLeft = splitVersion(left);
+        final List<String> subRight = splitVersion(right);
+        final int subMax = (subLeft.size() <= subRight.size()) ? subLeft.size() : subRight.size();
+        for (int x = 0; result == 0 && x < subMax; x++) {
+            if (isPositiveInteger(subLeft.get(x)) && isPositiveInteger(subRight.get(x))) {
+                try {
+                    result = Long.valueOf(subLeft.get(x)).compareTo(Long.valueOf(subRight.get(x)));
+                } catch (NumberFormatException ex) {
+                    //infeasible path - unless one of the values is larger then a long?
+                    if (!subLeft.get(x).equalsIgnoreCase(subRight.get(x))) {
+                        result = subLeft.get(x).compareTo(subRight.get(x));
+                    }
+                }
+            } else {
+                result = subLeft.get(x).compareTo(subRight.get(x));
+            }
+            if (result != 0) {
+                return result;
+            }
+        }
+
+        if (subLeft.size() > subRight.size()) {
+            result = 1;
+        }
+        if (subRight.size() > subLeft.size()) {
+            result = -1;
+        }
+
+        return result;
+    }
+
+    /**
+     * Method that split versions for '.', '|', ':' and '-". Then if a token
+     * start with a number and then contains letters, it will split it too. For
+     * example "12a" is split into ["12", "a"]. This is done to support correct
+     * comparison of "5.0.3a", "5.0.9" and "5.0.30".
+     *
+     * @param s the string to split
+     * @return an Array of String containing the tokens to be compared
+     */
+    private static List<String> splitVersion(String s) {
+        //TODO improve performance by removing regex.
+        final Pattern pattern = Pattern.compile("^([\\d]+?)(.*)$");
+        final String[] splitString = s.split("(\\.|:-)");
+
+        final List<String> res = new ArrayList<>();
+        for (String token : splitString) {
+            if (token.matches("^[\\d]+?[A-z]+")) {
+                final Matcher matcher = pattern.matcher(token);
+                matcher.find();
+                final String g1 = matcher.group(1);
+                final String g2 = matcher.group(2);
+
+                res.add(g1);
+                res.add(g2);
+            } else {
+                res.add(token);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * Determines if the string passed in is a positive integer. To be counted
+     * as a positive integer, the string must only contain 0-9 and must not have
+     * any leading zeros (though "0" is a valid positive integer).
+     *
+     * @param str the string to test
+     * @return true if the string only contains 0-9, otherwise false.
+     */
+    private static boolean isPositiveInteger(final String str) {
+        if (str == null || str.isEmpty()) {
+            return false;
+        }
+
+        // numbers with leading zeros should not be treated as numbers
+        // (e.g. when comparing "01" <-> "1")
+        if (str.charAt(0) == '0' && str.length() > 1) {
+            return false;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            final char c = str.charAt(i);
+            if (c < '0' || c > '9') {
+                return false;
+            }
+        }
+        return true;
+    }
 }

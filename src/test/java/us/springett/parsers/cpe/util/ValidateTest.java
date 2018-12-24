@@ -259,6 +259,54 @@ public class ValidateTest {
         value = "cpe:/a:jlike_project::1.0::~~~joomla%21~~:%02%02";
         assertFalse(Validate.cpeUri(value).isValid());
 
+        value = "cpe:a:vendor:product:version:update:~e~swe~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:*:product:version:update:~e~swe~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:*:version:update:~e~swe~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:vendor:product:*:update:~e~swe~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:vendor:product:version:*:~e~swe~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:vendor:product:version:update:~*~swe~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:vendor:product:version:update:~e~*~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:vendor:product:version:update:~e~swe~*~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:vendor:product:version:update:~e~swe~tsw~*~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:vendor:product:version:update:~e~swe~tsw~thw~*:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:vendor:product:version:update:~e~swe~tsw~thw~o:*";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:%02%02:~e~swe~tsw~*~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:~%02%02~swe~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:~e~%02%02~tsw~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:~e~swe~%02%02~thw~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:~e~swe~tsw~%02%02~o:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:~e~swe~tsw~thw~%02%02:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+
+        value = "cpe:/a:vendor:product:version:update:*:language";
+        assertFalse(Validate.cpeUri(value).isValid());
+        value = "cpe:/a:vendor:product:version:update:~e~swe~tsw~thw~o:language";
+        assertTrue(Validate.cpeUri(value).isValid());
+
         logEndWarning("testCpeUri");
     }
 
