@@ -34,7 +34,7 @@ public interface ICpe extends Comparable {
      *
      * @return the part for the CPE entry
      */
-    public Part getPart();
+    Part getPart();
 
     /**
      * <p>
@@ -43,7 +43,7 @@ public interface ICpe extends Comparable {
      *
      * @return the vendor for the CPE entry
      */
-    public String getVendor();
+    String getVendor();
 
     /**
      * <p>
@@ -52,7 +52,7 @@ public interface ICpe extends Comparable {
      *
      * @return the product for the CPE entry
      */
-    public String getProduct();
+    String getProduct();
 
     /**
      * <p>
@@ -61,7 +61,7 @@ public interface ICpe extends Comparable {
      *
      * @return the version for the CPE entry
      */
-    public String getVersion();
+    String getVersion();
 
     /**
      * <p>
@@ -70,7 +70,7 @@ public interface ICpe extends Comparable {
      *
      * @return the update for the CPE entry
      */
-    public String getUpdate();
+    String getUpdate();
 
     /**
      * <p>
@@ -79,7 +79,7 @@ public interface ICpe extends Comparable {
      *
      * @return the edition for the CPE entry
      */
-    public String getEdition();
+    String getEdition();
 
     /**
      * <p>
@@ -88,7 +88,7 @@ public interface ICpe extends Comparable {
      *
      * @return the language for the CPE entry
      */
-    public String getLanguage();
+    String getLanguage();
 
     /**
      * <p>
@@ -97,7 +97,7 @@ public interface ICpe extends Comparable {
      *
      * @return the software edition for the CPE entry
      */
-    public String getSwEdition();
+    String getSwEdition();
 
     /**
      * <p>
@@ -106,7 +106,7 @@ public interface ICpe extends Comparable {
      *
      * @return the target software environment for the CPE entry.
      */
-    public String getTargetSw();
+    String getTargetSw();
 
     /**
      * <p>
@@ -115,7 +115,7 @@ public interface ICpe extends Comparable {
      *
      * @return the target hardware environment for the CPE entry
      */
-    public String getTargetHw();
+    String getTargetHw();
 
     /**
      * <p>
@@ -124,7 +124,7 @@ public interface ICpe extends Comparable {
      *
      * @return the other component for the CPE entry
      */
-    public String getOther();
+    String getOther();
 
     /**
      * <p>
@@ -133,7 +133,7 @@ public interface ICpe extends Comparable {
      *
      * @return the vendor for the CPE entry
      */
-    public String getWellFormedVendor();
+    String getWellFormedVendor();
 
     /**
      * <p>
@@ -142,7 +142,7 @@ public interface ICpe extends Comparable {
      *
      * @return the product for the CPE entry
      */
-    public String getWellFormedProduct();
+    String getWellFormedProduct();
 
     /**
      * <p>
@@ -151,7 +151,7 @@ public interface ICpe extends Comparable {
      *
      * @return the version for the CPE entry
      */
-    public String getWellFormedVersion();
+    String getWellFormedVersion();
 
     /**
      * <p>
@@ -160,7 +160,7 @@ public interface ICpe extends Comparable {
      *
      * @return the update for the CPE entry
      */
-    public String getWellFormedUpdate();
+    String getWellFormedUpdate();
 
     /**
      * <p>
@@ -169,7 +169,7 @@ public interface ICpe extends Comparable {
      *
      * @return the edition for the CPE entry
      */
-    public String getWellFormedEdition();
+    String getWellFormedEdition();
 
     /**
      * <p>
@@ -178,7 +178,7 @@ public interface ICpe extends Comparable {
      *
      * @return the language for the CPE entry
      */
-    public String getWellFormedLanguage();
+    String getWellFormedLanguage();
 
     /**
      * <p>
@@ -187,7 +187,7 @@ public interface ICpe extends Comparable {
      *
      * @return the software edition for the CPE entry
      */
-    public String getWellFormedSwEdition();
+    String getWellFormedSwEdition();
 
     /**
      * <p>
@@ -197,7 +197,7 @@ public interface ICpe extends Comparable {
      *
      * @return the target software environment for the CPE entry.
      */
-    public String getWellFormedTargetSw();
+    String getWellFormedTargetSw();
 
     /**
      * <p>
@@ -207,7 +207,7 @@ public interface ICpe extends Comparable {
      *
      * @return the target hardware environment for the CPE entry
      */
-    public String getWellFormedTargetHw();
+    String getWellFormedTargetHw();
 
     /**
      * <p>
@@ -216,7 +216,7 @@ public interface ICpe extends Comparable {
      *
      * @return the other component for the CPE entry
      */
-    public String getWellFormedOther();
+    String getWellFormedOther();
 
     /**
      * Converts the CPE into the CPE 2.2 URI format.
@@ -224,14 +224,14 @@ public interface ICpe extends Comparable {
      * @return the CPE 2.2 URI format of the CPE
      * @throws CpeEncodingException thrown if the CPE is not well formed
      */
-    public String toCpe22Uri() throws CpeEncodingException;
+    String toCpe22Uri() throws CpeEncodingException;
 
     /**
      * Converts the CPE into the CPE 2.3 Formatted String.
      *
      * @return the CPE 2.3 Formatted String
      */
-    public String toCpe23FS();
+    String toCpe23FS();
 
     /**
      * Determines if the CPE matches the given target CPE. This does not follow
@@ -244,7 +244,7 @@ public interface ICpe extends Comparable {
      * @return <code>true</code> if the CPE matches the target; otherwise
      * <code>false</code>
      */
-    public boolean matches(ICpe target);
+    boolean matches(ICpe target);
 
     /**
      * Determines if the target CPE matches the CPE. This does not follow the
@@ -257,5 +257,5 @@ public interface ICpe extends Comparable {
      * @return <code>true</code> if the target CPE matches CPE; otherwise
      * <code>false</code>
      */
-    public boolean matchedBy(ICpe target);
+    boolean matchedBy(ICpe target);
 }
