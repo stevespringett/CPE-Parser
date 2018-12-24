@@ -20,6 +20,8 @@ package us.springett.parsers.cpe.util;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import us.springett.parsers.cpe.values.LogicalValue;
 import us.springett.parsers.cpe.values.Part;
 
@@ -34,6 +36,10 @@ public final class Convert {
      * Hexadecimal character sequence used for encoding.
      */
     private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
+    /**
+     * A reference to the logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(Convert.class);
 
     /**
      * Private constructor for utility class.
@@ -222,6 +228,8 @@ public final class Convert {
                     }
                 } else {
                     if (lenient) {
+                        //TODO check to ensure that the value is in the ascii range per spec?
+                        LOG.debug("Invalid CPE URI part, '%s'; escaping '%s' as a well formatted string", value, c);
                         sb.append('\\').append(c);
                     } else {
                         throw new CpeEncodingException("Invalid CPE URI component - unexpected characters");
