@@ -74,7 +74,7 @@ public final class CpeParser {
         } else if (cpeString.regionMatches(0, "cpe:/", 0, 5)) {
             return parse22(cpeString, lenient);
         } else if (cpeString.regionMatches(0, "cpe:2.3:", 0, 8)) {
-            return parse23(cpeString);
+            return parse23(cpeString, lenient);
         }
         throw new CpeParsingException("The CPE string specified does not conform to the CPE 2.2 or 2.3 specification");
     }
@@ -188,6 +188,19 @@ public final class CpeParser {
      * @throws CpeParsingException thrown if the cpeString is invalid
      */
     protected static Cpe parse23(String cpeString) throws CpeParsingException {
+        return parse23(cpeString, false);
+    }
+
+    /**
+     * Parses a CPE 2.3 Formatted String.
+     *
+     * @param cpeString the CPE string to parse
+     * @param lenient when <code>true</code> the parser will put in lenient mode
+     * attempting to parse invalid CPE values.
+     * @return the CPE object represented by the cpeString
+     * @throws CpeParsingException thrown if the cpeString is invalid
+     */
+    protected static Cpe parse23(String cpeString, boolean lenient) throws CpeParsingException {
         if (cpeString == null || cpeString.isEmpty()) {
             throw new CpeParsingException("CPE String is null ir enpty - unable to parse");
         }
@@ -195,16 +208,16 @@ public final class CpeParser {
         Cpe23PartIterator cpe = new Cpe23PartIterator(cpeString);
         try {
             cb.part(cpe.next());
-            cb.wfVendor(Convert.fsToWellFormed(cpe.next()));
-            cb.wfProduct(Convert.fsToWellFormed(cpe.next()));
-            cb.wfVersion(Convert.fsToWellFormed(cpe.next()));
-            cb.wfUpdate(Convert.fsToWellFormed(cpe.next()));
-            cb.wfEdition(Convert.fsToWellFormed(cpe.next()));
-            cb.wfLanguage(Convert.fsToWellFormed(cpe.next()));
-            cb.wfSwEdition(Convert.fsToWellFormed(cpe.next()));
-            cb.wfTargetSw(Convert.fsToWellFormed(cpe.next()));
-            cb.wfTargetHw(Convert.fsToWellFormed(cpe.next()));
-            cb.wfOther(Convert.fsToWellFormed(cpe.next()));
+            cb.wfVendor(Convert.fsToWellFormed(cpe.next(), lenient));
+            cb.wfProduct(Convert.fsToWellFormed(cpe.next(), lenient));
+            cb.wfVersion(Convert.fsToWellFormed(cpe.next(), lenient));
+            cb.wfUpdate(Convert.fsToWellFormed(cpe.next(), lenient));
+            cb.wfEdition(Convert.fsToWellFormed(cpe.next(), lenient));
+            cb.wfLanguage(Convert.fsToWellFormed(cpe.next(), lenient));
+            cb.wfSwEdition(Convert.fsToWellFormed(cpe.next(), lenient));
+            cb.wfTargetSw(Convert.fsToWellFormed(cpe.next(), lenient));
+            cb.wfTargetHw(Convert.fsToWellFormed(cpe.next(), lenient));
+            cb.wfOther(Convert.fsToWellFormed(cpe.next(), lenient));
         } catch (NoSuchElementException ex) {
             throw new CpeParsingException("Invalid CPE (too few components): " + cpeString);
         }

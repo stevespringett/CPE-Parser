@@ -270,7 +270,18 @@ public final class Convert {
             return value;
         }
         //unquote '.', '_', and '-'
-        return value.replaceAll("\\\\([._-])", "$1");
+        //return value.replaceAll("\\\\([._-])", "$1");
+        StringBuffer buffer = new StringBuffer(value);
+        char p = ' ';
+        for (int x = 0; x < buffer.length() - 1; x++) {
+            char c = buffer.charAt(x);
+            if ((c == '.' || c == '_' || c == '-') && p == '\\') {
+                buffer.delete(x - 1, x);
+                x -= 1;
+            }
+            p = c;
+        }
+        return buffer.toString();
     }
 
     /**
@@ -281,13 +292,76 @@ public final class Convert {
      * @return the formatted string
      */
     public static String fsToWellFormed(String value) {
+        return fsToWellFormed(value, false);
+    }
+
+    /**
+     * Transforms a formatted string (CPE 2.3 specification) into a Well Formed
+     * string.
+     *
+     * @param value the component value to transform
+     * @param lenient whether or not to enable lenient parsing of the CPE FS
+     * value
+     * @return the formatted string
+     */
+    public static String fsToWellFormed(String value, boolean lenient) {
         if (value == null || value.isEmpty()) {
             return LogicalValue.ANY.getAbbreviation();
         }
         if (LogicalValue.ANY.getAbbreviation().equals(value) || LogicalValue.NA.getAbbreviation().equals(value)) {
             return value;
         }
-        return value.replaceAll("([._-])", "\\\\$1");
+        //return value.replaceAll("([._-])", "\\\\$1");
+
+        int startLenient = -1;
+        int endLenient = value.length() - 1;
+        if (lenient) {
+            char prev = ' ';
+            for (int x = 0; x < value.length(); x++) {
+                char c = value.charAt(x);
+                if (startLenient < 0 && c != '?' && c != '*') {
+                    startLenient = x;
+                }
+                switch (c) {
+                    case '*':
+                    case '?':
+                        if (prev != '*' && prev != '?') {
+                            endLenient = x - 1;
+                        }
+                        break;
+                    case '\\':
+                        //skip the next character as it is quoted
+                        x += 1;
+                        //don't break because we need to set endLenient
+                    default:
+                        endLenient = value.length() - 1;
+                        break;
+                }
+                prev = c;
+            }
+        }
+
+        boolean quoted = false;
+        StringBuffer buffer = new StringBuffer(value);
+        for (int x = 0; x < buffer.length(); x++) {
+            char c = buffer.charAt(x);
+            if (c == '.' || c == '_' || c == '-') {
+                buffer.insert(x++, '\\');
+                endLenient += 1;
+            } else if (lenient && x >= startLenient && x <= endLenient) {
+                if (!quoted && c == '\\') {
+                    quoted = true;
+                    continue;
+                }
+                if (!quoted && !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
+                    buffer.insert(x++, '\\');
+                    endLenient += 1;
+                }
+                quoted = false;
+            }
+        }
+
+        return buffer.toString();
     }
 
     /**

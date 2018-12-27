@@ -81,6 +81,24 @@ public class CpeParserTest {
         Assert.assertEquals("*", cpe.getUpdate());
         Assert.assertEquals("*", cpe.getEdition());
         Assert.assertEquals("*", cpe.getLanguage());
+        
+        
+        
+        cpe = CpeParser.parse("cpe:2.3:a:disney:where\\'s_my_perry?_free:1.5.1:*:*:*:*:android:*:*", true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("disney", cpe.getVendor());
+        Assert.assertEquals("where's_my_perry?_free", cpe.getProduct());
+        Assert.assertEquals("1.5.1", cpe.getVersion());
+        Assert.assertEquals("android", cpe.getTargetSw());
+        
+        cpe = CpeParser.parse("cpe:2.3:a:*?t?t?*:t#*:*#:*:*:*:*:*:*:*", true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("*?t?t?*", cpe.getVendor());
+        Assert.assertEquals("*?t\\?t?*", cpe.getWellFormedVendor());
+        Assert.assertEquals("t#*", cpe.getProduct());
+        Assert.assertEquals("t\\#*", cpe.getWellFormedProduct());
+        Assert.assertEquals("*#", cpe.getVersion());
+        Assert.assertEquals("*\\#", cpe.getWellFormedVersion());
     }
 
     @Test
