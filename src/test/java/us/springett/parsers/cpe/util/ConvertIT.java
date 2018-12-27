@@ -56,11 +56,13 @@ public class ConvertIT {
             values.add("aaaaaaaaaaaaaaaaaa:5.3." + i);
         }
 
-        for (int i = 0; i < 10; i++) {
-            String res = Convert.toWellFormed(values.get(i));
-            String ref = referenceToWellFormed(values.get(i));
-            assertTrue(res.equals(ref));
-        }
+        values.forEach(
+                (cpe) -> {
+                    String res = Convert.toWellFormed(cpe);
+                    String ref = referenceToWellFormed(cpe);
+                    assertTrue(res.equals(ref));
+                }
+        );
 
         System.out.println(
                 "Performance test starting reference");
