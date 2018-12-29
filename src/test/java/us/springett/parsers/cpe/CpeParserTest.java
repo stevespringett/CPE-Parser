@@ -91,6 +91,13 @@ public class CpeParserTest {
         Assert.assertEquals("1.5.1", cpe.getVersion());
         Assert.assertEquals("android", cpe.getTargetSw());
         
+        cpe = CpeParser.parse("cpe:2.3:a:gratta_\\&_vinci?_project:gratta_\\&_vinci?:0.21.13167.93474:*:*:*:*:android:*:*", true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("gratta_&_vinci?_project", cpe.getVendor());
+        Assert.assertEquals("gratta_&_vinci?", cpe.getProduct());
+        Assert.assertEquals("0.21.13167.93474", cpe.getVersion());
+        Assert.assertEquals("android", cpe.getTargetSw());
+        
         cpe = CpeParser.parse("cpe:2.3:a:*?t?t?*:t#*:*#:*:*:*:*:*:*:*", true);
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("*?t?t?*", cpe.getVendor());
