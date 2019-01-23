@@ -66,7 +66,7 @@ public final class Convert {
             return value;
         }
         //return value.replaceAll("([^0-9A-Za-z])", "\\\\$1");
-        StringBuffer buffer = new StringBuffer(value);
+        StringBuilder buffer = new StringBuilder(value);
         for (int x = 0; x < buffer.length(); x++) {
             char c = buffer.charAt(x);
             if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
@@ -89,7 +89,7 @@ public final class Convert {
             return LogicalValue.ANY.getAbbreviation();
         }
         //return value.replaceAll("\\\\([^0-9A-Za-z])", "$1");
-        StringBuffer buffer = new StringBuffer(value);
+        StringBuilder buffer = new StringBuilder(value);
         char p = ' ';
         for (int x = 0; x < buffer.length() - 1; x++) {
             char c = buffer.charAt(x);
@@ -271,7 +271,7 @@ public final class Convert {
         }
         //unquote '.', '_', and '-'
         //return value.replaceAll("\\\\([._-])", "$1");
-        StringBuffer buffer = new StringBuffer(value);
+        StringBuilder buffer = new StringBuilder(value);
         char p = ' ';
         for (int x = 0; x < buffer.length() - 1; x++) {
             char c = buffer.charAt(x);
@@ -342,7 +342,7 @@ public final class Convert {
         }
 
         boolean quoted = false;
-        StringBuffer buffer = new StringBuffer(value);
+        StringBuilder buffer = new StringBuilder(value);
         for (int x = 0; x < buffer.length(); x++) {
             char c = buffer.charAt(x);
             if (c == '.' || c == '_' || c == '-') {
