@@ -717,76 +717,76 @@ public class Cpe implements ICpe, Serializable {
     @Override
     public int compareTo(Object o) {
         if (o instanceof ICpe) {
-            ICpe other = (ICpe) o;
+            ICpe otherObject = (ICpe) o;
 
             final int before = -1;
             final int equal = 0;
             final int after = 1;
 
-            if (this == other) {
+            if (this == otherObject) {
                 return equal;
             }
-            int r = getPart().getAbbreviation().compareTo(other.getPart().getAbbreviation());
+            int r = getPart().getAbbreviation().compareTo(otherObject.getPart().getAbbreviation());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getVendor().compareTo(other.getVendor());
+            r = getVendor().compareTo(otherObject.getVendor());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getProduct().compareTo(other.getProduct());
+            r = getProduct().compareTo(otherObject.getProduct());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = compareVersions(getVersion(), other.getVersion());
+            r = compareVersions(getVersion(), otherObject.getVersion());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getUpdate().compareTo(other.getUpdate());
+            r = getUpdate().compareTo(otherObject.getUpdate());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getEdition().compareTo(other.getEdition());
+            r = getEdition().compareTo(otherObject.getEdition());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getLanguage().compareTo(other.getLanguage());
+            r = getLanguage().compareTo(otherObject.getLanguage());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getSwEdition().compareTo(other.getSwEdition());
+            r = getSwEdition().compareTo(otherObject.getSwEdition());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getTargetSw().compareTo(other.getTargetSw());
+            r = getTargetSw().compareTo(otherObject.getTargetSw());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getTargetHw().compareTo(other.getTargetHw());
+            r = getTargetHw().compareTo(otherObject.getTargetHw());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getOther().compareTo(other.getOther());
+            r = getOther().compareTo(otherObject.getOther());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
