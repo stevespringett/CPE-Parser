@@ -48,7 +48,7 @@ public class ValidateIT {
 
     @Test
     public void testPerformance() throws Exception {
-        List<String> cpes = new ArrayList<String>();
+        List<String> cpes = new ArrayList<>();
 
         System.out.println("---------------------------------------------------");
         System.out.println("Performance test building data set");

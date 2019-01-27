@@ -17,18 +17,13 @@
  */
 package us.springett.parsers.cpe;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import org.mitre.cpe.common.WellFormedName;
 import org.mitre.cpe.matching.CPENameMatcher;
-import us.springett.parsers.cpe.exceptions.CpeValidationException;
 import us.springett.parsers.cpe.values.LogicalValue;
 
 /**

@@ -72,6 +72,54 @@ public class CpeParserTest {
         Assert.assertEquals("chrome", cpe.getTargetSw());
         Assert.assertEquals("*", cpe.getTargetHw());
         Assert.assertEquals("*", cpe.getOther());
+
+        cpe = CpeParser.parse("cpe:/a:oracle:connector/j:5.1.27", true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("oracle", cpe.getVendor());
+        Assert.assertEquals("connector/j", cpe.getProduct());
+        Assert.assertEquals("5.1.27", cpe.getVersion());
+        Assert.assertEquals("*", cpe.getUpdate());
+        Assert.assertEquals("*", cpe.getEdition());
+        Assert.assertEquals("*", cpe.getLanguage());
+        
+        
+        
+        cpe = CpeParser.parse("cpe:2.3:a:disney:where\\'s_my_perry?_free:1.5.1:*:*:*:*:android:*:*", true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("disney", cpe.getVendor());
+        Assert.assertEquals("where's_my_perry?_free", cpe.getProduct());
+        Assert.assertEquals("1.5.1", cpe.getVersion());
+        Assert.assertEquals("android", cpe.getTargetSw());
+        
+        cpe = CpeParser.parse("cpe:2.3:a:gratta_\\&_vinci?_project:gratta_\\&_vinci?:0.21.13167.93474:*:*:*:*:android:*:*", true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("gratta_&_vinci?_project", cpe.getVendor());
+        Assert.assertEquals("gratta_&_vinci?", cpe.getProduct());
+        Assert.assertEquals("0.21.13167.93474", cpe.getVersion());
+        Assert.assertEquals("android", cpe.getTargetSw());
+        
+        cpe = CpeParser.parse("cpe:2.3:a:*?t?t?*:t#*:*#:*:*:*:*:*:*:*", true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("*?t?t?*", cpe.getVendor());
+        Assert.assertEquals("*?t\\?t?*", cpe.getWellFormedVendor());
+        Assert.assertEquals("t#*", cpe.getProduct());
+        Assert.assertEquals("t\\#*", cpe.getWellFormedProduct());
+        Assert.assertEquals("*#", cpe.getVersion());
+        Assert.assertEquals("*\\#", cpe.getWellFormedVersion());
+    }
+
+    @Test
+    public void testParseException() throws CpeParsingException {
+        exception.expect(CpeParsingException.class);
+        
+        Cpe cpe = CpeParser.parse("cpe:/a:oracle:connector/j:5.1.27", false);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("oracle", cpe.getVendor());
+        Assert.assertEquals("connector/j", cpe.getProduct());
+        Assert.assertEquals("5.1.27", cpe.getVersion());
+        Assert.assertEquals("*", cpe.getUpdate());
+        Assert.assertEquals("*", cpe.getEdition());
+        Assert.assertEquals("*", cpe.getLanguage());
     }
 
     /**
@@ -108,8 +156,7 @@ public class CpeParserTest {
         Assert.assertEquals("*", cpe.getTargetSw());
         Assert.assertEquals("*", cpe.getTargetHw());
         Assert.assertEquals("*", cpe.getOther());
-        
-        
+
         cpe = CpeParser.parse23("cpe:2.3:a:jenkins:pipeline\\:build_step:*:*:*:*:*:jenkins:*:*");
         Assert.assertEquals(Part.APPLICATION, cpe.getPart());
         Assert.assertEquals("jenkins", cpe.getVendor());
@@ -199,6 +246,77 @@ public class CpeParserTest {
         Assert.assertEquals("*", cpe.getOther());
     }
 
+    
+    @Test
+    public void testParse22Lenient() throws Exception {
+        exception = ExpectedException.none();
+
+        Cpe cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:%01:beta::c%2b%2b",true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("microsoft", cpe.getVendor());
+        Assert.assertEquals("internet_explorer????", cpe.getProduct());
+        Assert.assertEquals("?", cpe.getVersion());
+        Assert.assertEquals("beta", cpe.getUpdate());
+        Assert.assertEquals("*", cpe.getEdition());
+        Assert.assertEquals("c++", cpe.getLanguage());
+        Assert.assertEquals("*", cpe.getSwEdition());
+        Assert.assertEquals("*", cpe.getTargetSw());
+        Assert.assertEquals("*", cpe.getTargetHw());
+        Assert.assertEquals("*", cpe.getOther());
+
+        cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01:%01",true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("microsoft", cpe.getVendor());
+        Assert.assertEquals("internet_explorer????", cpe.getProduct());
+        Assert.assertEquals("?", cpe.getVersion());
+        Assert.assertEquals("*", cpe.getUpdate());
+        Assert.assertEquals("*", cpe.getEdition());
+        Assert.assertEquals("*", cpe.getLanguage());
+        Assert.assertEquals("*", cpe.getSwEdition());
+        Assert.assertEquals("*", cpe.getTargetSw());
+        Assert.assertEquals("*", cpe.getTargetHw());
+        Assert.assertEquals("*", cpe.getOther());
+
+        cpe = CpeParser.parse22("cpe:/a:microsoft:internet_explorer%01%01%01%01",true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("microsoft", cpe.getVendor());
+        Assert.assertEquals("internet_explorer????", cpe.getProduct());
+        Assert.assertEquals("*", cpe.getVersion());
+        Assert.assertEquals("*", cpe.getUpdate());
+        Assert.assertEquals("*", cpe.getEdition());
+        Assert.assertEquals("*", cpe.getLanguage());
+        Assert.assertEquals("*", cpe.getSwEdition());
+        Assert.assertEquals("*", cpe.getTargetSw());
+        Assert.assertEquals("*", cpe.getTargetHw());
+        Assert.assertEquals("*", cpe.getOther());
+
+        cpe = CpeParser.parse22("cpe:/a:microsoft",true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("microsoft", cpe.getVendor());
+        Assert.assertEquals("*", cpe.getProduct());
+        Assert.assertEquals("*", cpe.getVersion());
+        Assert.assertEquals("*", cpe.getUpdate());
+        Assert.assertEquals("*", cpe.getEdition());
+        Assert.assertEquals("*", cpe.getLanguage());
+        Assert.assertEquals("*", cpe.getSwEdition());
+        Assert.assertEquals("*", cpe.getTargetSw());
+        Assert.assertEquals("*", cpe.getTargetHw());
+        Assert.assertEquals("*", cpe.getOther());
+
+        cpe = CpeParser.parse22("cpe:/a:",true);
+        Assert.assertEquals(Part.APPLICATION, cpe.getPart());
+        Assert.assertEquals("*", cpe.getVendor());
+        Assert.assertEquals("*", cpe.getProduct());
+        Assert.assertEquals("*", cpe.getVersion());
+        Assert.assertEquals("*", cpe.getUpdate());
+        Assert.assertEquals("*", cpe.getEdition());
+        Assert.assertEquals("*", cpe.getLanguage());
+        Assert.assertEquals("*", cpe.getSwEdition());
+        Assert.assertEquals("*", cpe.getTargetSw());
+        Assert.assertEquals("*", cpe.getTargetHw());
+        Assert.assertEquals("*", cpe.getOther());
+    }
+    
     /**
      * Test of unpackEdition method, of class CpeParser.
      *
@@ -210,7 +328,7 @@ public class CpeParserTest {
 
         CpeBuilder cb = new CpeBuilder();
         String edition = null;
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         Cpe cpe = cb.build();
         assertEquals("*", cpe.getEdition());
         assertEquals("*", cpe.getSwEdition());
@@ -219,7 +337,7 @@ public class CpeParserTest {
         assertEquals("*", cpe.getOther());
 
         edition = "";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("*", cpe.getEdition());
         assertEquals("*", cpe.getSwEdition());
@@ -228,7 +346,7 @@ public class CpeParserTest {
         assertEquals("*", cpe.getOther());
 
         edition = "one";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("one", cpe.getEdition());
         assertEquals("*", cpe.getSwEdition());
@@ -237,7 +355,7 @@ public class CpeParserTest {
         assertEquals("*", cpe.getOther());
 
         edition = "~e~sw~ts~th~o";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("e", cpe.getEdition());
         assertEquals("sw", cpe.getSwEdition());
@@ -246,7 +364,7 @@ public class CpeParserTest {
         assertEquals("o", cpe.getOther());
 
         edition = "~~sw~ts~th~o";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("*", cpe.getEdition());
         assertEquals("sw", cpe.getSwEdition());
@@ -255,7 +373,7 @@ public class CpeParserTest {
         assertEquals("o", cpe.getOther());
 
         edition = "~e~sw~ts~th~";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("e", cpe.getEdition());
         assertEquals("sw", cpe.getSwEdition());
@@ -264,7 +382,7 @@ public class CpeParserTest {
         assertEquals("*", cpe.getOther());
 
         edition = "~~sw~ts~th~";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("*", cpe.getEdition());
         assertEquals("sw", cpe.getSwEdition());
@@ -273,7 +391,7 @@ public class CpeParserTest {
         assertEquals("*", cpe.getOther());
 
         edition = "~~~ts~th~";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("*", cpe.getEdition());
         assertEquals("*", cpe.getSwEdition());
@@ -282,7 +400,7 @@ public class CpeParserTest {
         assertEquals("*", cpe.getOther());
 
         edition = "~~sw~~~";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("*", cpe.getEdition());
         assertEquals("sw", cpe.getSwEdition());
@@ -291,7 +409,7 @@ public class CpeParserTest {
         assertEquals("*", cpe.getOther());
 
         edition = "~~~~th~";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("*", cpe.getEdition());
         assertEquals("*", cpe.getSwEdition());
@@ -300,7 +418,7 @@ public class CpeParserTest {
         assertEquals("*", cpe.getOther());
 
         edition = "~~~~~";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("*", cpe.getEdition());
         assertEquals("*", cpe.getSwEdition());
@@ -309,13 +427,92 @@ public class CpeParserTest {
         assertEquals("*", cpe.getOther());
 
         edition = "~~~chrome~~";
-        CpeParser.unpackEdition(edition, cb);
+        CpeParser.unpackEdition(edition, cb, false);
         cpe = cb.build();
         assertEquals("*", cpe.getEdition());
         assertEquals("*", cpe.getSwEdition());
         assertEquals("chrome", cpe.getTargetSw());
         assertEquals("*", cpe.getTargetHw());
         assertEquals("*", cpe.getOther());
+
+        edition = "~test/test~test?test~test:test~test&test~test*test";
+        CpeParser.unpackEdition(edition, cb, true);
+        cpe = cb.build();
+        assertEquals("test\\/test", cpe.getWellFormedEdition());
+        assertEquals("test\\?test", cpe.getWellFormedSwEdition());
+        assertEquals("test\\:test", cpe.getWellFormedTargetSw());
+        assertEquals("test\\&test", cpe.getWellFormedTargetHw());
+        assertEquals("test\\*test", cpe.getWellFormedOther());
+    }
+
+    @Test
+    public void testUnpackEditionException1() throws Exception {
+        exception.expect(CpeParsingException.class);
+        CpeBuilder cb = new CpeBuilder();
+        String edition = "~test/test~test?test~test:test~test&test~test*test";
+        CpeParser.unpackEdition(edition, cb, false);
+        Cpe cpe = cb.build();
+        assertEquals("test\\/test", cpe.getWellFormedEdition());
+        assertEquals("test\\?test", cpe.getWellFormedSwEdition());
+        assertEquals("test\\:test", cpe.getWellFormedTargetSw());
+        assertEquals("test\\&test", cpe.getWellFormedTargetHw());
+        assertEquals("test\\*test", cpe.getWellFormedOther());
+    }
+
+    @Test
+    public void testUnpackEditionException2() throws Exception {
+        exception.expect(CpeParsingException.class);
+        CpeBuilder cb = new CpeBuilder();
+        String edition = "~test~test?test~test:test~test&test~test*test";
+        CpeParser.unpackEdition(edition, cb, false);
+        Cpe cpe = cb.build();
+        assertEquals("test", cpe.getWellFormedEdition());
+        assertEquals("test\\?test", cpe.getWellFormedSwEdition());
+        assertEquals("test\\:test", cpe.getWellFormedTargetSw());
+        assertEquals("test\\&test", cpe.getWellFormedTargetHw());
+        assertEquals("test\\*test", cpe.getWellFormedOther());
+    }
+
+    @Test
+    public void testUnpackEditionException3() throws Exception {
+        exception.expect(CpeParsingException.class);
+        CpeBuilder cb = new CpeBuilder();
+        String edition = "~test~test~test:test~test&test~test*test";
+        CpeParser.unpackEdition(edition, cb, false);
+        Cpe cpe = cb.build();
+        assertEquals("test", cpe.getWellFormedEdition());
+        assertEquals("test", cpe.getWellFormedSwEdition());
+        assertEquals("test\\:test", cpe.getWellFormedTargetSw());
+        assertEquals("test\\&test", cpe.getWellFormedTargetHw());
+        assertEquals("test\\*test", cpe.getWellFormedOther());
+    }
+
+    @Test
+    public void testUnpackEditionException4() throws Exception {
+        exception.expect(CpeParsingException.class);
+        CpeBuilder cb = new CpeBuilder();
+        String edition = "~test~test~test~test&test~test*test";
+        CpeParser.unpackEdition(edition, cb, false);
+        Cpe cpe = cb.build();
+        assertEquals("test", cpe.getWellFormedEdition());
+        assertEquals("test", cpe.getWellFormedSwEdition());
+        assertEquals("test", cpe.getWellFormedTargetSw());
+        assertEquals("test\\&test", cpe.getWellFormedTargetHw());
+        assertEquals("test\\*test", cpe.getWellFormedOther());
+    }
+
+    @Test
+    public void testUnpackEditionException5() throws Exception {
+        exception.expect(CpeParsingException.class);
+        CpeBuilder cb = new CpeBuilder();
+        String edition = "~test~test~test~test~test*test";
+        CpeParser.unpackEdition(edition, cb, false);
+        Cpe cpe = cb.build();
+        assertEquals("test", cpe.getWellFormedEdition());
+        assertEquals("test", cpe.getWellFormedSwEdition());
+        assertEquals("test", cpe.getWellFormedTargetSw());
+        assertEquals("test", cpe.getWellFormedTargetHw());
+        assertEquals("test\\*test", cpe.getWellFormedOther());
     }
 
     /**

@@ -108,6 +108,9 @@ public class ValidateTest {
         value = "foobar?*";
         assertTrue(Validate.component(value).isValid());
 
+        value = "foobar?";
+        assertTrue(Validate.component(value).isValid());
+        
         char[] str = {10, 34};
         value = new String(str);
         assertFalse(Validate.component(value).isValid());

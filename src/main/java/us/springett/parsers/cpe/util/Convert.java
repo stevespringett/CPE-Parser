@@ -20,6 +20,8 @@ package us.springett.parsers.cpe.util;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import us.springett.parsers.cpe.values.LogicalValue;
 import us.springett.parsers.cpe.values.Part;
 
@@ -34,6 +36,10 @@ public final class Convert {
      * Hexadecimal character sequence used for encoding.
      */
     private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
+    /**
+     * A reference to the logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(Convert.class);
 
     /**
      * Private constructor for utility class.
@@ -60,7 +66,7 @@ public final class Convert {
             return value;
         }
         //return value.replaceAll("([^0-9A-Za-z])", "\\\\$1");
-        StringBuffer buffer = new StringBuffer(value);
+        StringBuilder buffer = new StringBuilder(value);
         for (int x = 0; x < buffer.length(); x++) {
             char c = buffer.charAt(x);
             if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
@@ -83,7 +89,7 @@ public final class Convert {
             return LogicalValue.ANY.getAbbreviation();
         }
         //return value.replaceAll("\\\\([^0-9A-Za-z])", "$1");
-        StringBuffer buffer = new StringBuffer(value);
+        StringBuilder buffer = new StringBuilder(value);
         char p = ' ';
         for (int x = 0; x < buffer.length() - 1; x++) {
             char c = buffer.charAt(x);
@@ -174,6 +180,21 @@ public final class Convert {
      * formed
      */
     public static String cpeUriToWellFormed(String value) throws CpeEncodingException {
+        return cpeUriToWellFormed(value, false);
+    }
+
+    /**
+     * CPE URI decodes the value into a well formed string. If the value is NULL
+     * or an empty string then a the LogicalValue.ANY ('*') is returned.
+     *
+     * @param value the CPE URI encoded string to convert
+     * @param lenient whether or not to enable lenient parsing of the CPE URI
+     * value
+     * @return the well formed string representation of the given value
+     * @throws CpeEncodingException thrown if the string provided is not well
+     * formed
+     */
+    public static String cpeUriToWellFormed(String value, boolean lenient) throws CpeEncodingException {
         if (value == null || value.isEmpty() || LogicalValue.ANY.getAbbreviation().equals(value)) {
             return LogicalValue.ANY.getAbbreviation();
         } else if (LogicalValue.NA.getAbbreviation().equals(value)) {
@@ -206,7 +227,13 @@ public final class Convert {
                             break;
                     }
                 } else {
-                    throw new CpeEncodingException("Invalid CPE URI component - unexpected characters");
+                    if (lenient) {
+                        //TODO check to ensure that the value is in the ascii range per spec?
+                        LOG.debug("Invalid CPE URI part, '%s'; escaping '%s' as a well formatted string", value, c);
+                        sb.append('\\').append(c);
+                    } else {
+                        throw new CpeEncodingException("Invalid CPE URI component - unexpected characters");
+                    }
                 }
             }
             return sb.toString();
@@ -243,7 +270,18 @@ public final class Convert {
             return value;
         }
         //unquote '.', '_', and '-'
-        return value.replaceAll("\\\\([._-])", "$1");
+        //return value.replaceAll("\\\\([._-])", "$1");
+        StringBuilder buffer = new StringBuilder(value);
+        char p = ' ';
+        for (int x = 0; x < buffer.length() - 1; x++) {
+            char c = buffer.charAt(x);
+            if ((c == '.' || c == '_' || c == '-') && p == '\\') {
+                buffer.delete(x - 1, x);
+                x -= 1;
+            }
+            p = c;
+        }
+        return buffer.toString();
     }
 
     /**
@@ -254,13 +292,76 @@ public final class Convert {
      * @return the formatted string
      */
     public static String fsToWellFormed(String value) {
+        return fsToWellFormed(value, false);
+    }
+
+    /**
+     * Transforms a formatted string (CPE 2.3 specification) into a Well Formed
+     * string.
+     *
+     * @param value the component value to transform
+     * @param lenient whether or not to enable lenient parsing of the CPE FS
+     * value
+     * @return the formatted string
+     */
+    public static String fsToWellFormed(String value, boolean lenient) {
         if (value == null || value.isEmpty()) {
             return LogicalValue.ANY.getAbbreviation();
         }
         if (LogicalValue.ANY.getAbbreviation().equals(value) || LogicalValue.NA.getAbbreviation().equals(value)) {
             return value;
         }
-        return value.replaceAll("([._-])", "\\\\$1");
+        //return value.replaceAll("([._-])", "\\\\$1");
+
+        int startLenient = -1;
+        int endLenient = value.length() - 1;
+        if (lenient) {
+            char prev = ' ';
+            for (int x = 0; x < value.length(); x++) {
+                char c = value.charAt(x);
+                if (startLenient < 0 && c != '?' && c != '*') {
+                    startLenient = x;
+                }
+                switch (c) {
+                    case '*':
+                    case '?':
+                        if (prev != '*' && prev != '?') {
+                            endLenient = x - 1;
+                        }
+                        break;
+                    case '\\':
+                        //skip the next character as it is quoted
+                        x += 1;
+                        //don't break because we need to set endLenient
+                    default:
+                        endLenient = value.length() - 1;
+                        break;
+                }
+                prev = c;
+            }
+        }
+
+        boolean quoted = false;
+        StringBuilder buffer = new StringBuilder(value);
+        for (int x = 0; x < buffer.length(); x++) {
+            char c = buffer.charAt(x);
+            if (c == '.' || c == '_' || c == '-') {
+                buffer.insert(x++, '\\');
+                endLenient += 1;
+            } else if (lenient && x >= startLenient && x <= endLenient) {
+                if (!quoted && c == '\\') {
+                    quoted = true;
+                    continue;
+                }
+                if (!quoted && !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
+                    buffer.insert(x++, '\\');
+                    endLenient += 1;
+                }
+                quoted = false;
+            }
+        }
+
+        return buffer.toString();
     }
 
     /**

@@ -19,14 +19,9 @@ package us.springett.parsers.cpe.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import us.springett.parsers.cpe.values.LogicalValue;
-import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
-import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 
 /**
  *
@@ -47,7 +42,7 @@ public class ConvertIT {
 
     @Test
     public void testPerformance() throws Exception {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
 
         System.out.println("---------------------------------------------------");
         System.out.println("Performance test building data set");
@@ -56,11 +51,13 @@ public class ConvertIT {
             values.add("aaaaaaaaaaaaaaaaaa:5.3." + i);
         }
 
-        for (int i = 0; i < 10; i++) {
-            String res = Convert.toWellFormed(values.get(i));
-            String ref = referenceToWellFormed(values.get(i));
-            assertTrue(res.equals(ref));
-        }
+        values.forEach(
+                (cpe) -> {
+                    String res = Convert.toWellFormed(cpe);
+                    String ref = referenceToWellFormed(cpe);
+                    assertTrue(res.equals(ref));
+                }
+        );
 
         System.out.println(
                 "Performance test starting reference");

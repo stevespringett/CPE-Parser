@@ -740,8 +740,9 @@ public class CpeTest {
         result = instance.equals("test");
         assertEquals(expResult, result);
 
+        obj = null;
         expResult = false;
-        result = instance.equals(null);
+        result = instance.equals(obj);
         assertEquals(expResult, result);
     }
 

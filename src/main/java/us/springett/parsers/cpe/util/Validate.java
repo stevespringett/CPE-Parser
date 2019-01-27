@@ -65,7 +65,7 @@ public final class Validate {
             }
             for (int x = 0; x < value.length(); x++) {
                 char c = value.charAt(x);
-                if (c == '?' && x > 0
+                if (c == '?' && x > 0 && x < value.length() - 1
                         && !((value.charAt(x - 1) == '?' || value.charAt(x - 1) == '*' || value.charAt(x - 1) == '\\')
                         || (x < value.length() - 1 && (value.charAt(x + 1) == '?' || value.charAt(x + 1) == '*')))) {
                     return Status.UNQUOTED_QUESTION_MARK;

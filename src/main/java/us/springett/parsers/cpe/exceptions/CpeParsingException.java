@@ -25,6 +25,11 @@ package us.springett.parsers.cpe.exceptions;
 public class CpeParsingException extends Exception {
 
     /**
+     * Generated serial version UID.
+     */
+    private static final long serialVersionUID = -4624394628314058224L;
+
+    /**
      * Constructs a new exception with the specified detail message.
      *
      * @param message the detailed message
