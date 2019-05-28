@@ -1,6 +1,4 @@
 <configuration>
-    <contextName>dependency-check</contextName>
-    <!-- Logging configuration -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <Target>System.out</Target>
         <encoder>
