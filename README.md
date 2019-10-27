@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/stevespringett/CPE-Parser.svg?branch=master)](https://travis-ci.org/stevespringett/CPE-Parser)
+[![Build Status](https://github.com/stevespringett/CPE-Parser/workflows/Maven%20CI/badge.svg)](https://github.com/stevespringett/CPE-Parser/actions?workflow=Maven+CI)
 [![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)][License]
 
 
