@@ -77,7 +77,9 @@ public class CpeIT {
         
         target = new WellFormedName("a", "owasp", any, "4\\.0\\.0", any, any, any, any, any, any, any);
         source = new WellFormedName("a", "owasp", "dependency\\-check", "4\\.0\\.0", any, any, any, any, any, any, any);
-        expResult = referenceMatcher.isEqual(source, target) || referenceMatcher.isSuperset(source, target);
+        expResult = referenceMatcher.isEqual(source, target) 
+                || referenceMatcher.isSubset(source, target)
+                || referenceMatcher.isSuperset(source, target);
 
         cpe = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.ANY).version("4.0.0").build();
         instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
@@ -101,7 +103,6 @@ public class CpeIT {
         instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
         result = instance.matches(cpe);
         assertEquals(expResult, result);
-
 
         target = new WellFormedName("a", "owasp", "dependency\\-check", "4\\.0\\.0", any, any, any, any, any, any, any);
         source = new WellFormedName("a", "owasp", "*check", "4\\.0\\.0", any, any, any, any, any, any, any);
