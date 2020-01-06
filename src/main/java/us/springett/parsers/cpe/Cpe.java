@@ -610,20 +610,24 @@ public class Cpe implements ICpe, Serializable {
         //https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir7696.pdf
 
         if (left.equalsIgnoreCase(right)) {
-            //1 6 9
+            //1 6 9 - equals
             return true;
         } else if (LogicalValue.ANY.getAbbreviation().equals(left)) {
-            //2 3 4
+            //2 3 4 - superset (4 is undefined - treating as true)
+            return true;
+        } else if (LogicalValue.NA.getAbbreviation().equals(left) 
+                && LogicalValue.ANY.getAbbreviation().equals(right)) {
+            //5 - subset
             return true;
         } else if (LogicalValue.NA.getAbbreviation().equals(left)) {
-            //5 7 8
+            //7 8 - disjoint, undefined
             return false;
         } else if (LogicalValue.NA.getAbbreviation().equals(right)) {
-            //12 16
+            //12 16 - disjoint
             return false;
         } else if (LogicalValue.ANY.getAbbreviation().equals(right)) {
-            //13 15
-            return false;
+            //13 15 - subset
+            return true;
         }
         //10 11 14 17
         if (containsSpecialCharacter(left)) {
