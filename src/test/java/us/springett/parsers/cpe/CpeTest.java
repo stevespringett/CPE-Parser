@@ -429,7 +429,7 @@ public class CpeTest {
 
         cpe = builder.part(Part.APPLICATION).vendor("owasp").product(LogicalValue.ANY).version("4.0.0").build();
         instance = builder.part(Part.APPLICATION).vendor("owasp").product("dependency-check").version("4.0.0").build();
-        expResult = false;
+        expResult = true;
         result = instance.matches(cpe);
         assertEquals(expResult, result);
 
