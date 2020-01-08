@@ -1,4 +1,5 @@
 [![Build Status](https://github.com/stevespringett/CPE-Parser/workflows/Maven%20CI/badge.svg)](https://github.com/stevespringett/CPE-Parser/actions?workflow=Maven+CI)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/us.springett/cpe-parser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/us.springett/cpe-parser)
 [![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)][License]
 
 
