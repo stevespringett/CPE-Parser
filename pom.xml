@@ -52,7 +52,7 @@
         <junit.version>4.13.1</junit.version>
         <logback.classic.version>1.2.3</logback.classic.version>
         <!-- Maven Plugin Versions -->
-        <maven.cyclonedx.plugin.version>2.1.1</maven.cyclonedx.plugin.version>
+        <maven.cyclonedx.plugin.version>2.2.0</maven.cyclonedx.plugin.version>
         <maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
         <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
         <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
