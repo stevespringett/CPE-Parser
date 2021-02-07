@@ -731,13 +731,12 @@ public class Cpe implements ICpe, Serializable {
      * CompareTo is used for sorting, this does not implement any CPE Matching
      * rules.
      *
-     * @param o the CPE to compare
+     * @param otherObject the CPE to compare
      * @return the sort order
      */
     @Override
-    public int compareTo(Object o) {
-        if (o instanceof ICpe) {
-            ICpe otherObject = (ICpe) o;
+    public int compareTo(ICpe otherObject) {
+        if (otherObject != null) {
 
             final int before = -1;
             final int equal = 0;
@@ -814,7 +813,7 @@ public class Cpe implements ICpe, Serializable {
             }
             return equal;
         }
-        throw new RuntimeException("Unable to compare " + o.getClass().getCanonicalName());
+        return -1;
     }
 
     /**
