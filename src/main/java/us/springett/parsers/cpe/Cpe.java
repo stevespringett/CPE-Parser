@@ -38,6 +38,9 @@ import us.springett.parsers.cpe.values.LogicalValue;
  * @author Jeremy Long
  */
 public class Cpe implements ICpe, Serializable {
+    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("(\\.|:-)");
+    private static final Pattern DIGITS_AND_LETTERS_PATTERN = Pattern.compile("^[\\d]+?[A-z]+");
+    private static final Pattern VERSION_SPLIT_INNER_PATTERN = Pattern.compile("^([\\d]+?)(.*)$");
 
     /**
      * The serial version UID.
@@ -873,13 +876,12 @@ public class Cpe implements ICpe, Serializable {
      */
     private static List<String> splitVersion(String s) {
         //TODO improve performance by removing regex.
-        final Pattern pattern = Pattern.compile("^([\\d]+?)(.*)$");
-        final String[] splitString = s.split("(\\.|:-)");
+        final String[] splitString = VERSION_SPLIT_PATTERN.split(s);
 
         final List<String> res = new ArrayList<>();
         for (String token : splitString) {
-            if (token.matches("^[\\d]+?[A-z]+")) {
-                final Matcher matcher = pattern.matcher(token);
+            if (DIGITS_AND_LETTERS_PATTERN.matcher(token).matches()) {
+                final Matcher matcher = VERSION_SPLIT_INNER_PATTERN.matcher(token);
                 matcher.find();
                 final String g1 = matcher.group(1);
                 final String g2 = matcher.group(2);
