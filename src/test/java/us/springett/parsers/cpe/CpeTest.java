@@ -769,7 +769,7 @@ public class CpeTest {
         assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.HARDWARE_DEVICE));
         assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.OPERATING_SYSTEM));
         assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.NA));
-        assertFalse(Cpe.compareAttributes(Part.APPLICATION, Part.ANY));
+        assertTrue(Cpe.compareAttributes(Part.APPLICATION, Part.ANY));
 
         assertTrue(Cpe.compareAttributes(Part.ANY, Part.ANY));
         assertTrue(Cpe.compareAttributes(Part.ANY, Part.APPLICATION));
@@ -778,7 +778,7 @@ public class CpeTest {
         assertTrue(Cpe.compareAttributes(Part.ANY, Part.NA));
 
         assertTrue(Cpe.compareAttributes(Part.NA, Part.NA));
-        assertFalse(Cpe.compareAttributes(Part.NA, Part.ANY));
+        assertTrue(Cpe.compareAttributes(Part.NA, Part.ANY));
         assertFalse(Cpe.compareAttributes(Part.NA, Part.APPLICATION));
         assertFalse(Cpe.compareAttributes(Part.NA, Part.HARDWARE_DEVICE));
         assertFalse(Cpe.compareAttributes(Part.NA, Part.OPERATING_SYSTEM));

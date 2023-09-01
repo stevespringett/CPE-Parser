@@ -582,9 +582,16 @@ public class Cpe implements ICpe, Serializable {
      * otherwise <code>false</code>
      */
     protected static boolean compareAttributes(Part left, Part right) {
+        //1 6 9 - equals
         if (left == right) {
             return true;
-        } else if (left == Part.ANY) {
+        }
+        //2 3 - superset (4 does not apply due to enum)
+        else if (left == Part.ANY) {
+            return true;
+        }
+        //5 13 - subset (15 does not apply due to enum)
+        else if (right == Part.ANY) {
             return true;
         }
         return false;
