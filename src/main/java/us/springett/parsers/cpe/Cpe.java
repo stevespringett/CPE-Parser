@@ -38,6 +38,9 @@ import us.springett.parsers.cpe.values.LogicalValue;
  * @author Jeremy Long
  */
 public class Cpe implements ICpe, Serializable {
+    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("(\\.|:-)");
+    private static final Pattern DIGITS_AND_LETTERS_PATTERN = Pattern.compile("^[\\d]+?[A-z]+");
+    private static final Pattern VERSION_SPLIT_INNER_PATTERN = Pattern.compile("^([\\d]+?)(.*)$");
 
     /**
      * The serial version UID.
@@ -735,78 +738,77 @@ public class Cpe implements ICpe, Serializable {
      * @return the sort order
      */
     @Override
-    public int compareTo(Object o) {
-        if (o instanceof ICpe) {
-            ICpe otherObject = (ICpe) o;
+    public int compareTo(ICpe o) {
+        if (o != null) {
 
             final int before = -1;
             final int equal = 0;
             final int after = 1;
 
-            if (this == otherObject) {
+            if (this == o) {
                 return equal;
             }
-            int r = getPart().getAbbreviation().compareTo(otherObject.getPart().getAbbreviation());
+            int r = getPart().getAbbreviation().compareTo(o.getPart().getAbbreviation());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getVendor().compareTo(otherObject.getVendor());
+            r = getVendor().compareTo(o.getVendor());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getProduct().compareTo(otherObject.getProduct());
+            r = getProduct().compareTo(o.getProduct());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = compareVersions(getVersion(), otherObject.getVersion());
+            r = compareVersions(getVersion(), o.getVersion());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getUpdate().compareTo(otherObject.getUpdate());
+            r = getUpdate().compareTo(o.getUpdate());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getEdition().compareTo(otherObject.getEdition());
+            r = getEdition().compareTo(o.getEdition());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getLanguage().compareTo(otherObject.getLanguage());
+            r = getLanguage().compareTo(o.getLanguage());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getSwEdition().compareTo(otherObject.getSwEdition());
+            r = getSwEdition().compareTo(o.getSwEdition());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getTargetSw().compareTo(otherObject.getTargetSw());
+            r = getTargetSw().compareTo(o.getTargetSw());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getTargetHw().compareTo(otherObject.getTargetHw());
+            r = getTargetHw().compareTo(o.getTargetHw());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
                 return after;
             }
-            r = getOther().compareTo(otherObject.getOther());
+            r = getOther().compareTo(o.getOther());
             if (r < 0) {
                 return before;
             } else if (r > 0) {
@@ -814,7 +816,7 @@ public class Cpe implements ICpe, Serializable {
             }
             return equal;
         }
-        throw new RuntimeException("Unable to compare " + o.getClass().getCanonicalName());
+        return -1;
     }
 
     /**
@@ -874,13 +876,12 @@ public class Cpe implements ICpe, Serializable {
      */
     private static List<String> splitVersion(String s) {
         //TODO improve performance by removing regex.
-        final Pattern pattern = Pattern.compile("^([\\d]+?)(.*)$");
-        final String[] splitString = s.split("(\\.|:-)");
+        final String[] splitString = VERSION_SPLIT_PATTERN.split(s);
 
         final List<String> res = new ArrayList<>();
         for (String token : splitString) {
-            if (token.matches("^[\\d]+?[A-z]+")) {
-                final Matcher matcher = pattern.matcher(token);
+            if (DIGITS_AND_LETTERS_PATTERN.matcher(token).matches()) {
+                final Matcher matcher = VERSION_SPLIT_INNER_PATTERN.matcher(token);
                 matcher.find();
                 final String g1 = matcher.group(1);
                 final String g2 = matcher.group(2);
