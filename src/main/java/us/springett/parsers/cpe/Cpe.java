@@ -17,6 +17,7 @@
  */
 package us.springett.parsers.cpe;
 
+import us.springett.parsers.cpe.util.Relation;
 import us.springett.parsers.cpe.values.Part;
 import us.springett.parsers.cpe.util.Convert;
 import java.io.Serializable;
@@ -582,19 +583,23 @@ public class Cpe implements ICpe, Serializable {
      * otherwise <code>false</code>
      */
     protected static boolean compareAttributes(Part left, Part right) {
+        return compareAttribute(left, right) != Relation.DISJOINT;
+    }
+
+    public static Relation compareAttribute(final Part left, final Part right) {
         //1 6 9 - equals
         if (left == right) {
-            return true;
+            return Relation.EQUAL;
         }
         //2 3 - superset (4 does not apply due to enum)
         else if (left == Part.ANY) {
-            return true;
+            return Relation.SUPERSET;
         }
         //5 13 - subset (15 does not apply due to enum)
         else if (right == Part.ANY) {
-            return true;
+            return Relation.SUBSET;
         }
-        return false;
+        return Relation.DISJOINT;
     }
 
     /**
@@ -612,37 +617,41 @@ public class Cpe implements ICpe, Serializable {
      * otherwise <code>false</code>
      */
     protected static boolean compareAttributes(String left, String right) {
+        return compareAttribute(left, right) != Relation.DISJOINT;
+    }
+
+    public static Relation compareAttribute(final String left, final String right) {
         //the numbers below come from the CPE Matching standard
         //Table 6-2: Enumeration of Attribute Comparison Set Relations
         //https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir7696.pdf
 
         if (left.equalsIgnoreCase(right)) {
             //1 6 9 - equals
-            return true;
+            return Relation.EQUAL;
         } else if (LogicalValue.ANY.getAbbreviation().equals(left)) {
             //2 3 4 - superset (4 is undefined - treating as true)
-            return true;
-        } else if (LogicalValue.NA.getAbbreviation().equals(left) 
+            return Relation.SUPERSET;
+        } else if (LogicalValue.NA.getAbbreviation().equals(left)
                 && LogicalValue.ANY.getAbbreviation().equals(right)) {
             //5 - subset
-            return true;
+            return Relation.SUBSET;
         } else if (LogicalValue.NA.getAbbreviation().equals(left)) {
             //7 8 - disjoint, undefined
-            return false;
+            return Relation.DISJOINT;
         } else if (LogicalValue.NA.getAbbreviation().equals(right)) {
             //12 16 - disjoint
-            return false;
+            return Relation.DISJOINT;
         } else if (LogicalValue.ANY.getAbbreviation().equals(right)) {
             //13 15 - subset
-            return true;
+            return Relation.SUBSET;
         }
         //10 11 14 17
         if (containsSpecialCharacter(left)) {
             Pattern p = Convert.wellFormedToPattern(left.toLowerCase());
             Matcher m = p.matcher(right.toLowerCase());
-            return m.matches();
+            return m.matches() ? Relation.SUPERSET : Relation.DISJOINT;
         }
-        return false;
+        return Relation.DISJOINT;
     }
 
     /**
