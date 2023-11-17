@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
+import us.springett.parsers.cpe.util.Relation;
 import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -784,6 +785,27 @@ public class CpeTest {
         assertFalse(Cpe.compareAttributes(Part.NA, Part.OPERATING_SYSTEM));
     }
 
+    @Test
+    public void testCompareAttribute_Part_Part_Relation() {
+        assertEquals(Relation.EQUAL, Cpe.compareAttribute(Part.APPLICATION, Part.APPLICATION));
+        assertEquals(Relation.DISJOINT, Cpe.compareAttribute(Part.APPLICATION, Part.HARDWARE_DEVICE));
+        assertEquals(Relation.DISJOINT, Cpe.compareAttribute(Part.APPLICATION, Part.OPERATING_SYSTEM));
+        assertEquals(Relation.DISJOINT, Cpe.compareAttribute(Part.APPLICATION, Part.NA));
+        assertEquals(Relation.SUBSET, Cpe.compareAttribute(Part.APPLICATION, Part.ANY));
+
+        assertEquals(Relation.EQUAL, Cpe.compareAttribute(Part.ANY, Part.ANY));
+        assertEquals(Relation.SUPERSET, Cpe.compareAttribute(Part.ANY, Part.APPLICATION));
+        assertEquals(Relation.SUPERSET, Cpe.compareAttribute(Part.ANY, Part.OPERATING_SYSTEM));
+        assertEquals(Relation.SUPERSET, Cpe.compareAttribute(Part.ANY, Part.HARDWARE_DEVICE));
+        assertEquals(Relation.SUPERSET, Cpe.compareAttribute(Part.ANY, Part.NA));
+
+        assertEquals(Relation.EQUAL, Cpe.compareAttribute(Part.NA, Part.NA));
+        assertEquals(Relation.SUBSET, Cpe.compareAttribute(Part.NA, Part.ANY));
+        assertEquals(Relation.DISJOINT, Cpe.compareAttribute(Part.NA, Part.APPLICATION));
+        assertEquals(Relation.DISJOINT, Cpe.compareAttribute(Part.NA, Part.HARDWARE_DEVICE));
+        assertEquals(Relation.DISJOINT, Cpe.compareAttribute(Part.NA, Part.OPERATING_SYSTEM));
+    }
+
     /**
      * Test of compareAttributes method, of class Cpe.
      */
@@ -796,6 +818,17 @@ public class CpeTest {
         assertFalse(Cpe.compareAttributes("abc", "abcdef"));
         assertTrue(Cpe.compareAttributes("abc*", "abcdef"));
         assertFalse(Cpe.compareAttributes("abc??", "abcdef"));
+    }
+
+    @Test
+    public void testCompareAttribute_String_String_Relation() {
+        assertEquals(Relation.EQUAL, Cpe.compareAttribute("a", "a"));
+        assertEquals(Relation.EQUAL, Cpe.compareAttribute("a", "A"));
+        assertEquals(Relation.SUPERSET, Cpe.compareAttribute("abc?", "abcd"));
+        assertEquals(Relation.EQUAL, Cpe.compareAttribute("abc\\:def", "abc\\:def"));
+        assertEquals(Relation.DISJOINT, Cpe.compareAttribute("abc", "abcdef"));
+        assertEquals(Relation.SUPERSET, Cpe.compareAttribute("abc*", "abcdef"));
+        assertEquals(Relation.DISJOINT, Cpe.compareAttribute("abc??", "abcdef"));
     }
 
     /**
