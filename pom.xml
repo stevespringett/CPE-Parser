@@ -68,7 +68,7 @@
         <maven.site.plugin.version>3.20.0</maven.site.plugin.version>
         <maven.project.info.reports.plugin.version>3.7.0</maven.project.info.reports.plugin.version>
         <maven.surefire.plugin.version>3.5.0</maven.surefire.plugin.version>
-        <maven.failsafe.plugin.version>3.5.0</maven.failsafe.plugin.version>
+        <maven.failsafe.plugin.version>3.5.2</maven.failsafe.plugin.version>
     </properties>
 
     <scm>
