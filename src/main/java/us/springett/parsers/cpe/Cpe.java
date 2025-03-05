@@ -679,50 +679,23 @@ public class Cpe implements ICpe, Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (obj == null
+            || getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Cpe compareTo = (Cpe) obj;
-        if (!Objects.equals(this.vendor, compareTo.vendor)) {
-            return false;
-        }
-        if (!Objects.equals(this.product, compareTo.product)) {
-            return false;
-        }
-        if (!Objects.equals(this.version, compareTo.version)) {
-            return false;
-        }
-        if (!Objects.equals(this.update, compareTo.update)) {
-            return false;
-        }
-        if (!Objects.equals(this.edition, compareTo.edition)) {
-            return false;
-        }
-        if (!Objects.equals(this.language, compareTo.language)) {
-            return false;
-        }
-        if (!Objects.equals(this.swEdition, compareTo.swEdition)) {
-            return false;
-        }
-        if (!Objects.equals(this.targetSw, compareTo.targetSw)) {
-            return false;
-        }
-        if (!Objects.equals(this.targetHw, compareTo.targetHw)) {
-            return false;
-        }
-        if (!Objects.equals(this.other, compareTo.other)) {
-            return false;
-        }
-        if (this.part != compareTo.part) {
-            return false;
-        }
-        return true;
+
+        final Cpe cpe = (Cpe) obj;
+        return part == cpe.part
+               && Objects.equals(vendor, cpe.vendor)
+               && Objects.equals(product, cpe.product)
+               && Objects.equals(version, cpe.version)
+               && Objects.equals(update, cpe.update)
+               && Objects.equals(edition, cpe.edition)
+               && Objects.equals(language, cpe.language)
+               && Objects.equals(swEdition, cpe.swEdition)
+               && Objects.equals(targetSw, cpe.targetSw)
+               && Objects.equals(targetHw, cpe.targetHw)
+               && Objects.equals(other, cpe.other);
     }
 
     @Override
