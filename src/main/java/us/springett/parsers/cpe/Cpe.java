@@ -810,7 +810,7 @@ public class Cpe implements ICpe, Serializable {
         final List<String> subLeft = splitVersion(left);
         final List<String> subRight = splitVersion(right);
         final int subMax = Math.min(subLeft.size(), subRight.size());
-        for (int x = 0; result == 0 && x < subMax; x++) {
+        for (int x = 0; x < subMax; x++) {
             if (isPositiveInteger(subLeft.get(x)) && isPositiveInteger(subRight.get(x))) {
                 try {
                     result = Long.valueOf(subLeft.get(x)).compareTo(Long.valueOf(subRight.get(x)));
