@@ -38,9 +38,8 @@ import us.springett.parsers.cpe.values.LogicalValue;
  * @author Jeremy Long
  */
 public class Cpe implements ICpe, Serializable {
-    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("(\\.|:-)");
-    private static final Pattern DIGITS_AND_LETTERS_PATTERN = Pattern.compile("^[\\d]+?[A-z]+");
-    private static final Pattern VERSION_SPLIT_INNER_PATTERN = Pattern.compile("^([\\d]+?)(.*)$");
+    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("(?:\\.|:-)");
+    private static final Pattern DIGITS_AND_LETTERS_PATTERN = Pattern.compile("^(\\d+?)((?:[A-z]+)(.*))$");
 
     /**
      * The serial version UID.
@@ -845,17 +844,16 @@ public class Cpe implements ICpe, Serializable {
      * comparison of "5.0.3a", "5.0.9" and "5.0.30".
      *
      * @param s the string to split
-     * @return an Array of String containing the tokens to be compared
+     * @return a List of String containing the tokens to be compared
      */
-    private static List<String> splitVersion(String s) {
+    static List<String> splitVersion(String s) {
         //TODO improve performance by removing regex.
         final String[] splitString = VERSION_SPLIT_PATTERN.split(s);
 
         final List<String> res = new ArrayList<>();
         for (String token : splitString) {
-            if (DIGITS_AND_LETTERS_PATTERN.matcher(token).matches()) {
-                final Matcher matcher = VERSION_SPLIT_INNER_PATTERN.matcher(token);
-                matcher.find();
+            final Matcher matcher = DIGITS_AND_LETTERS_PATTERN.matcher(token);
+            if (matcher.matches() && matcher.group(3).isEmpty()) {
                 final String g1 = matcher.group(1);
                 final String g2 = matcher.group(2);
 
