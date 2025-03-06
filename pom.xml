@@ -58,11 +58,11 @@
         <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
         <maven.github.release.plugin.version>1.6.0</maven.github.release.plugin.version>
         <com.github.spotbugs.plugin.version>4.8.6.6</com.github.spotbugs.plugin.version>
-        <maven.jxr.plugin.version>3.5.0</maven.jxr.plugin.version>
+        <maven.jxr.plugin.version>3.6.0</maven.jxr.plugin.version>
         <maven.enforcer.plugin.version>3.5.0</maven.enforcer.plugin.version>
         <maven.gpg.plugin.version>3.2.7</maven.gpg.plugin.version>
         <com.h3xstream.findsecbugs.version>1.13.0</com.h3xstream.findsecbugs.version>
-        <maven.checkstyle.plugin.version>3.5.0</maven.checkstyle.plugin.version>
+        <maven.checkstyle.plugin.version>3.6.0</maven.checkstyle.plugin.version>
         <com.puppycrawl.tools.checkstyle.version>10.20.0</com.puppycrawl.tools.checkstyle.version>
         <jacoco.maven.plugin.version>0.8.12</jacoco.maven.plugin.version>
         <maven.site.plugin.version>3.20.0</maven.site.plugin.version>
