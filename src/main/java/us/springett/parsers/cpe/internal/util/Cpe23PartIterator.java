@@ -60,7 +60,7 @@ public class Cpe23PartIterator implements Iterator<String> {
     @Override
     public String next() {
         if (pos >= cpe.length()) {
-            throw new NoSuchElementException("No remainging parts");
+            throw new NoSuchElementException("No remaining parts");
         }
         int end;
         for (end = pos; end < cpe.length(); end++) {

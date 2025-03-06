@@ -465,7 +465,7 @@ public class Cpe implements ICpe, Serializable {
         sb.append(Convert.wellFormedToCpeUri(version)).append(":");
         sb.append(Convert.wellFormedToCpeUri(update)).append(":");
         //pack the extra fields from CPE 2.3 into the edition field if present
-        //when outputing to 2.2 format
+        //when outputting to 2.2 format
         if (!((swEdition.isEmpty() || "*".equals(swEdition))
                 && (targetSw.isEmpty() || "*".equals(targetSw))
                 && (targetHw.isEmpty() || "*".equals(targetHw))
