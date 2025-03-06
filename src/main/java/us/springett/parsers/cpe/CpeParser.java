@@ -108,11 +108,13 @@ public final class CpeParser {
         if (parts.length <= 1 || parts.length > 8) {
             throw new CpeParsingException("CPE String is invalid - too many components specified: " + cpeString);
         }
-        if (parts[1].length() != 2) {
+        if (parts[1].length() == 0 || parts[1].length() > 2) {
             throw new CpeParsingException("CPE String contains a malformed part: " + cpeString);
         }
         try {
-            cb.part(parts[1].substring(1));
+            if (parts[1].length() > 1) {
+                cb.part(parts[1].substring(1));
+            }
             if (parts.length > 2) {
                 cb.wfVendor(Convert.cpeUriToWellFormed(parts[2], lenient));
             }

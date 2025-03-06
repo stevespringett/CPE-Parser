@@ -636,4 +636,11 @@ public class CpeParserTest {
         exception.expect(CpeParsingException.class);
         CpeParser.parse22("cpe:/t:vendor:product:1.0");
     }
+
+    @Test
+    public void testEmptyPart() throws Exception {
+        Cpe cpe = CpeParser.parse22("cpe:/:redhat:enterprise_linux:::hypervisor");
+        assertEquals(Part.ANY, cpe.getPart());
+        assertEquals("cpe:/*:redhat:enterprise_linux:::hypervisor", cpe.toCpe22Uri());
+    }
 }
