@@ -38,6 +38,8 @@ import us.springett.parsers.cpe.values.LogicalValue;
  * @author Jeremy Long
  */
 public class Cpe implements ICpe, Serializable {
+    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("(?:\\.|:-)");
+    private static final Pattern DIGITS_AND_LETTERS_PATTERN = Pattern.compile("^(\\d+?)((?:[A-z]+)(.*))$");
 
     /**
      * The serial version UID.
@@ -463,7 +465,7 @@ public class Cpe implements ICpe, Serializable {
         sb.append(Convert.wellFormedToCpeUri(version)).append(":");
         sb.append(Convert.wellFormedToCpeUri(update)).append(":");
         //pack the extra fields from CPE 2.3 into the edition field if present
-        //when outputing to 2.2 format
+        //when outputting to 2.2 format
         if (!((swEdition.isEmpty() || "*".equals(swEdition))
                 && (targetSw.isEmpty() || "*".equals(targetSw))
                 && (targetHw.isEmpty() || "*".equals(targetHw))
@@ -676,50 +678,23 @@ public class Cpe implements ICpe, Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+        if (obj == null
+            || getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Cpe compareTo = (Cpe) obj;
-        if (!Objects.equals(this.vendor, compareTo.vendor)) {
-            return false;
-        }
-        if (!Objects.equals(this.product, compareTo.product)) {
-            return false;
-        }
-        if (!Objects.equals(this.version, compareTo.version)) {
-            return false;
-        }
-        if (!Objects.equals(this.update, compareTo.update)) {
-            return false;
-        }
-        if (!Objects.equals(this.edition, compareTo.edition)) {
-            return false;
-        }
-        if (!Objects.equals(this.language, compareTo.language)) {
-            return false;
-        }
-        if (!Objects.equals(this.swEdition, compareTo.swEdition)) {
-            return false;
-        }
-        if (!Objects.equals(this.targetSw, compareTo.targetSw)) {
-            return false;
-        }
-        if (!Objects.equals(this.targetHw, compareTo.targetHw)) {
-            return false;
-        }
-        if (!Objects.equals(this.other, compareTo.other)) {
-            return false;
-        }
-        if (this.part != compareTo.part) {
-            return false;
-        }
-        return true;
+
+        final Cpe cpe = (Cpe) obj;
+        return part == cpe.part
+               && Objects.equals(vendor, cpe.vendor)
+               && Objects.equals(product, cpe.product)
+               && Objects.equals(version, cpe.version)
+               && Objects.equals(update, cpe.update)
+               && Objects.equals(edition, cpe.edition)
+               && Objects.equals(language, cpe.language)
+               && Objects.equals(swEdition, cpe.swEdition)
+               && Objects.equals(targetSw, cpe.targetSw)
+               && Objects.equals(targetHw, cpe.targetHw)
+               && Objects.equals(other, cpe.other);
     }
 
     @Override
@@ -731,13 +706,12 @@ public class Cpe implements ICpe, Serializable {
      * CompareTo is used for sorting, this does not implement any CPE Matching
      * rules.
      *
-     * @param o the CPE to compare
+     * @param otherObject the CPE to compare
      * @return the sort order
      */
     @Override
-    public int compareTo(Object o) {
-        if (o instanceof ICpe) {
-            ICpe otherObject = (ICpe) o;
+    public int compareTo(ICpe otherObject) {
+        if (otherObject != null) {
 
             final int before = -1;
             final int equal = 0;
@@ -814,7 +788,7 @@ public class Cpe implements ICpe, Serializable {
             }
             return equal;
         }
-        throw new RuntimeException("Unable to compare " + o.getClass().getCanonicalName());
+        return -1;
     }
 
     /**
@@ -834,8 +808,8 @@ public class Cpe implements ICpe, Serializable {
         //final List<String> subRight = splitVersion(Convert.fromWellFormed(right));
         final List<String> subLeft = splitVersion(left);
         final List<String> subRight = splitVersion(right);
-        final int subMax = (subLeft.size() <= subRight.size()) ? subLeft.size() : subRight.size();
-        for (int x = 0; result == 0 && x < subMax; x++) {
+        final int subMax = Math.min(subLeft.size(), subRight.size());
+        for (int x = 0; x < subMax; x++) {
             if (isPositiveInteger(subLeft.get(x)) && isPositiveInteger(subRight.get(x))) {
                 try {
                     result = Long.valueOf(subLeft.get(x)).compareTo(Long.valueOf(subRight.get(x)));
@@ -870,18 +844,16 @@ public class Cpe implements ICpe, Serializable {
      * comparison of "5.0.3a", "5.0.9" and "5.0.30".
      *
      * @param s the string to split
-     * @return an Array of String containing the tokens to be compared
+     * @return a List of String containing the tokens to be compared
      */
-    private static List<String> splitVersion(String s) {
+    static List<String> splitVersion(String s) {
         //TODO improve performance by removing regex.
-        final Pattern pattern = Pattern.compile("^([\\d]+?)(.*)$");
-        final String[] splitString = s.split("(\\.|:-)");
+        final String[] splitString = VERSION_SPLIT_PATTERN.split(s);
 
         final List<String> res = new ArrayList<>();
         for (String token : splitString) {
-            if (token.matches("^[\\d]+?[A-z]+")) {
-                final Matcher matcher = pattern.matcher(token);
-                matcher.find();
+            final Matcher matcher = DIGITS_AND_LETTERS_PATTERN.matcher(token);
+            if (matcher.matches() && matcher.group(3).isEmpty()) {
                 final String g1 = matcher.group(1);
                 final String g2 = matcher.group(2);
 

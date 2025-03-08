@@ -71,7 +71,7 @@ public enum Status {
     /**
      * The CPE value is invalid.
      */
-    INVALID(false, "The CPE valud is invalid");
+    INVALID(false, "The CPE value is invalid");
 
     /**
      * Flag indicating whether or not the status is considered valid.

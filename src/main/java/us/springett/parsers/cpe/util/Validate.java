@@ -99,75 +99,75 @@ public final class Validate {
             try {
                 instance = new Cpe23PartIterator(value);
             } catch (CpeParsingException ex) {
-                LOG.warn("The CPE (" + value + ") is invalid as it is not in the formatted string format");
+                LOG.warn("The CPE ({}) is invalid as it is not in the formatted string format", value);
                 return Status.INVALID;
             }
             try {
                 //part
                 Part.getEnum(instance.next());
             } catch (CpeParsingException ex) {
-                LOG.warn("The CPE (" + value + ") is invalid as it has an invalid part attribute");
+                LOG.warn("The CPE ({}) is invalid as it has an invalid part attribute", value);
                 return Status.INVALID_PART;
             }
             Status status;
             //vendor
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE (" + value + ") has an invalid vendor - " + status.getMessage());
+                LOG.warn("The CPE ({}) has an invalid vendor - {}", value, status.getMessage());
                 return status;
             }
             //product
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE (" + value + ") has an invalid product - " + status.getMessage());
+                LOG.warn("The CPE ({}) has an invalid product - {}", value, status.getMessage());
                 return status;
             }
             //version
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE (" + value + ") has an version version - " + status.getMessage());
+                LOG.warn("The CPE ({}) has an version version - {}", value, status.getMessage());
                 return status;
             }
             //update
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE (" + value + ") has an invalid update - " + status.getMessage());
+                LOG.warn("The CPE ({}) has an invalid update - {}", value, status.getMessage());
                 return status;
             }
             //edition
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE (" + value + ") has an invalid edition - " + status.getMessage());
+                LOG.warn("The CPE ({}) has an invalid edition - {}", value, status.getMessage());
                 return status;
             }
             //language
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE (" + value + ") has an invalid language - " + status.getMessage());
+                LOG.warn("The CPE ({}) has an invalid language - {}", value, status.getMessage());
                 return status;
             }
             //swEdition
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE (" + value + ") has an invalid swEdition - " + status.getMessage());
+                LOG.warn("The CPE ({}) has an invalid swEdition - {}", value, status.getMessage());
                 return status;
             }
             //targetSw
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE (" + value + ") has an invalid targetSw - " + status.getMessage());
+                LOG.warn("The CPE ({}) has an invalid targetSw - {}", value, status.getMessage());
                 return status;
             }
             //targetHw
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE (" + value + ") has an invalid targetHw - " + status.getMessage());
+                LOG.warn("The CPE ({}) has an invalid targetHw - {}", value, status.getMessage());
                 return status;
             }
             //other
             status = Validate.component(instance.next());
             if (!status.isValid()) {
-                LOG.warn("The CPE (" + value + ") has an invalid other attribute - " + status.getMessage());
+                LOG.warn("The CPE ({}) has an invalid other attribute - {}", value, status.getMessage());
                 return status;
             }
             if (instance.hasNext()) {
@@ -192,7 +192,7 @@ public final class Validate {
         try {
             String[] parts = value.split(":");
             if (parts.length > 8 || parts.length == 1 || !"cpe".equalsIgnoreCase(parts[0])) {
-                LOG.warn("The CPE (" + value + ") is invalid as it is not in the CPE 2.2 URI format");
+                LOG.warn("The CPE ({}) is invalid as it is not in the CPE 2.2 URI format", value);
                 return Status.INVALID;
             }
             if (parts.length >= 2 && parts[1].length() == 2) {
@@ -205,144 +205,144 @@ public final class Validate {
                     }
                 }
                 if (!found) {
-                    LOG.warn("The CPE (" + value + ") is invalid as it has an invalid part attribute");
+                    LOG.warn("The CPE ({}) is invalid as it has an invalid part attribute", value);
                     return Status.INVALID_PART;
                 }
             } else {
-                LOG.warn("The CPE (" + value + ") is invalid as it has an invalid part attribute");
+                LOG.warn("The CPE ({}) is invalid as it has an invalid part attribute", value);
                 return Status.INVALID_PART;
             }
             if (parts.length > 2) {
                 if ("*".equals(parts[2])) {
-                    LOG.warn("The CPE (" + value + ") has an invalid vendor - asterisk");
+                    LOG.warn("The CPE ({}) has an invalid vendor - asterisk", value);
                     return Status.INVALID;
                 }
                 Status s = component(Convert.cpeUriToWellFormed(parts[2]));
                 if (!s.isValid() || "*".equals(parts[2])) {
-                    LOG.warn("The CPE (" + value + ") has an invalid vendor - " + s.getMessage());
+                    LOG.warn("The CPE ({}) has an invalid vendor - {}", value, s.getMessage());
                     return s;
                 }
             }
             if (parts.length > 3) {
                 if ("*".equals(parts[3])) {
-                    LOG.warn("The CPE (" + value + ") has an invalid product - asterisk");
+                    LOG.warn("The CPE ({}) has an invalid product - asterisk", value);
                     return Status.INVALID;
                 }
                 Status s = component(Convert.cpeUriToWellFormed(parts[3]));
                 if (!s.isValid()) {
-                    LOG.warn("The CPE (" + value + ") has an invalid product - " + s.getMessage());
+                    LOG.warn("The CPE ({}) has an invalid product - {}", value, s.getMessage());
                     return s;
                 }
             }
             if (parts.length > 4) {
                 if ("*".equals(parts[4])) {
-                    LOG.warn("The CPE (" + value + ") has an invalid version - asterisk");
+                    LOG.warn("The CPE ({}) has an invalid version - asterisk", value);
                     return Status.INVALID;
                 }
                 Status s = component(Convert.cpeUriToWellFormed(parts[4]));
                 if (!s.isValid()) {
-                    LOG.warn("The CPE (" + value + ") has an invalid version - " + s.getMessage());
+                    LOG.warn("The CPE ({}) has an invalid version - {}", value, s.getMessage());
                     return s;
                 }
             }
             if (parts.length > 5) {
                 if ("*".equals(parts[5])) {
-                    LOG.warn("The CPE (" + value + ") has an invalid update - asterisk");
+                    LOG.warn("The CPE ({}) has an invalid update - asterisk", value);
                     return Status.INVALID;
                 }
                 Status s = component(Convert.cpeUriToWellFormed(parts[5]));
                 if (!s.isValid()) {
-                    LOG.warn("The CPE (" + value + ") has an invalid update - " + s.getMessage());
+                    LOG.warn("The CPE ({}) has an invalid update - {}", value, s.getMessage());
                     return s;
                 }
             }
             if (parts.length > 6) {
                 if (parts[6].startsWith("~")) {
                     if (countCharacter(parts[6], '~') != 5) {
-                        LOG.warn("The CPE (" + value + ") has an invalid packed edition - too many entries");
+                        LOG.warn("The CPE ({}) has an invalid packed edition - too many entries", value);
                         return Status.INVALID;
                     }
                     String[] unpacked = parts[6].split("~");
                     if (unpacked.length > 1) {
                         if ("*".equals(unpacked[1])) {
-                            LOG.warn("The CPE (" + value + ") has an invalid packed edition - asterisk");
+                            LOG.warn("The CPE ({}) has an invalid packed edition - asterisk", value);
                             return Status.INVALID;
                         }
                         Status s = component(Convert.cpeUriToWellFormed(unpacked[1]));
                         if (!s.isValid()) {
-                            LOG.warn("The CPE (" + value + ") has an invalid packed edition - " + s.getMessage());
+                            LOG.warn("The CPE ({}) has an invalid packed edition - {}", value, s.getMessage());
                             return s;
                         }
                     }
                     if (unpacked.length > 2) {
                         if ("*".equals(unpacked[2])) {
-                            LOG.warn("The CPE (" + value + ") has an invalid packed sw_edition - asterisk");
+                            LOG.warn("The CPE ({}) has an invalid packed sw_edition - asterisk", value);
                             return Status.INVALID;
                         }
                         Status s = component(Convert.cpeUriToWellFormed(unpacked[2]));
                         if (!s.isValid()) {
-                            LOG.warn("The CPE (" + value + ") has an invalid packed sw_edition - " + s.getMessage());
+                            LOG.warn("The CPE ({}) has an invalid packed sw_edition - {}", value, s.getMessage());
                             return s;
                         }
                     }
                     if (unpacked.length > 3) {
                         if ("*".equals(unpacked[3])) {
-                            LOG.warn("The CPE (" + value + ") has an invalid packed target_sw - asterisk");
+                            LOG.warn("The CPE ({}) has an invalid packed target_sw - asterisk", value);
                             return Status.INVALID;
                         }
                         Status s = component(Convert.cpeUriToWellFormed(unpacked[3]));
                         if (!s.isValid()) {
-                            LOG.warn("The CPE (" + value + ") has an invalid packed target_sw - " + s.getMessage());
+                            LOG.warn("The CPE ({}) has an invalid packed target_sw - {}", value, s.getMessage());
                             return s;
                         }
                     }
                     if (unpacked.length > 4) {
                         if ("*".equals(unpacked[4])) {
-                            LOG.warn("The CPE (" + value + ") has an invalid packed target_hw - asterisk");
+                            LOG.warn("The CPE ({}) has an invalid packed target_hw - asterisk", value);
                             return Status.INVALID;
                         }
                         Status s = component(Convert.cpeUriToWellFormed(unpacked[4]));
                         if (!s.isValid()) {
-                            LOG.warn("The CPE (" + value + ") has an invalid packed target_hw - " + s.getMessage());
+                            LOG.warn("The CPE ({}) has an invalid packed target_hw - {}", value, s.getMessage());
                             return s;
                         }
                     }
                     if (unpacked.length > 5) {
                         if ("*".equals(unpacked[5])) {
-                            LOG.warn("The CPE (" + value + ") has an invalid packed other - asterisk");
+                            LOG.warn("The CPE ({}) has an invalid packed other - asterisk", value);
                             return Status.INVALID;
                         }
                         Status s = component(Convert.cpeUriToWellFormed(unpacked[5]));
                         if (!s.isValid()) {
-                            LOG.warn("The CPE (" + value + ") has an invalid packed other - " + s.getMessage());
+                            LOG.warn("The CPE ({}) has an invalid packed other - {}", value, s.getMessage());
                             return s;
                         }
                     }
                 } else {
                     if ("*".equals(parts[6])) {
-                        LOG.warn("The CPE (" + value + ") has an invalid edition - asterisk");
+                        LOG.warn("The CPE ({}) has an invalid edition - asterisk", value);
                         return Status.INVALID;
                     }
                     Status s = component(Convert.cpeUriToWellFormed(parts[6]));
                     if (!s.isValid()) {
-                        LOG.warn("The CPE (" + value + ") has an invalid edition - " + s.getMessage());
+                        LOG.warn("The CPE ({}) has an invalid edition - {}", value, s.getMessage());
                         return s;
                     }
                 }
             }
             if (parts.length > 7) {
                 if ("*".equals(parts[7])) {
-                    LOG.warn("The CPE (" + value + ") has an invalid language - asterisk");
+                    LOG.warn("The CPE ({}) has an invalid language - asterisk", value);
                     return Status.INVALID;
                 }
                 Status s = component(Convert.cpeUriToWellFormed(parts[7]));
                 if (!s.isValid()) {
-                    LOG.warn("The CPE (" + value + ") has an invalid language - " + s.getMessage());
+                    LOG.warn("The CPE ({}) has an invalid language - {}", value, s.getMessage());
                     return s;
                 }
             }
         } catch (CpeEncodingException ex) {
-            LOG.warn("The CPE (" + value + ") has an unencoded special characters");
+            LOG.warn("The CPE ({}) has an unencoded special characters", value);
             return Status.INVALID;
         }
         return Status.VALID;

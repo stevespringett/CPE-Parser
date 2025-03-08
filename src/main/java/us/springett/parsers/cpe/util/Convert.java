@@ -18,7 +18,7 @@
 package us.springett.parsers.cpe.util;
 
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,39 +135,35 @@ public final class Convert {
         if (LogicalValue.NA.getAbbreviation().equals(wellFormed)) {
             return wellFormed;
         }
-        try {
-            byte[] bytes = wellFormed.getBytes("UTF-8");
-            StringBuilder sb = new StringBuilder(wellFormed.length() + 10);
-            for (int x = 0; x < bytes.length; x++) {
-                byte c = bytes[x];
-                if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
-                    sb.append((char) c);
-                } else if (c == '\\') {
-                    x += 1;
-                    if (x >= bytes.length) {
-                        throw new CpeEncodingException("Invalid Well Formed string - ends with an unquoted backslash");
-                    }
-                    c = bytes[x];
-                    if (c == '_' || c == '.' || c == '-') {
-                        sb.append((char) c);
-                    } else {
-                        //consider .append(Integer.toHexString(c))
-                        sb.append('%')
-                                .append(HEX_CHARS[(c & 0xF0) >>> 4])
-                                .append(HEX_CHARS[c & 0x0F]);
-                    }
-                } else if (c == '*') {
-                    sb.append("%02");
-                } else if (c == '?') {
-                    sb.append("%01");
-                } else {
-                    throw new CpeEncodingException("Invalid Well Formed string - unexpected characters: " + wellFormed);
+        byte[] bytes = wellFormed.getBytes(StandardCharsets.UTF_8);
+        StringBuilder sb = new StringBuilder(wellFormed.length() + 10);
+        for (int x = 0; x < bytes.length; x++) {
+            byte c = bytes[x];
+            if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
+                sb.append((char) c);
+            } else if (c == '\\') {
+                x += 1;
+                if (x >= bytes.length) {
+                    throw new CpeEncodingException("Invalid Well Formed string - ends with an unquoted backslash");
                 }
+                c = bytes[x];
+                if (c == '_' || c == '.' || c == '-') {
+                    sb.append((char) c);
+                } else {
+                    //consider .append(Integer.toHexString(c))
+                    sb.append('%')
+                            .append(HEX_CHARS[(c & 0xF0) >>> 4])
+                            .append(HEX_CHARS[c & 0x0F]);
+                }
+            } else if (c == '*') {
+                sb.append("%02");
+            } else if (c == '?') {
+                sb.append("%01");
+            } else {
+                throw new CpeEncodingException("Invalid Well Formed string - unexpected characters: " + wellFormed);
             }
-            return sb.toString();
-        } catch (UnsupportedEncodingException ex) {
-            throw new CpeEncodingException("UTF-8 encoding is not supported on this JVM?", ex);
         }
+        return sb.toString();
     }
 
     /**
@@ -200,46 +196,42 @@ public final class Convert {
         } else if (LogicalValue.NA.getAbbreviation().equals(value)) {
             return LogicalValue.NA.getAbbreviation();
         }
-        try {
-            byte[] bytes = value.toLowerCase().getBytes("UTF-8");
-            StringBuilder sb = new StringBuilder(value.length());
-            for (int x = 0; x < bytes.length; x++) {
-                char c = (char) bytes[x];
-                if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z')) {
-                    sb.append(c);
-                } else if (c == '_' || c == '.' || c == '-') {
+        byte[] bytes = value.toLowerCase().getBytes(StandardCharsets.UTF_8);
+        StringBuilder sb = new StringBuilder(value.length());
+        for (int x = 0; x < bytes.length; x++) {
+            char c = (char) bytes[x];
+            if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z')) {
+                sb.append(c);
+            } else if (c == '_' || c == '.' || c == '-') {
+                sb.append('\\').append(c);
+            } else if (c == '%') {
+                if ((2 + x) >= bytes.length) {
+                    throw new CpeEncodingException("Invalid CPE URI component - ends with a single percent");
+                }
+                char decoded = (char) (Character.digit(bytes[++x], 16) * 16
+                        + Character.digit(bytes[++x], 16));
+                switch (decoded) {
+                    case 1:
+                        sb.append('?');
+                        break;
+                    case 2:
+                        sb.append('*');
+                        break;
+                    default:
+                        sb.append('\\').append(decoded);
+                        break;
+                }
+            } else {
+                if (lenient) {
+                    //TODO check to ensure that the value is in the ascii range per spec?
+                    LOG.debug("Invalid CPE URI part, '{}'; escaping '{}' as a well formatted string", value, c);
                     sb.append('\\').append(c);
-                } else if (c == '%') {
-                    if ((2 + x) >= bytes.length) {
-                        throw new CpeEncodingException("Invalid CPE URI component - ends with a single percent");
-                    }
-                    char decoded = (char) (Character.digit(bytes[++x], 16) * 16
-                            + Character.digit(bytes[++x], 16));
-                    switch (decoded) {
-                        case 1:
-                            sb.append('?');
-                            break;
-                        case 2:
-                            sb.append('*');
-                            break;
-                        default:
-                            sb.append('\\').append(decoded);
-                            break;
-                    }
                 } else {
-                    if (lenient) {
-                        //TODO check to ensure that the value is in the ascii range per spec?
-                        LOG.debug("Invalid CPE URI part, '%s'; escaping '%s' as a well formatted string", value, c);
-                        sb.append('\\').append(c);
-                    } else {
-                        throw new CpeEncodingException("Invalid CPE URI component - unexpected characters");
-                    }
+                    throw new CpeEncodingException("Invalid CPE URI component - unexpected characters");
                 }
             }
-            return sb.toString();
-        } catch (UnsupportedEncodingException ex) {
-            throw new CpeEncodingException("UTF-8 encoding is not supported on this JVM?", ex);
         }
+        return sb.toString();
     }
 
     /**
