@@ -20,6 +20,8 @@ package us.springett.parsers.cpe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.AfterClass;
 import us.springett.parsers.cpe.util.Relation;
@@ -887,5 +889,12 @@ public class CpeTest {
         left = "alpha";
         right = "alpha";
         assertTrue(Cpe.compareVersions(left, right) == 0);
+    }
+
+    @Test
+    public void testSplitVersions() {
+        Assertions.assertThat(Cpe.splitVersion("1.2.3")).containsExactly("1", "2", "3");
+        Assertions.assertThat(Cpe.splitVersion("1.2.3b")).containsExactly("1", "2", "3", "b");
+        Assertions.assertThat(Cpe.splitVersion("1.2.3-SNAPSHOT")).containsExactly("1", "2", "3-SNAPSHOT");
     }
 }

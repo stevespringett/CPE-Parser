@@ -101,7 +101,7 @@ public final class CpeParser {
      */
     protected static Cpe parse22(String cpeString, boolean lenient) throws CpeParsingException {
         if (cpeString == null || cpeString.isEmpty()) {
-            throw new CpeParsingException("CPE String is null ir enpty - unable to parse");
+            throw new CpeParsingException("CPE String is null is empty - unable to parse");
         }
         CpeBuilder cb = new CpeBuilder();
         String[] parts = cpeString.split(":");
@@ -141,7 +141,7 @@ public final class CpeParser {
 
     /**
      * In a CPE 2.2 URI the new fields from CPE 2.3 may be "packed" into the
-     * edition field. If present, each field will be preceeded by a '~'.
+     * edition field. If present, each field will be preceded by a '~'.
      * Example, "~edition~swEdition~targetSw~targetHw~other".
      *
      * @param edition the edition string to unpack
@@ -204,7 +204,7 @@ public final class CpeParser {
      */
     protected static Cpe parse23(String cpeString, boolean lenient) throws CpeParsingException {
         if (cpeString == null || cpeString.isEmpty()) {
-            throw new CpeParsingException("CPE String is null ir enpty - unable to parse");
+            throw new CpeParsingException("CPE String is null is empty - unable to parse");
         }
         CpeBuilder cb = new CpeBuilder();
         Cpe23PartIterator cpe = new Cpe23PartIterator(cpeString);

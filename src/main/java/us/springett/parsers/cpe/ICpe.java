@@ -25,7 +25,7 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
  *
  * @author Jeremy Long
  */
-public interface ICpe extends Comparable {
+public interface ICpe extends Comparable<ICpe> {
 
     /**
      * <p>
