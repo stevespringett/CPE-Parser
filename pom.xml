@@ -64,7 +64,7 @@
         <maven.gpg.plugin.version>3.2.7</maven.gpg.plugin.version>
         <com.h3xstream.findsecbugs.version>1.13.0</com.h3xstream.findsecbugs.version>
         <maven.checkstyle.plugin.version>3.6.0</maven.checkstyle.plugin.version>
-        <com.puppycrawl.tools.checkstyle.version>10.21.4</com.puppycrawl.tools.checkstyle.version>
+        <com.puppycrawl.tools.checkstyle.version>10.24.0</com.puppycrawl.tools.checkstyle.version>
         <jacoco.maven.plugin.version>0.8.12</jacoco.maven.plugin.version>
         <maven.site.plugin.version>3.21.0</maven.site.plugin.version>
         <maven.project.info.reports.plugin.version>3.9.0</maven.project.info.reports.plugin.version>
