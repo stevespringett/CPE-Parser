@@ -21,7 +21,9 @@ import us.springett.parsers.cpe.util.Relation;
 import us.springett.parsers.cpe.values.Part;
 import us.springett.parsers.cpe.util.Convert;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -32,15 +34,14 @@ import us.springett.parsers.cpe.util.Status;
 import us.springett.parsers.cpe.util.Validate;
 import us.springett.parsers.cpe.values.LogicalValue;
 
+import static java.lang.Character.isDigit;
+
 /**
  * Object representation of a Common Platform Enumeration (CPE).
  *
  * @author Jeremy Long
  */
 public class Cpe implements ICpe, Serializable {
-    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("(?:\\.|:-)");
-    private static final Pattern DIGITS_AND_LETTERS_PATTERN = Pattern.compile("^(\\d+?)((?:[A-z]+)(.*))$");
-
     /**
      * The serial version UID.
      */
@@ -801,26 +802,16 @@ public class Cpe implements ICpe, Serializable {
      */
     protected static int compareVersions(String left, String right) {
         int result = 0;
-        //while the strings are well formed - the backslashes will be in the exact
-        //same location in equal strings - for version numbers the cost of conversion
-        //should not be incurred
-        //final List<String> subLeft = splitVersion(Convert.fromWellFormed(left));
-        //final List<String> subRight = splitVersion(Convert.fromWellFormed(right));
-        final List<String> subLeft = splitVersion(left);
-        final List<String> subRight = splitVersion(right);
+        final List<Comparable<?>> subLeft = splitVersion(left);
+        final List<Comparable<?>> subRight = splitVersion(right);
         final int subMax = Math.min(subLeft.size(), subRight.size());
         for (int x = 0; x < subMax; x++) {
-            if (isPositiveInteger(subLeft.get(x)) && isPositiveInteger(subRight.get(x))) {
-                try {
-                    result = Long.valueOf(subLeft.get(x)).compareTo(Long.valueOf(subRight.get(x)));
-                } catch (NumberFormatException ex) {
-                    //infeasible path - unless one of the values is larger then a long?
-                    if (!subLeft.get(x).equalsIgnoreCase(subRight.get(x))) {
-                        result = subLeft.get(x).compareTo(subRight.get(x));
-                    }
-                }
+            Object leftPart = subLeft.get(x);
+            Object rightPart = subRight.get(x);
+            if (leftPart instanceof BigInteger && rightPart instanceof BigInteger) {
+                result = ((BigInteger) leftPart).compareTo(((BigInteger) rightPart));
             } else {
-                result = subLeft.get(x).compareTo(subRight.get(x));
+                result = leftPart.toString().compareTo(rightPart.toString());
             }
             if (result != 0) {
                 return result;
@@ -844,53 +835,48 @@ public class Cpe implements ICpe, Serializable {
      * comparison of "5.0.3a", "5.0.9" and "5.0.30".
      *
      * @param s the string to split
-     * @return a List of String containing the tokens to be compared
+     * @return a List of comparable objects containing the tokens to be compared. Not that difference comparable
+     *         types are not generally comparable to one another; and it is the caller's responsibility to handle that.
      */
-    static List<String> splitVersion(String s) {
-        //TODO improve performance by removing regex.
-        final String[] splitString = VERSION_SPLIT_PATTERN.split(s);
+    static List<Comparable<?>> splitVersion(String s) {
+        if (s == null || s.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-        final List<String> res = new ArrayList<>();
-        for (String token : splitString) {
-            final Matcher matcher = DIGITS_AND_LETTERS_PATTERN.matcher(token);
-            if (matcher.matches() && matcher.group(3).isEmpty()) {
-                final String g1 = matcher.group(1);
-                final String g2 = matcher.group(2);
+        List<Comparable<?>> result = new ArrayList<>();
 
-                res.add(g1);
-                res.add(g2);
+        StringBuilder token = new StringBuilder(3);
+        boolean integerMode = false;
+
+        for (int i = 0; i < s.length(); i++) {
+            final char c = s.charAt(i);
+            final boolean firstChar = token.length() == 0;
+
+            if (c == '.' || c == '|' || c == ':' || c == '-') {
+                if (!firstChar) {
+                    // Complete the current token
+                    result.add(integerMode ? new BigInteger(token.toString()) : token.toString());
+                    token.setLength(0);
+                    integerMode = false;
+                }
+                // skip splitter char
+            } else if (isDigit(c)) {
+                integerMode |= firstChar && c != '0'; // Start integer mode if first char is a non-zero digit
+                token.append(c);
             } else {
-                res.add(token);
+                // not a splitter, not a digit
+                if (integerMode) {
+                    // Always start a new token if in integer mode and encountering a non-digit
+                    result.add(new BigInteger(token.toString()));
+                    token.setLength(0);
+                    integerMode = false;
+                }
+                token.append(c);
             }
         }
-        return res;
-    }
-
-    /**
-     * Determines if the string passed in is a positive integer. To be counted
-     * as a positive integer, the string must only contain 0-9 and must not have
-     * any leading zeros (though "0" is a valid positive integer).
-     *
-     * @param str the string to test
-     * @return true if the string only contains 0-9, otherwise false.
-     */
-    private static boolean isPositiveInteger(final String str) {
-        if (str == null || str.isEmpty()) {
-            return false;
+        if (token.length() > 0) {
+            result.add(integerMode ? new BigInteger(token.toString()) : token.toString());
         }
-
-        // numbers with leading zeros should not be treated as numbers
-        // (e.g. when comparing "01" <-> "1")
-        if (str.charAt(0) == '0' && str.length() > 1) {
-            return false;
-        }
-
-        for (int i = 0; i < str.length(); i++) {
-            final char c = str.charAt(i);
-            if (c < '0' || c > '9') {
-                return false;
-            }
-        }
-        return true;
+        return result;
     }
 }

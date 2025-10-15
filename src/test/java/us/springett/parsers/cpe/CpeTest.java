@@ -17,6 +17,7 @@
  */
 package us.springett.parsers.cpe;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -880,21 +881,46 @@ public class CpeTest {
 
         left = "5.1.9223372036854775807152";
         right = "5.1.932";
-        assertTrue(Cpe.compareVersions(left, right) < 0);
+        assertTrue(Cpe.compareVersions(left, right) > 0);
 
         left = "5.1.932";
         right = "5.1.9223372036854775807152";
-        assertTrue(Cpe.compareVersions(left, right) > 0);
+        assertTrue(Cpe.compareVersions(left, right) < 0);
 
         left = "alpha";
         right = "alpha";
         assertTrue(Cpe.compareVersions(left, right) == 0);
+
+        assertTrue(Cpe.compareVersions("5.1.9", "5.1.20") < 0);
+        assertTrue(Cpe.compareVersions("5.1.20", "5.1.32-bzr") < 0);
+        assertTrue(Cpe.compareVersions("5.1.9", "5.1.32-bzr") < 0);
+        assertTrue(Cpe.compareVersions("5.1.32-bzr", "5.1.9") > 0);
+        assertTrue(Cpe.compareVersions("1-SNAPSHOT", "1.SNAPSHOT") == 0);
+        assertTrue(Cpe.compareVersions("1-SNAPSHOT", "1|SNAPSHOT") == 0);
+        assertTrue(Cpe.compareVersions("1-SNAPSHOT", "1:SNAPSHOT") == 0);
+
+        assertTrue(Cpe.compareVersions("9", "20") < 0);
+        assertTrue(Cpe.compareVersions("20", "32+bzr") < 0);
+        assertTrue(Cpe.compareVersions("9", "32+bzr") < 0); // Transitive inconsistency - still fails
     }
 
     @Test
     public void testSplitVersions() {
-        Assertions.assertThat(Cpe.splitVersion("1.2.3")).containsExactly("1", "2", "3");
-        Assertions.assertThat(Cpe.splitVersion("1.2.3b")).containsExactly("1", "2", "3", "b");
-        Assertions.assertThat(Cpe.splitVersion("1.2.3-SNAPSHOT")).containsExactly("1", "2", "3-SNAPSHOT");
+        Assertions.assertThat(Cpe.splitVersion(null)).containsExactly();
+        Assertions.assertThat(Cpe.splitVersion("")).containsExactly();
+        Assertions.assertThat(Cpe.splitVersion("0.1")).containsExactly("0", bi("1"));
+        Assertions.assertThat(Cpe.splitVersion("0.134alpha")).containsExactly("0", bi("134"), "alpha");
+        Assertions.assertThat(Cpe.splitVersion("0.1+alpha")).containsExactly("0", bi("1"), "+alpha");
+        Assertions.assertThat(Cpe.splitVersion("1.2.3")).containsExactly(bi("1"), bi("2"), bi("3"));
+        Assertions.assertThat(Cpe.splitVersion("1.2.3b")).containsExactly(bi("1"), bi("2"), bi("3"), "b");
+        Assertions.assertThat(Cpe.splitVersion("1.2.3-SNAPSHOT")).containsExactly(bi("1"), bi("2"), bi("3"), "SNAPSHOT");
+        Assertions.assertThat(Cpe.splitVersion("1.2.3:|")).containsExactly(bi("1"), bi("2"), bi("3"));
+        Assertions.assertThat(Cpe.splitVersion("1-2|3|")).containsExactly(bi("1"), bi("2"), bi("3"));
+        Assertions.assertThat(Cpe.splitVersion("5.1.32-bzr")).containsExactly(bi("5"), bi("1"), bi("32"), "bzr");
+        Assertions.assertThat(Cpe.splitVersion("5.1.9223372036854775807152")).containsExactly(bi("5"), bi("1"), bi("9223372036854775807152"));
+    }
+
+    private static BigInteger bi(String val) {
+        return new BigInteger(val);
     }
 }
