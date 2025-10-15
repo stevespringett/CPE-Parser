@@ -880,11 +880,11 @@ public class CpeTest {
 
         left = "5.1.9223372036854775807152";
         right = "5.1.932";
-        assertTrue(Cpe.compareVersions(left, right) < 0);
+        assertTrue(Cpe.compareVersions(left, right) > 0);
 
         left = "5.1.932";
         right = "5.1.9223372036854775807152";
-        assertTrue(Cpe.compareVersions(left, right) > 0);
+        assertTrue(Cpe.compareVersions(left, right) < 0);
 
         left = "alpha";
         right = "alpha";

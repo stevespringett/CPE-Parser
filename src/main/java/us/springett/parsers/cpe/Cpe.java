@@ -21,8 +21,10 @@ import us.springett.parsers.cpe.util.Relation;
 import us.springett.parsers.cpe.values.Part;
 import us.springett.parsers.cpe.util.Convert;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -649,8 +651,8 @@ public class Cpe implements ICpe, Serializable {
         }
         //10 11 14 17
         if (containsSpecialCharacter(left)) {
-            Pattern p = Convert.wellFormedToPattern(left.toLowerCase());
-            Matcher m = p.matcher(right.toLowerCase());
+            Pattern p = Convert.wellFormedToPattern(left.toLowerCase(Locale.ROOT));
+            Matcher m = p.matcher(right.toLowerCase(Locale.ROOT));
             return m.matches() ? Relation.SUPERSET : Relation.DISJOINT;
         }
         return Relation.DISJOINT;
@@ -812,12 +814,9 @@ public class Cpe implements ICpe, Serializable {
         for (int x = 0; x < subMax; x++) {
             if (isPositiveInteger(subLeft.get(x)) && isPositiveInteger(subRight.get(x))) {
                 try {
-                    result = Long.valueOf(subLeft.get(x)).compareTo(Long.valueOf(subRight.get(x)));
+                    result = new BigInteger(subLeft.get(x)).compareTo(new BigInteger(subRight.get(x)));
                 } catch (NumberFormatException ex) {
-                    //infeasible path - unless one of the values is larger then a long?
-                    if (!subLeft.get(x).equalsIgnoreCase(subRight.get(x))) {
-                        result = subLeft.get(x).compareTo(subRight.get(x));
-                    }
+                    result = subLeft.get(x).compareTo(subRight.get(x));
                 }
             } else {
                 result = subLeft.get(x).compareTo(subRight.get(x));
