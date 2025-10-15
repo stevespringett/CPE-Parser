@@ -38,7 +38,7 @@ import us.springett.parsers.cpe.values.LogicalValue;
  * @author Jeremy Long
  */
 public class Cpe implements ICpe, Serializable {
-    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("(?:\\.|:-)");
+    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("(?:[.|:-])");
     private static final Pattern DIGITS_AND_LETTERS_PATTERN = Pattern.compile("^(\\d+?)((?:[A-z]+)(.*))$");
 
     /**

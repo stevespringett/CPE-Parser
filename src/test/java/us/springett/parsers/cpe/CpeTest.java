@@ -889,12 +889,27 @@ public class CpeTest {
         left = "alpha";
         right = "alpha";
         assertTrue(Cpe.compareVersions(left, right) == 0);
+
+        assertTrue(Cpe.compareVersions("5.1.9", "5.1.20") < 0);
+        assertTrue(Cpe.compareVersions("5.1.20", "5.1.32-bzr") < 0);
+        assertTrue(Cpe.compareVersions("5.1.9", "5.1.32-bzr") < 0);
+        assertTrue(Cpe.compareVersions("5.1.32-bzr", "5.1.9") > 0);
+        assertTrue(Cpe.compareVersions("1-SNAPSHOT", "1.SNAPSHOT") == 0);
+        assertTrue(Cpe.compareVersions("1-SNAPSHOT", "1|SNAPSHOT") == 0);
+        assertTrue(Cpe.compareVersions("1-SNAPSHOT", "1:SNAPSHOT") == 0);
+
+        assertTrue(Cpe.compareVersions("9", "20") < 0);
+        assertTrue(Cpe.compareVersions("20", "32+bzr") < 0);
+        assertTrue(Cpe.compareVersions("9", "32+bzr") < 0); // Transitive inconsistency - still fails
     }
 
     @Test
     public void testSplitVersions() {
         Assertions.assertThat(Cpe.splitVersion("1.2.3")).containsExactly("1", "2", "3");
         Assertions.assertThat(Cpe.splitVersion("1.2.3b")).containsExactly("1", "2", "3", "b");
-        Assertions.assertThat(Cpe.splitVersion("1.2.3-SNAPSHOT")).containsExactly("1", "2", "3-SNAPSHOT");
+        Assertions.assertThat(Cpe.splitVersion("1.2.3-SNAPSHOT")).containsExactly("1", "2", "3", "SNAPSHOT");
+        Assertions.assertThat(Cpe.splitVersion("1.2.3:|")).containsExactly("1", "2", "3");
+        Assertions.assertThat(Cpe.splitVersion("1-2|3|")).containsExactly("1", "2", "3");
+        Assertions.assertThat(Cpe.splitVersion("5.1.32-bzr")).containsExactly("5", "1", "32", "bzr");
     }
 }
