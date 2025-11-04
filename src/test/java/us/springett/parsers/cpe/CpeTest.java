@@ -903,7 +903,7 @@ public class CpeTest {
 
         assertTrue(Cpe.compareVersions("9", "20") < 0);
         assertTrue(Cpe.compareVersions("20", "32+bzr") < 0);
-        assertTrue(Cpe.compareVersions("9", "32+bzr") < 0); // Transitive inconsistency - still fails
+        assertTrue(Cpe.compareVersions("9", "32+bzr") < 0);
     }
 
     @Test
