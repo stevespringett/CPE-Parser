@@ -589,6 +589,13 @@ public class Cpe implements ICpe, Serializable {
         return compareAttribute(left, right) != Relation.DISJOINT;
     }
 
+    /**
+     * Compares two Part values and determines their relationship.
+     *
+     * @param left the left value to compare
+     * @param right the right value to compare
+     * @return the relationship between the two Part values
+     */
     public static Relation compareAttribute(final Part left, final Part right) {
         //1 6 9 - equals
         if (left == right) {
@@ -623,6 +630,13 @@ public class Cpe implements ICpe, Serializable {
         return compareAttribute(left, right) != Relation.DISJOINT;
     }
 
+    /**
+     * Compares two String values and determines their relationship.
+     *
+     * @param left the left value to compare
+     * @param right the right value to compare
+     * @return the relationship between the two String values
+     */
     public static Relation compareAttribute(final String left, final String right) {
         //the numbers below come from the CPE Matching standard
         //Table 6-2: Enumeration of Attribute Comparison Set Relations
@@ -835,7 +849,7 @@ public class Cpe implements ICpe, Serializable {
      * comparison of "5.0.3a", "5.0.9" and "5.0.30".
      *
      * @param s the string to split
-     * @return a List of comparable objects containing the tokens to be compared. Not that difference comparable
+     * @return a List of comparable objects containing the tokens to be compared. Note that difference comparable
      *         types are not generally comparable to one another; and it is the caller's responsibility to handle that.
      */
     static List<Comparable<?>> splitVersion(String s) {
@@ -847,6 +861,7 @@ public class Cpe implements ICpe, Serializable {
 
         StringBuilder token = new StringBuilder(3);
         boolean integerMode = false;
+        boolean leadingZeroStringMode = false; // Track if we're in a leading-zero string (like "01a")
 
         for (int i = 0; i < s.length(); i++) {
             final char c = s.charAt(i);
@@ -858,18 +873,56 @@ public class Cpe implements ICpe, Serializable {
                     result.add(integerMode ? new BigInteger(token.toString()) : token.toString());
                     token.setLength(0);
                     integerMode = false;
+                    leadingZeroStringMode = false;
                 }
                 // skip splitter char
             } else if (isDigit(c)) {
-                integerMode |= firstChar && c != '0'; // Start integer mode if first char is a non-zero digit
-                token.append(c);
+                if (firstChar) {
+                    // Start of a new token - check if it's a number
+                    if (c == '0') {
+                        // Leading zero - treat entire token as string, don't split further
+                        leadingZeroStringMode = true;
+                        integerMode = false;
+                    } else {
+                        // Non-zero digit - this is a number
+                        integerMode = true;
+                        leadingZeroStringMode = false;
+                    }
+                    token.append(c);
+                } else if (leadingZeroStringMode) {
+                    // We're in leading-zero string mode (like "0123") - keep everything together
+                    token.append(c);
+                } else if (!integerMode) {
+                    // We're building a letter-based string token (like "rc") and hit a digit - split here
+                    // Save the current string token
+                    result.add(token.toString());
+                    token.setLength(0);
+                    // Start a new numeric token (unless it's a leading zero)
+                    if (c == '0') {
+                        leadingZeroStringMode = true;
+                        integerMode = false;
+                    } else {
+                        integerMode = true;
+                        leadingZeroStringMode = false;
+                    }
+                    token.append(c);
+                } else {
+                    // Already in integer mode, just append
+                    token.append(c);
+                }
             } else {
-                // not a splitter, not a digit
-                if (integerMode) {
-                    // Always start a new token if in integer mode and encountering a non-digit
-                    result.add(new BigInteger(token.toString()));
+                // not a splitter, not a digit (it's a letter)
+                if (integerMode || leadingZeroStringMode) {
+                    // Transition from number/leading-zero to letter - split here
+                    if (integerMode) {
+                        result.add(new BigInteger(token.toString()));
+                    } else {
+                        // Save leading-zero string like "01"
+                        result.add(token.toString());
+                    }
                     token.setLength(0);
                     integerMode = false;
+                    leadingZeroStringMode = false;
                 }
                 token.append(c);
             }
