@@ -939,7 +939,7 @@ public class CpeTest {
 
     /**
      * Test transitivity of version comparison - CRITICAL
-     * This test verifies that if a > b and b > c, then a > c
+     * This test verifies that if a &gt; b and b &gt; c, then a &gt; c
      * Mixed BigInteger/String comparisons can violate transitivity
      */
     @Test
