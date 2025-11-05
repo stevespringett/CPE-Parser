@@ -21,7 +21,9 @@ import us.springett.parsers.cpe.util.Relation;
 import us.springett.parsers.cpe.values.Part;
 import us.springett.parsers.cpe.util.Convert;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -38,9 +40,6 @@ import us.springett.parsers.cpe.values.LogicalValue;
  * @author Jeremy Long
  */
 public class Cpe implements ICpe, Serializable {
-    private static final Pattern VERSION_SPLIT_PATTERN = Pattern.compile("(?:\\.|:-)");
-    private static final Pattern DIGITS_AND_LETTERS_PATTERN = Pattern.compile("^(\\d+?)((?:[A-z]+)(.*))$");
-
     /**
      * The serial version UID.
      */
@@ -588,6 +587,13 @@ public class Cpe implements ICpe, Serializable {
         return compareAttribute(left, right) != Relation.DISJOINT;
     }
 
+    /**
+     * Compares two Part values and determines their relationship.
+     *
+     * @param left the left value to compare
+     * @param right the right value to compare
+     * @return the relationship between the two Part values
+     */
     public static Relation compareAttribute(final Part left, final Part right) {
         //1 6 9 - equals
         if (left == right) {
@@ -622,6 +628,13 @@ public class Cpe implements ICpe, Serializable {
         return compareAttribute(left, right) != Relation.DISJOINT;
     }
 
+    /**
+     * Compares two String values and determines their relationship.
+     *
+     * @param left the left value to compare
+     * @param right the right value to compare
+     * @return the relationship between the two String values
+     */
     public static Relation compareAttribute(final String left, final String right) {
         //the numbers below come from the CPE Matching standard
         //Table 6-2: Enumeration of Attribute Comparison Set Relations
@@ -800,97 +813,147 @@ public class Cpe implements ICpe, Serializable {
      * the left and right are equal;<code>1</code> if left is after the right
      */
     protected static int compareVersions(String left, String right) {
-        int result = 0;
-        //while the strings are well formed - the backslashes will be in the exact
-        //same location in equal strings - for version numbers the cost of conversion
-        //should not be incurred
-        //final List<String> subLeft = splitVersion(Convert.fromWellFormed(left));
-        //final List<String> subRight = splitVersion(Convert.fromWellFormed(right));
-        final List<String> subLeft = splitVersion(left);
-        final List<String> subRight = splitVersion(right);
-        final int subMax = Math.min(subLeft.size(), subRight.size());
-        for (int x = 0; x < subMax; x++) {
-            if (isPositiveInteger(subLeft.get(x)) && isPositiveInteger(subRight.get(x))) {
-                try {
-                    result = Long.valueOf(subLeft.get(x)).compareTo(Long.valueOf(subRight.get(x)));
-                } catch (NumberFormatException ex) {
-                    //infeasible path - unless one of the values is larger then a long?
-                    if (!subLeft.get(x).equalsIgnoreCase(subRight.get(x))) {
-                        result = subLeft.get(x).compareTo(subRight.get(x));
-                    }
-                }
-            } else {
-                result = subLeft.get(x).compareTo(subRight.get(x));
-            }
+        if (left.equals(right)) {
+            return 0;
+        }
+        List<VersionPart> subLeft = splitVersion(left);
+        List<VersionPart> subRight = splitVersion(right);
+        for (int x = 0; x < Math.min(subLeft.size(), subRight.size()); x++) {
+            int result = subLeft.get(x).compareTo(subRight.get(x));
             if (result != 0) {
                 return result;
             }
         }
 
-        if (subLeft.size() > subRight.size()) {
-            result = 1;
-        }
-        if (subRight.size() > subLeft.size()) {
-            result = -1;
-        }
-
-        return result;
+        // All parts are equal up until the minimum size - version with more chunks is thus "bigger"
+        return Integer.compare(subLeft.size(), subRight.size());
     }
 
     /**
      * Method that split versions for '.', '|', ':' and '-". Then if a token
-     * start with a number and then contains letters, it will split it too. For
-     * example "12a" is split into ["12", "a"]. This is done to support correct
+     * start with a number and then contains letters, or starts with a letter and then contains numbers, it will split it too.
+     * For example "12a" is split into ["12", "a"]. This is done to support correct
      * comparison of "5.0.3a", "5.0.9" and "5.0.30".
      *
      * @param s the string to split
-     * @return a List of String containing the tokens to be compared
+     * @return a List of Comparable VersionParts containing the tokens to be compared.
      */
-    static List<String> splitVersion(String s) {
-        //TODO improve performance by removing regex.
-        final String[] splitString = VERSION_SPLIT_PATTERN.split(s);
+    static List<VersionPart> splitVersion(String s) {
+        if (s == null || s.isEmpty()) {
+            return Collections.emptyList();
+        }
+        VersionParserState token = new VersionParserState();
 
-        final List<String> res = new ArrayList<>();
-        for (String token : splitString) {
-            final Matcher matcher = DIGITS_AND_LETTERS_PATTERN.matcher(token);
-            if (matcher.matches() && matcher.group(3).isEmpty()) {
-                final String g1 = matcher.group(1);
-                final String g2 = matcher.group(2);
-
-                res.add(g1);
-                res.add(g2);
+        for (int i = 0; i < s.length(); i++) {
+            final char c = s.charAt(i);
+            if (isSplitter(c)) {
+                // Complete the current token; throwing away the current (splitter) char
+                token.complete();
+            } else if (isDigit(c) && token.mode.numeric()) {
+                // Already in a numeric mode, just append
+                token.appendDigit(c);
+            } else if (isDigit(c) && !token.mode.numeric()) {
+                // We're building a letter-based string token (like "rc") and hit a digit - split here
+                token.complete();
+                token.appendDigit(c);
+            } else if (token.mode.numeric()) {
+                // Non-digit, non splitter (a letter) in a numeric mode
+                // Transition from numeric to letter - split here
+                token.complete();
+                token.append(c);
             } else {
-                res.add(token);
+                // Non-digit, non splitter (a letter) - just append
+                token.append(c);
             }
         }
-        return res;
+        token.complete();
+        return token.parts;
     }
 
-    /**
-     * Determines if the string passed in is a positive integer. To be counted
-     * as a positive integer, the string must only contain 0-9 and must not have
-     * any leading zeros (though "0" is a valid positive integer).
-     *
-     * @param str the string to test
-     * @return true if the string only contains 0-9, otherwise false.
-     */
-    private static boolean isPositiveInteger(final String str) {
-        if (str == null || str.isEmpty()) {
-            return false;
+    private static boolean isSplitter(char c) {
+        return c == '.' || c == '|' || c == ':' || c == '-';
+    }
+
+    private static boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    private static class VersionParserState {
+        private final List<VersionPart> parts = new ArrayList<>(3);
+        private final StringBuilder token = new StringBuilder(3);
+        private VersionParserMode mode = VersionParserMode.String;
+
+        boolean empty() {
+            return token.length() == 0;
         }
 
-        // numbers with leading zeros should not be treated as numbers
-        // (e.g. when comparing "01" <-> "1")
-        if (str.charAt(0) == '0' && str.length() > 1) {
-            return false;
+        void append(char c) {
+            token.append(c);
         }
 
-        for (int i = 0; i < str.length(); i++) {
-            final char c = str.charAt(i);
-            if (c < '0' || c > '9') {
-                return false;
+        void appendDigit(char c) {
+            // When appending digits we switch mode if at the start of a new token
+            if (empty()) {
+                mode = c == '0' ? VersionParserMode.IntegerAsString : VersionParserMode.Integer;
             }
+            append(c);
         }
-        return true;
+
+        void complete() {
+            if (!empty()) {
+                parts.add(mode.toPart(token));
+            }
+            token.setLength(0);
+            mode = VersionParserMode.String;
+        }
+    }
+
+    private enum VersionParserMode {
+        String,
+        Integer,
+        IntegerAsString;
+
+        boolean numeric() {
+            return this == Integer || this == IntegerAsString;
+        }
+
+        VersionPart toPart(StringBuilder s) {
+            return new VersionPart(s.toString(), this == Integer);
+        }
+    }
+
+    static class VersionPart implements Comparable<VersionPart> {
+        private final String part;
+        private final boolean compareAsInteger;
+
+        VersionPart(String part, boolean compareAsInteger) {
+            this.part = part;
+            this.compareAsInteger = compareAsInteger;
+        }
+
+        @Override
+        public int compareTo(VersionPart o) {
+            return compareAsInteger && o.compareAsInteger ? new BigInteger(part).compareTo(new BigInteger(o.part)) : part.compareTo(o.part);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            VersionPart that = (VersionPart) o;
+            return compareAsInteger == that.compareAsInteger && Objects.equals(part, that.part);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(part, compareAsInteger);
+        }
+
+        static VersionPart intPart(String val) {
+            return new VersionPart(val, true);
+        }
+
+        static VersionPart strPart(String val) {
+            return new VersionPart(val, false);
+        }
     }
 }
