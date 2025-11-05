@@ -17,7 +17,6 @@
  */
 package us.springett.parsers.cpe;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +29,8 @@ import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static us.springett.parsers.cpe.Cpe.VersionPart.intPart;
+import static us.springett.parsers.cpe.Cpe.VersionPart.strPart;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -903,38 +904,34 @@ public class CpeTest {
 
         assertTrue(Cpe.compareVersions("9", "20") < 0);
         assertTrue(Cpe.compareVersions("20", "32+bzr") < 0);
-        assertTrue(Cpe.compareVersions("9", "32+bzr") < 0); // Transitive inconsistency - still fails
+        assertTrue(Cpe.compareVersions("9", "32+bzr") < 0);
     }
 
     @Test
     public void testSplitVersions() {
         Assertions.assertThat(Cpe.splitVersion(null)).containsExactly();
         Assertions.assertThat(Cpe.splitVersion("")).containsExactly();
-        Assertions.assertThat(Cpe.splitVersion("0.1")).containsExactly("0", bi("1"));
-        Assertions.assertThat(Cpe.splitVersion("0.134alpha")).containsExactly("0", bi("134"), "alpha");
-        Assertions.assertThat(Cpe.splitVersion("0.1+alpha")).containsExactly("0", bi("1"), "+alpha");
-        Assertions.assertThat(Cpe.splitVersion("1.2.3")).containsExactly(bi("1"), bi("2"), bi("3"));
-        Assertions.assertThat(Cpe.splitVersion("1.2.3b")).containsExactly(bi("1"), bi("2"), bi("3"), "b");
-        Assertions.assertThat(Cpe.splitVersion("1.2.3-SNAPSHOT")).containsExactly(bi("1"), bi("2"), bi("3"), "SNAPSHOT");
-        Assertions.assertThat(Cpe.splitVersion("1.2.3:|")).containsExactly(bi("1"), bi("2"), bi("3"));
-        Assertions.assertThat(Cpe.splitVersion("1-2|3|")).containsExactly(bi("1"), bi("2"), bi("3"));
-        Assertions.assertThat(Cpe.splitVersion("5.1.32-bzr")).containsExactly(bi("5"), bi("1"), bi("32"), "bzr");
-        Assertions.assertThat(Cpe.splitVersion("5.1.9223372036854775807152")).containsExactly(bi("5"), bi("1"), bi("9223372036854775807152"));
+        Assertions.assertThat(Cpe.splitVersion("0.1")).containsExactly(strPart("0"), intPart("1"));
+        Assertions.assertThat(Cpe.splitVersion("0.134alpha")).containsExactly(strPart("0"), intPart("134"), strPart("alpha"));
+        Assertions.assertThat(Cpe.splitVersion("0.1+alpha")).containsExactly(strPart("0"), intPart("1"), strPart("+alpha"));
+        Assertions.assertThat(Cpe.splitVersion("1.2.3")).containsExactly(intPart("1"), intPart("2"), intPart("3"));
+        Assertions.assertThat(Cpe.splitVersion("1.2.3b")).containsExactly(intPart("1"), intPart("2"), intPart("3"), strPart("b"));
+        Assertions.assertThat(Cpe.splitVersion("1.2.3-SNAPSHOT")).containsExactly(intPart("1"), intPart("2"), intPart("3"), strPart("SNAPSHOT"));
+        Assertions.assertThat(Cpe.splitVersion("1.2.3:|")).containsExactly(intPart("1"), intPart("2"), intPart("3"));
+        Assertions.assertThat(Cpe.splitVersion("1-2|3|")).containsExactly(intPart("1"), intPart("2"), intPart("3"));
+        Assertions.assertThat(Cpe.splitVersion("5.1.32-bzr")).containsExactly(intPart("5"), intPart("1"), intPart("32"), strPart("bzr"));
+        Assertions.assertThat(Cpe.splitVersion("5.1.9223372036854775807152")).containsExactly(intPart("5"), intPart("1"), intPart("9223372036854775807152"));
         // Test letter-to-digit transitions (rc10 should split into rc and 10)
-        Assertions.assertThat(Cpe.splitVersion("rc10")).containsExactly("rc", bi("10"));
-        Assertions.assertThat(Cpe.splitVersion("alpha2")).containsExactly("alpha", bi("2"));
+        Assertions.assertThat(Cpe.splitVersion("rc10")).containsExactly(strPart("rc"), intPart("10"));
+        Assertions.assertThat(Cpe.splitVersion("alpha2")).containsExactly(strPart("alpha"), intPart("2"));
     }
 
     @Test
     public void testZeroOneA() {
         // Test consistency: letter suffix always splits, even with leading zeros
-        Assertions.assertThat(Cpe.splitVersion("1.1a")).containsExactly(bi("1"), bi("1"), "a");
-        Assertions.assertThat(Cpe.splitVersion("1.01a")).containsExactly(bi("1"), "01", "a");
+        Assertions.assertThat(Cpe.splitVersion("1.1a")).containsExactly(intPart("1"), intPart("1"), strPart("a"));
+        Assertions.assertThat(Cpe.splitVersion("1.01a")).containsExactly(intPart("1"), strPart("01"), strPart("a"));
         assertTrue(Cpe.compareVersions("1.01a", "1.1a") < 0);
-    }
-
-    private static BigInteger bi(String val) {
-        return new BigInteger(val);
     }
 
     /**
@@ -1063,25 +1060,25 @@ public class CpeTest {
     @Test
     public void testSplitVersionLeadingZeros() {
         // Leading zeros in first position
-        Assertions.assertThat(Cpe.splitVersion("0.1")).containsExactly("0", bi("1"));
+        Assertions.assertThat(Cpe.splitVersion("0.1")).containsExactly(strPart("0"), intPart("1"));
 
         // Leading zeros create string tokens (numeric part stays together, no leading zeros stripped)
         // "01" is a string (leading zero indicates not a number, like a date or build ID)
         // "02" is a string (leading zero indicates not a number)
         Assertions.assertThat(Cpe.splitVersion("01.02"))
                 .as("Leading zeros indicate string tokens")
-                .containsExactly("01", "02");
+                .containsExactly(strPart("01"), strPart("02"));
 
         // Leading-zero numeric followed by letter: splits at digit->letter boundary for consistency
         // "01a" splits into "01" (string) + "a" (string) for consistency with "1a" -> [1, "a"]
         Assertions.assertThat(Cpe.splitVersion("1.01a"))
                 .as("1.01a splits: 1 (numeric), then '01' (string), then 'a' (string)")
-                .containsExactly(bi("1"), "01", "a");
+                .containsExactly(intPart("1"), strPart("01"), strPart("a"));
 
         // Pure leading-zero number with no suffix stays together
         Assertions.assertThat(Cpe.splitVersion("04121975"))
                 .as("Date-like numbers with all digits stay together")
-                .containsExactly("04121975");
+                .containsExactly(strPart("04121975"));
     }
 
     /**

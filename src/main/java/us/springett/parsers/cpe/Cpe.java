@@ -34,8 +34,6 @@ import us.springett.parsers.cpe.util.Status;
 import us.springett.parsers.cpe.util.Validate;
 import us.springett.parsers.cpe.values.LogicalValue;
 
-import static java.lang.Character.isDigit;
-
 /**
  * Object representation of a Common Platform Enumeration (CPE).
  *
@@ -815,121 +813,147 @@ public class Cpe implements ICpe, Serializable {
      * the left and right are equal;<code>1</code> if left is after the right
      */
     protected static int compareVersions(String left, String right) {
-        int result = 0;
-        final List<Comparable<?>> subLeft = splitVersion(left);
-        final List<Comparable<?>> subRight = splitVersion(right);
-        final int subMax = Math.min(subLeft.size(), subRight.size());
-        for (int x = 0; x < subMax; x++) {
-            Object leftPart = subLeft.get(x);
-            Object rightPart = subRight.get(x);
-            if (leftPart instanceof BigInteger && rightPart instanceof BigInteger) {
-                result = ((BigInteger) leftPart).compareTo(((BigInteger) rightPart));
-            } else {
-                result = leftPart.toString().compareTo(rightPart.toString());
-            }
+        if (left.equals(right)) {
+            return 0;
+        }
+        List<VersionPart> subLeft = splitVersion(left);
+        List<VersionPart> subRight = splitVersion(right);
+        for (int x = 0; x < Math.min(subLeft.size(), subRight.size()); x++) {
+            int result = subLeft.get(x).compareTo(subRight.get(x));
             if (result != 0) {
                 return result;
             }
         }
 
-        if (subLeft.size() > subRight.size()) {
-            result = 1;
-        }
-        if (subRight.size() > subLeft.size()) {
-            result = -1;
-        }
-
-        return result;
+        // All parts are equal up until the minimum size - version with more chunks is thus "bigger"
+        return Integer.compare(subLeft.size(), subRight.size());
     }
 
     /**
      * Method that split versions for '.', '|', ':' and '-". Then if a token
-     * start with a number and then contains letters, it will split it too. For
-     * example "12a" is split into ["12", "a"]. This is done to support correct
+     * start with a number and then contains letters, or starts with a letter and then contains numbers, it will split it too.
+     * For example "12a" is split into ["12", "a"]. This is done to support correct
      * comparison of "5.0.3a", "5.0.9" and "5.0.30".
      *
      * @param s the string to split
-     * @return a List of comparable objects containing the tokens to be compared. Note that difference comparable
-     *         types are not generally comparable to one another; and it is the caller's responsibility to handle that.
+     * @return a List of Comparable VersionParts containing the tokens to be compared.
      */
-    static List<Comparable<?>> splitVersion(String s) {
+    static List<VersionPart> splitVersion(String s) {
         if (s == null || s.isEmpty()) {
             return Collections.emptyList();
         }
-
-        List<Comparable<?>> result = new ArrayList<>();
-
-        StringBuilder token = new StringBuilder(3);
-        boolean integerMode = false;
-        boolean leadingZeroStringMode = false; // Track if we're in a leading-zero string (like "01a")
+        VersionParserState token = new VersionParserState();
 
         for (int i = 0; i < s.length(); i++) {
             final char c = s.charAt(i);
-            final boolean firstChar = token.length() == 0;
-
-            if (c == '.' || c == '|' || c == ':' || c == '-') {
-                if (!firstChar) {
-                    // Complete the current token
-                    result.add(integerMode ? new BigInteger(token.toString()) : token.toString());
-                    token.setLength(0);
-                    integerMode = false;
-                    leadingZeroStringMode = false;
-                }
-                // skip splitter char
-            } else if (isDigit(c)) {
-                if (firstChar) {
-                    // Start of a new token - check if it's a number
-                    if (c == '0') {
-                        // Leading zero - treat entire token as string, don't split further
-                        leadingZeroStringMode = true;
-                        integerMode = false;
-                    } else {
-                        // Non-zero digit - this is a number
-                        integerMode = true;
-                        leadingZeroStringMode = false;
-                    }
-                    token.append(c);
-                } else if (leadingZeroStringMode) {
-                    // We're in leading-zero string mode (like "0123") - keep everything together
-                    token.append(c);
-                } else if (!integerMode) {
-                    // We're building a letter-based string token (like "rc") and hit a digit - split here
-                    // Save the current string token
-                    result.add(token.toString());
-                    token.setLength(0);
-                    // Start a new numeric token (unless it's a leading zero)
-                    if (c == '0') {
-                        leadingZeroStringMode = true;
-                        integerMode = false;
-                    } else {
-                        integerMode = true;
-                        leadingZeroStringMode = false;
-                    }
-                    token.append(c);
-                } else {
-                    // Already in integer mode, just append
-                    token.append(c);
-                }
+            if (isSplitter(c)) {
+                // Complete the current token; throwing away the current (splitter) char
+                token.complete();
+            } else if (isDigit(c) && token.mode.numeric()) {
+                // Already in a numeric mode, just append
+                token.appendDigit(c);
+            } else if (isDigit(c) && !token.mode.numeric()) {
+                // We're building a letter-based string token (like "rc") and hit a digit - split here
+                token.complete();
+                token.appendDigit(c);
+            } else if (token.mode.numeric()) {
+                // Non-digit, non splitter (a letter) in a numeric mode
+                // Transition from numeric to letter - split here
+                token.complete();
+                token.append(c);
             } else {
-                // not a splitter, not a digit (it's a letter)
-                if (integerMode || leadingZeroStringMode) {
-                    // Transition from number/leading-zero to letter - split here
-                    if (integerMode) {
-                        result.add(new BigInteger(token.toString()));
-                    } else {
-                        // Save leading-zero string like "01"
-                        result.add(token.toString());
-                    }
-                    token.setLength(0);
-                    integerMode = false;
-                    leadingZeroStringMode = false;
-                }
+                // Non-digit, non splitter (a letter) - just append
                 token.append(c);
             }
         }
-        if (token.length() > 0) {
-            result.add(integerMode ? new BigInteger(token.toString()) : token.toString());
+        token.complete();
+        return token.parts;
+    }
+
+    private static boolean isSplitter(char c) {
+        return c == '.' || c == '|' || c == ':' || c == '-';
+    }
+
+    private static boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    private static class VersionParserState {
+        private final List<VersionPart> parts = new ArrayList<>(3);
+        private final StringBuilder token = new StringBuilder(3);
+        private VersionParserMode mode = VersionParserMode.String;
+
+        boolean empty() {
+            return token.length() == 0;
         }
-        return result;
+
+        void append(char c) {
+            token.append(c);
+        }
+
+        void appendDigit(char c) {
+            // When appending digits we switch mode if at the start of a new token
+            if (empty()) {
+                mode = c == '0' ? VersionParserMode.IntegerAsString : VersionParserMode.Integer;
+            }
+            append(c);
+        }
+
+        void complete() {
+            if (!empty()) {
+                parts.add(mode.toPart(token));
+            }
+            token.setLength(0);
+            mode = VersionParserMode.String;
+        }
+    }
+
+    private enum VersionParserMode {
+        String,
+        Integer,
+        IntegerAsString;
+
+        boolean numeric() {
+            return this == Integer || this == IntegerAsString;
+        }
+
+        VersionPart toPart(StringBuilder s) {
+            return new VersionPart(s.toString(), this == Integer);
+        }
+    }
+
+    static class VersionPart implements Comparable<VersionPart> {
+        private final String part;
+        private final boolean compareAsInteger;
+
+        VersionPart(String part, boolean compareAsInteger) {
+            this.part = part;
+            this.compareAsInteger = compareAsInteger;
+        }
+
+        @Override
+        public int compareTo(VersionPart o) {
+            return compareAsInteger && o.compareAsInteger ? new BigInteger(part).compareTo(new BigInteger(o.part)) : part.compareTo(o.part);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            VersionPart that = (VersionPart) o;
+            return compareAsInteger == that.compareAsInteger && Objects.equals(part, that.part);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(part, compareAsInteger);
+        }
+
+        static VersionPart intPart(String val) {
+            return new VersionPart(val, true);
+        }
+
+        static VersionPart strPart(String val) {
+            return new VersionPart(val, false);
+        }
     }
 }
