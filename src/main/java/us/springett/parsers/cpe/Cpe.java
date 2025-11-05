@@ -813,44 +813,32 @@ public class Cpe implements ICpe, Serializable {
      * the left and right are equal;<code>1</code> if left is after the right
      */
     protected static int compareVersions(String left, String right) {
-        int result = 0;
-        final List<Comparable<?>> subLeft = splitVersion(left);
-        final List<Comparable<?>> subRight = splitVersion(right);
-        final int subMax = Math.min(subLeft.size(), subRight.size());
-        for (int x = 0; x < subMax; x++) {
-            Object leftPart = subLeft.get(x);
-            Object rightPart = subRight.get(x);
-            if (leftPart instanceof BigInteger && rightPart instanceof BigInteger) {
-                result = ((BigInteger) leftPart).compareTo(((BigInteger) rightPart));
-            } else {
-                result = leftPart.toString().compareTo(rightPart.toString());
-            }
+        if (left.equals(right)) {
+            return 0;
+        }
+        List<VersionPart> subLeft = splitVersion(left);
+        List<VersionPart> subRight = splitVersion(right);
+        for (int x = 0; x < Math.min(subLeft.size(), subRight.size()); x++) {
+            int result = subLeft.get(x).compareTo(subRight.get(x));
             if (result != 0) {
                 return result;
             }
         }
 
-        if (subLeft.size() > subRight.size()) {
-            result = 1;
-        }
-        if (subRight.size() > subLeft.size()) {
-            result = -1;
-        }
-
-        return result;
+        // All parts are equal up until the minimum size - version with more chunks is thus "bigger"
+        return Integer.compare(subLeft.size(), subRight.size());
     }
 
     /**
      * Method that split versions for '.', '|', ':' and '-". Then if a token
-     * start with a number and then contains letters, it will split it too. For
-     * example "12a" is split into ["12", "a"]. This is done to support correct
+     * start with a number and then contains letters, or starts with a letter and then contains numbers, it will split it too.
+     * For example "12a" is split into ["12", "a"]. This is done to support correct
      * comparison of "5.0.3a", "5.0.9" and "5.0.30".
      *
      * @param s the string to split
-     * @return a List of comparable objects containing the tokens to be compared. Note that different Comparable
-     *         types are not generally comparable to one another; and it is the caller's responsibility to handle that.
+     * @return a List of Comparable VersionParts containing the tokens to be compared.
      */
-    static List<Comparable<?>> splitVersion(String s) {
+    static List<VersionPart> splitVersion(String s) {
         if (s == null || s.isEmpty()) {
             return Collections.emptyList();
         }
@@ -891,7 +879,7 @@ public class Cpe implements ICpe, Serializable {
     }
 
     private static class VersionParserState {
-        private final List<Comparable<?>> parts = new ArrayList<>(3);
+        private final List<VersionPart> parts = new ArrayList<>(3);
         private final StringBuilder token = new StringBuilder(3);
         private VersionParserMode mode = VersionParserMode.String;
 
@@ -913,7 +901,7 @@ public class Cpe implements ICpe, Serializable {
 
         void complete() {
             if (!empty()) {
-                parts.add(mode.toComparable(token));
+                parts.add(mode.toPart(token));
             }
             token.setLength(0);
             mode = VersionParserMode.String;
@@ -929,8 +917,43 @@ public class Cpe implements ICpe, Serializable {
             return this == Integer || this == IntegerAsString;
         }
 
-        Comparable<?> toComparable(StringBuilder s) {
-            return this == Integer ? new BigInteger(s.toString()) : s.toString();
+        VersionPart toPart(StringBuilder s) {
+            return new VersionPart(s.toString(), this == Integer);
+        }
+    }
+
+    static class VersionPart implements Comparable<VersionPart> {
+        private final String part;
+        private final boolean compareAsInteger;
+
+        VersionPart(String part, boolean compareAsInteger) {
+            this.part = part;
+            this.compareAsInteger = compareAsInteger;
+        }
+
+        @Override
+        public int compareTo(VersionPart o) {
+            return compareAsInteger && o.compareAsInteger ? new BigInteger(part).compareTo(new BigInteger(o.part)) : part.compareTo(o.part);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null || getClass() != o.getClass()) return false;
+            VersionPart that = (VersionPart) o;
+            return compareAsInteger == that.compareAsInteger && Objects.equals(part, that.part);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(part, compareAsInteger);
+        }
+
+        static VersionPart intPart(String val) {
+            return new VersionPart(val, true);
+        }
+
+        static VersionPart strPart(String val) {
+            return new VersionPart(val, false);
         }
     }
 }
