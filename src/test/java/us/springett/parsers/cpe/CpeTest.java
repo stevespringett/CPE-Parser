@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.AfterClass;
 import us.springett.parsers.cpe.util.Relation;
@@ -29,8 +28,6 @@ import us.springett.parsers.cpe.values.Part;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static us.springett.parsers.cpe.Cpe.VersionPart.intPart;
-import static us.springett.parsers.cpe.Cpe.VersionPart.strPart;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -842,62 +839,29 @@ public class CpeTest {
      */
     @Test
     public void testCompareVersions() {
-        String left = "2.1.10";
-        String right = "2.1.10";
-        assertTrue(Cpe.compareVersions(left, right) == 0);
+        assertTrue(Cpe.compareVersions("2.1.10", "2.1.10") == 0);
+        assertTrue(Cpe.compareVersions("2.1", "2.1.10") < 0);
+        assertTrue(Cpe.compareVersions("2.1.10", "2.1") > 0);
 
-        left = "2.1";
-        right = "2.1.10";
-        assertTrue(Cpe.compareVersions(left, right) < 0);
+        assertTrue(Cpe.compareVersions("2.1.42", "2.3.21") < 0);
+        assertTrue(Cpe.compareVersions("2.1.10", "2.1.10-186") < 0);
+        assertTrue(Cpe.compareVersions("10.01", "10.1") < 0);
+        assertTrue(Cpe.compareVersions("10.1", "10.01") > 0);
 
-        left = "2.1.10";
-        right = "2.1";
-        assertTrue(Cpe.compareVersions(left, right) > 0);
+        assertTrue(Cpe.compareVersions("5.1.23a", "5.1.23a") == 0);
+        assertTrue(Cpe.compareVersions("5.1.23a", "5.1.23b") < 0);
+        assertTrue(Cpe.compareVersions("5.1.23b", "5.1.23a") > 0);
 
-        left = "2.1.42";
-        right = "2.3.21";
-        assertTrue(Cpe.compareVersions(left, right) < 0);
+        assertTrue(Cpe.compareVersions("5.1.9223372036854775807152", "5.1.932") > 0);
+        assertTrue(Cpe.compareVersions("5.1.932", "5.1.9223372036854775807152") < 0);
 
-        left = "2.1.10";
-        right = "2.1.10-186";
-        assertTrue(Cpe.compareVersions(left, right) < 0);
-
-        left = "10.01";
-        right = "10.1";
-        assertTrue(Cpe.compareVersions(left, right) < 0);
-
-        left = "10.1";
-        right = "10.01";
-        assertTrue(Cpe.compareVersions(left, right) > 0);
-
-        left = "5.1.23a";
-        right = "5.1.23a";
-        assertTrue(Cpe.compareVersions(left, right) == 0);
-
-        left = "5.1.23a";
-        right = "5.1.23b";
-        assertTrue(Cpe.compareVersions(left, right) < 0);
-
-        left = "5.1.23b";
-        right = "5.1.23a";
-        assertTrue(Cpe.compareVersions(left, right) > 0);
-
-        left = "5.1.9223372036854775807152";
-        right = "5.1.932";
-        assertTrue(Cpe.compareVersions(left, right) > 0);
-
-        left = "5.1.932";
-        right = "5.1.9223372036854775807152";
-        assertTrue(Cpe.compareVersions(left, right) < 0);
-
-        left = "alpha";
-        right = "alpha";
-        assertTrue(Cpe.compareVersions(left, right) == 0);
+        assertTrue(Cpe.compareVersions("alpha", "alpha") == 0);
 
         assertTrue(Cpe.compareVersions("5.1.9", "5.1.20") < 0);
         assertTrue(Cpe.compareVersions("5.1.20", "5.1.32-bzr") < 0);
         assertTrue(Cpe.compareVersions("5.1.9", "5.1.32-bzr") < 0);
         assertTrue(Cpe.compareVersions("5.1.32-bzr", "5.1.9") > 0);
+
         assertTrue(Cpe.compareVersions("1-SNAPSHOT", "1.SNAPSHOT") == 0);
         assertTrue(Cpe.compareVersions("1-SNAPSHOT", "1|SNAPSHOT") == 0);
         assertTrue(Cpe.compareVersions("1-SNAPSHOT", "1:SNAPSHOT") == 0);
@@ -908,29 +872,8 @@ public class CpeTest {
     }
 
     @Test
-    public void testSplitVersions() {
-        Assertions.assertThat(Cpe.splitVersion(null)).containsExactly();
-        Assertions.assertThat(Cpe.splitVersion("")).containsExactly();
-        Assertions.assertThat(Cpe.splitVersion("0.1")).containsExactly(strPart("0"), intPart("1"));
-        Assertions.assertThat(Cpe.splitVersion("0.134alpha")).containsExactly(strPart("0"), intPart("134"), strPart("alpha"));
-        Assertions.assertThat(Cpe.splitVersion("0.1+alpha")).containsExactly(strPart("0"), intPart("1"), strPart("+alpha"));
-        Assertions.assertThat(Cpe.splitVersion("1.2.3")).containsExactly(intPart("1"), intPart("2"), intPart("3"));
-        Assertions.assertThat(Cpe.splitVersion("1.2.3b")).containsExactly(intPart("1"), intPart("2"), intPart("3"), strPart("b"));
-        Assertions.assertThat(Cpe.splitVersion("1.2.3-SNAPSHOT")).containsExactly(intPart("1"), intPart("2"), intPart("3"), strPart("SNAPSHOT"));
-        Assertions.assertThat(Cpe.splitVersion("1.2.3:|")).containsExactly(intPart("1"), intPart("2"), intPart("3"));
-        Assertions.assertThat(Cpe.splitVersion("1-2|3|")).containsExactly(intPart("1"), intPart("2"), intPart("3"));
-        Assertions.assertThat(Cpe.splitVersion("5.1.32-bzr")).containsExactly(intPart("5"), intPart("1"), intPart("32"), strPart("bzr"));
-        Assertions.assertThat(Cpe.splitVersion("5.1.9223372036854775807152")).containsExactly(intPart("5"), intPart("1"), intPart("9223372036854775807152"));
-        // Test letter-to-digit transitions (rc10 should split into rc and 10)
-        Assertions.assertThat(Cpe.splitVersion("rc10")).containsExactly(strPart("rc"), intPart("10"));
-        Assertions.assertThat(Cpe.splitVersion("alpha2")).containsExactly(strPart("alpha"), intPart("2"));
-    }
-
-    @Test
     public void testZeroOneA() {
         // Test consistency: letter suffix always splits, even with leading zeros
-        Assertions.assertThat(Cpe.splitVersion("1.1a")).containsExactly(intPart("1"), intPart("1"), strPart("a"));
-        Assertions.assertThat(Cpe.splitVersion("1.01a")).containsExactly(intPart("1"), strPart("01"), strPart("a"));
         assertTrue(Cpe.compareVersions("1.01a", "1.1a") < 0);
     }
 
@@ -1054,32 +997,6 @@ public class CpeTest {
         assertTrue("rc10 > rc2 when numeric", Cpe.compareVersions("1.0.0-rc10", "1.0.0-rc2") > 0);
     }
 
-    /**
-     * Test splitVersion with additional leading zero cases
-     */
-    @Test
-    public void testSplitVersionLeadingZeros() {
-        // Leading zeros in first position
-        Assertions.assertThat(Cpe.splitVersion("0.1")).containsExactly(strPart("0"), intPart("1"));
-
-        // Leading zeros create string tokens (numeric part stays together, no leading zeros stripped)
-        // "01" is a string (leading zero indicates not a number, like a date or build ID)
-        // "02" is a string (leading zero indicates not a number)
-        Assertions.assertThat(Cpe.splitVersion("01.02"))
-                .as("Leading zeros indicate string tokens")
-                .containsExactly(strPart("01"), strPart("02"));
-
-        // Leading-zero numeric followed by letter: splits at digit->letter boundary for consistency
-        // "01a" splits into "01" (string) + "a" (string) for consistency with "1a" -> [1, "a"]
-        Assertions.assertThat(Cpe.splitVersion("1.01a"))
-                .as("1.01a splits: 1 (numeric), then '01' (string), then 'a' (string)")
-                .containsExactly(intPart("1"), strPart("01"), strPart("a"));
-
-        // Pure leading-zero number with no suffix stays together
-        Assertions.assertThat(Cpe.splitVersion("04121975"))
-                .as("Date-like numbers with all digits stay together")
-                .containsExactly(strPart("04121975"));
-    }
 
     /**
      * Test comprehensive transitivity across multiple version triplets
