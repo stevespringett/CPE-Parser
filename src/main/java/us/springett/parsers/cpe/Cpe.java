@@ -17,22 +17,22 @@
  */
 package us.springett.parsers.cpe;
 
-import us.springett.parsers.cpe.util.Relation;
-import us.springett.parsers.cpe.values.Part;
-import us.springett.parsers.cpe.util.Convert;
 import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.util.Convert;
+import us.springett.parsers.cpe.util.Relation;
 import us.springett.parsers.cpe.util.Status;
 import us.springett.parsers.cpe.util.Validate;
+import us.springett.parsers.cpe.util.Versions.VersionPart;
 import us.springett.parsers.cpe.values.LogicalValue;
+import us.springett.parsers.cpe.values.Part;
+
+import static us.springett.parsers.cpe.util.Versions.splitVersion;
 
 /**
  * Object representation of a Common Platform Enumeration (CPE).
@@ -827,133 +827,5 @@ public class Cpe implements ICpe, Serializable {
 
         // All parts are equal up until the minimum size - version with more chunks is thus "bigger"
         return Integer.compare(subLeft.size(), subRight.size());
-    }
-
-    /**
-     * Method that split versions for '.', '|', ':' and '-". Then if a token
-     * start with a number and then contains letters, or starts with a letter and then contains numbers, it will split it too.
-     * For example "12a" is split into ["12", "a"]. This is done to support correct
-     * comparison of "5.0.3a", "5.0.9" and "5.0.30".
-     *
-     * @param s the string to split
-     * @return a List of Comparable VersionParts containing the tokens to be compared.
-     */
-    static List<VersionPart> splitVersion(String s) {
-        if (s == null || s.isEmpty()) {
-            return Collections.emptyList();
-        }
-        VersionParserState token = new VersionParserState();
-
-        for (int i = 0; i < s.length(); i++) {
-            final char c = s.charAt(i);
-            if (isSplitter(c)) {
-                // Complete the current token; throwing away the current (splitter) char
-                token.complete();
-            } else if (isDigit(c) && token.mode.numeric()) {
-                // Already in a numeric mode, just append
-                token.appendDigit(c);
-            } else if (isDigit(c) && !token.mode.numeric()) {
-                // We're building a letter-based string token (like "rc") and hit a digit - split here
-                token.complete();
-                token.appendDigit(c);
-            } else if (token.mode.numeric()) {
-                // Non-digit, non splitter (a letter) in a numeric mode
-                // Transition from numeric to letter - split here
-                token.complete();
-                token.append(c);
-            } else {
-                // Non-digit, non splitter (a letter) - just append
-                token.append(c);
-            }
-        }
-        token.complete();
-        return token.parts;
-    }
-
-    private static boolean isSplitter(char c) {
-        return c == '.' || c == '|' || c == ':' || c == '-';
-    }
-
-    private static boolean isDigit(char c) {
-        return c >= '0' && c <= '9';
-    }
-
-    private static class VersionParserState {
-        private final List<VersionPart> parts = new ArrayList<>(3);
-        private final StringBuilder token = new StringBuilder(3);
-        private VersionParserMode mode = VersionParserMode.String;
-
-        boolean empty() {
-            return token.length() == 0;
-        }
-
-        void append(char c) {
-            token.append(c);
-        }
-
-        void appendDigit(char c) {
-            // When appending digits we switch mode if at the start of a new token
-            if (empty()) {
-                mode = c == '0' ? VersionParserMode.IntegerAsString : VersionParserMode.Integer;
-            }
-            append(c);
-        }
-
-        void complete() {
-            if (!empty()) {
-                parts.add(mode.toPart(token));
-            }
-            token.setLength(0);
-            mode = VersionParserMode.String;
-        }
-    }
-
-    private enum VersionParserMode {
-        String,
-        Integer,
-        IntegerAsString;
-
-        boolean numeric() {
-            return this == Integer || this == IntegerAsString;
-        }
-
-        VersionPart toPart(StringBuilder s) {
-            return new VersionPart(s.toString(), this == Integer);
-        }
-    }
-
-    static class VersionPart implements Comparable<VersionPart> {
-        private final String part;
-        private final boolean compareAsInteger;
-
-        VersionPart(String part, boolean compareAsInteger) {
-            this.part = part;
-            this.compareAsInteger = compareAsInteger;
-        }
-
-        @Override
-        public int compareTo(VersionPart o) {
-            return compareAsInteger && o.compareAsInteger ? new BigInteger(part).compareTo(new BigInteger(o.part)) : part.compareTo(o.part);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o == null || getClass() != o.getClass()) return false;
-            VersionPart that = (VersionPart) o;
-            return compareAsInteger == that.compareAsInteger && Objects.equals(part, that.part);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(part, compareAsInteger);
-        }
-
-        static VersionPart intPart(String val) {
-            return new VersionPart(val, true);
-        }
-
-        static VersionPart strPart(String val) {
-            return new VersionPart(val, false);
-        }
     }
 }
