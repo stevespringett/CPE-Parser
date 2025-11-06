@@ -18,13 +18,14 @@
 package us.springett.parsers.cpe;
 
 import java.text.ParseException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.cpe.common.LogicalValue;
 import org.mitre.cpe.common.WellFormedName;
 import org.mitre.cpe.naming.CPENameUnbinder;
 import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import us.springett.parsers.cpe.util.Convert;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CpeParserIT {
 
@@ -54,18 +55,18 @@ public class CpeParserIT {
             wfn = cpeUnbinder.unbindFS(cpeString);
         }
         
-        Assert.assertEquals(fromWFN(wfn.get("part")), cpe.getPart().getAbbreviation());
-        Assert.assertEquals(fromWFN(wfn.get("vendor")), cpe.getVendor());
-        Assert.assertEquals(fromWFN(wfn.get("product")), cpe.getProduct());
-        Assert.assertEquals(fromWFN(wfn.get("version")), cpe.getVersion());
-        Assert.assertEquals(fromWFN(wfn.get("update")), cpe.getUpdate());
-        Assert.assertEquals(fromWFN(wfn.get("edition")), cpe.getEdition());
-        Assert.assertEquals(fromWFN(wfn.get("language")), cpe.getLanguage());
-        Assert.assertEquals(fromWFN(wfn.get("sw_edition")), cpe.getSwEdition());
-        Assert.assertEquals(fromWFN(wfn.get("target_sw")), cpe.getTargetSw());
-        Assert.assertEquals(fromWFN(wfn.get("target_hw")), cpe.getTargetHw());
-        Assert.assertEquals(fromWFN(wfn.get("other")), cpe.getOther());
-        Assert.assertEquals(fromWFN(wfn.get("language")), cpe.getLanguage());
+        assertEquals(fromWFN(wfn.get("part")), cpe.getPart().getAbbreviation());
+        assertEquals(fromWFN(wfn.get("vendor")), cpe.getVendor());
+        assertEquals(fromWFN(wfn.get("product")), cpe.getProduct());
+        assertEquals(fromWFN(wfn.get("version")), cpe.getVersion());
+        assertEquals(fromWFN(wfn.get("update")), cpe.getUpdate());
+        assertEquals(fromWFN(wfn.get("edition")), cpe.getEdition());
+        assertEquals(fromWFN(wfn.get("language")), cpe.getLanguage());
+        assertEquals(fromWFN(wfn.get("sw_edition")), cpe.getSwEdition());
+        assertEquals(fromWFN(wfn.get("target_sw")), cpe.getTargetSw());
+        assertEquals(fromWFN(wfn.get("target_hw")), cpe.getTargetHw());
+        assertEquals(fromWFN(wfn.get("other")), cpe.getOther());
+        assertEquals(fromWFN(wfn.get("language")), cpe.getLanguage());
     }
 
     public String fromWFN(Object wfn) {
@@ -94,6 +95,6 @@ public class CpeParserIT {
         WellFormedName wfn22 = cpeUnbinder.unbindURI(cpeString22);
         WellFormedName wfn23 = cpeUnbinder.unbindFS(cpeString23);
 
-        Assert.assertEquals(wfn22.get("product"), wfn23.get("product"));
+        assertEquals(wfn22.get("product"), wfn23.get("product"));
     }
 }

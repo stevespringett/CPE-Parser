@@ -17,12 +17,12 @@
  */
 package us.springett.parsers.cpe.util;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -34,9 +34,6 @@ public class ValidateTest {
      * A reference to the logger.
      */
     private static final Logger LOG = LoggerFactory.getLogger(ValidateTest.class);
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     public void logBeginWarning(String test) {
         LOG.warn("---------------------------------------------------------");
@@ -54,12 +51,10 @@ public class ValidateTest {
     /**
      * Test of component method, of class Validate.
      *
-     * @throws Exception thrown if there is a parsing error
      */
     @Test
-    public void testComponent() throws Exception {
-        exception = ExpectedException.none();
-
+    public void testComponent() {
+        
         String value = null;
         assertFalse(Validate.component(value).isValid());
 
@@ -141,8 +136,7 @@ public class ValidateTest {
      */
     @Test
     public void testFormattedString() {
-        exception = ExpectedException.none();
-
+        
         logBeginWarning("testFormattedString");
 
         String value = "cpe:2.3:a:misterpark:re\\:kyu:1:*:*:*:*:android:*:*";
@@ -210,8 +204,7 @@ public class ValidateTest {
      */
     @Test
     public void testCpeUri() {
-        exception = ExpectedException.none();
-
+        
         logBeginWarning("testCpeUri");
         String value = "cpe:/a:jlike_project:jlike:1.0::~~~joomla%21~~";
         assertTrue(Validate.cpeUri(value).isValid());
@@ -318,8 +311,7 @@ public class ValidateTest {
      */
     @Test
     public void testCpe() {
-        exception = ExpectedException.none();
-
+        
         logBeginWarning("testCPE()");
 
         String value = "cpe:/a:jlike_project:jlike:1.0::~~~joomla%21~~";

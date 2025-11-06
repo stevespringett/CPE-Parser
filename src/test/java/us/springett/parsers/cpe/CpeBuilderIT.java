@@ -18,8 +18,7 @@
 package us.springett.parsers.cpe;
 
 import java.text.ParseException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mitre.cpe.common.LogicalValue;
 import org.mitre.cpe.common.WellFormedName;
 import org.mitre.cpe.naming.CPENameBinder;
@@ -28,6 +27,8 @@ import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 import us.springett.parsers.cpe.exceptions.CpeParsingException;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
 import us.springett.parsers.cpe.util.Convert;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the CPE Builder.
@@ -70,8 +71,8 @@ public class CpeBuilderIT {
         System.out.println(cpe.toCpe22Uri().toLowerCase());
         System.out.println(cpenb.bindToFS(wfn));
         System.out.println(cpe.toCpe23FS());
-        Assert.assertEquals(cpenb.bindToURI(wfn).toLowerCase(), cpe.toCpe22Uri().toLowerCase());
-        Assert.assertEquals(cpenb.bindToFS(wfn), cpe.toCpe23FS());
+        assertEquals(cpenb.bindToURI(wfn).toLowerCase(), cpe.toCpe22Uri().toLowerCase());
+        assertEquals(cpenb.bindToFS(wfn), cpe.toCpe23FS());
     }
 
     private Object toWellFormed(String value) {
@@ -98,7 +99,7 @@ public class CpeBuilderIT {
 
         System.out.println("Original:  " + original);
         System.out.println("Processed: " + cpeString);
-        Assert.assertEquals(original, cpeString);
+        assertEquals(original, cpeString);
 
     }
 }

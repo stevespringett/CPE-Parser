@@ -17,23 +17,19 @@
  */
 package us.springett.parsers.cpe;
 
-import us.springett.parsers.cpe.values.Part;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.mitre.cpe.common.WellFormedName;
 import org.mitre.cpe.matching.CPENameMatcher;
 import us.springett.parsers.cpe.values.LogicalValue;
+import us.springett.parsers.cpe.values.Part;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  * @author Jeremy Long
  */
 public class CpeIT {
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     /**
      * Test of matches method, of class Cpe.

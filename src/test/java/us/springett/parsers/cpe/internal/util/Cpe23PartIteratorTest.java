@@ -17,21 +17,17 @@
  */
 package us.springett.parsers.cpe.internal.util;
 
+import org.junit.jupiter.api.Test;
 import us.springett.parsers.cpe.exceptions.CpeParsingException;
-import org.junit.Test;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
-import static org.junit.Assert.*;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  * @author Jeremy Long
  */
 public class Cpe23PartIteratorTest {
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     /**
      * Test of hasNext method, of class Cpe23PartIterator.
      *
@@ -48,23 +44,21 @@ public class Cpe23PartIteratorTest {
     /**
      * Test of constructor method, of class Cpe23PartIterator.
      *
-     * @throws CpeParsingException expected exception
      */
     @Test
-    public void testConstructorException() throws CpeParsingException {
-        exception.expect(CpeParsingException.class);
-        Cpe23PartIterator instance = new Cpe23PartIterator("invalid:cpe");
+    public void testConstructorException() {
+        assertThatThrownBy(() -> new Cpe23PartIterator("invalid:cpe"))
+                .isInstanceOf(CpeParsingException.class);
     }
 
     /**
      * Test of constructor method, of class Cpe23PartIterator.
      *
-     * @throws CpeParsingException expected exception
      */
     @Test
-    public void testConstructorException1() throws CpeParsingException {
-        exception.expect(CpeParsingException.class);
-        Cpe23PartIterator instance = new Cpe23PartIterator(null);
+    public void testConstructorException1() {
+        assertThatThrownBy(() -> new Cpe23PartIterator(null))
+                .isInstanceOf(CpeParsingException.class);
     }
 
     /**

@@ -19,9 +19,10 @@ package us.springett.parsers.cpe.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 import us.springett.parsers.cpe.values.LogicalValue;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -41,7 +42,7 @@ public class ConvertIT {
     }
 
     @Test
-    public void testPerformance() throws Exception {
+    public void testPerformance() {
         List<String> values = new ArrayList<>();
 
         System.out.println("---------------------------------------------------");
