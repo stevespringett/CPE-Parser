@@ -114,7 +114,7 @@ public class Versions {
         }
 
         /*
-         * Compares one version part to another. Only two integer parts can be compared to one other with numeric semantics
+         * Compares one version part to another. Only two integer parts can be compared to each other with numeric semantics
          * otherwise everything is compared as a string. This means, for example:
          *    intPart(1) > strPart(01)
          *    strPart(11) < strPart(9)
