@@ -10,7 +10,7 @@ public class Versions {
     private Versions() {}
 
     /**
-     * Method that splits versions for '.', '|', ':' and '-". Then if a token
+     * Method that splits versions for '.', '|', ':' and '-'. Then if a token
      * start with a number and then contains letters, or starts with a letter and then contains numbers, it will split it too.
      * For example "12a" is split into ["12", "a"]. This is done to support correct
      * comparison of "5.0.3a", "5.0.9" and "5.0.30".
