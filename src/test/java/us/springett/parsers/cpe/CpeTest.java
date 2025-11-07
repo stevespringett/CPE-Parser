@@ -20,21 +20,17 @@ package us.springett.parsers.cpe;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import us.springett.parsers.cpe.util.Relation;
-import us.springett.parsers.cpe.values.Part;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
+import us.springett.parsers.cpe.util.Relation;
 import us.springett.parsers.cpe.values.LogicalValue;
+import us.springett.parsers.cpe.values.Part;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -42,143 +38,114 @@ import us.springett.parsers.cpe.values.LogicalValue;
  */
 public class CpeTest {
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
+    /**
+     * Test of constructor, of class Cpe.
+     *
+     */
+    @Test
+    public void testConstructorError() {
+        assertThatThrownBy(() -> new Cpe(Part.ANY, "ve*ndor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other"))
+                .isInstanceOf(CpeValidationException.class);
     }
 
     /**
      * Test of constructor, of class Cpe.
      *
-     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testConstructorError() throws Exception {
-        exception.expect(CpeValidationException.class);
-        Cpe instance = new Cpe(Part.ANY, "ve*ndor", "product", "version", "update",
-                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+    public void testConstructorError1() {
+        assertThatThrownBy(() -> new Cpe(Part.ANY, "vendor", "pro*duct", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other"))
+                .isInstanceOf(CpeValidationException.class);
     }
 
     /**
      * Test of constructor, of class Cpe.
      *
-     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testConstructorError1() throws Exception {
-        exception.expect(CpeValidationException.class);
-        Cpe instance = new Cpe(Part.ANY, "vendor", "pro*duct", "version", "update",
-                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+    public void testConstructorError2() {
+        assertThatThrownBy(() -> new Cpe(Part.ANY, "vendor", "product", "ver*sion", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other"))
+                .isInstanceOf(CpeValidationException.class);
     }
 
     /**
      * Test of constructor, of class Cpe.
      *
-     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testConstructorError2() throws Exception {
-        exception.expect(CpeValidationException.class);
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "ver*sion", "update",
-                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+    public void testConstructorError3() {
+        assertThatThrownBy(() -> new Cpe(Part.ANY, "vendor", "product", "version", "upd*ate",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "other"))
+                .isInstanceOf(CpeValidationException.class);
     }
 
     /**
      * Test of constructor, of class Cpe.
      *
-     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testConstructorError3() throws Exception {
-        exception.expect(CpeValidationException.class);
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "upd*ate",
-                "edition", "language", "swEdition", "targetSw", "targetHw", "other");
+    public void testConstructorError4() {
+        assertThatThrownBy(() -> new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edit*ion", "language", "swEdition", "targetSw", "targetHw", "other"))
+                .isInstanceOf(CpeValidationException.class);
     }
 
     /**
      * Test of constructor, of class Cpe.
      *
-     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testConstructorError4() throws Exception {
-        exception.expect(CpeValidationException.class);
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
-                "edit*ion", "language", "swEdition", "targetSw", "targetHw", "other");
+    public void testConstructorError5() {
+        assertThatThrownBy(() -> new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "lang*uage", "swEdition", "targetSw", "targetHw", "other"))
+                .isInstanceOf(CpeValidationException.class);
     }
 
     /**
      * Test of constructor, of class Cpe.
      *
-     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testConstructorError5() throws Exception {
-        exception.expect(CpeValidationException.class);
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
-                "edition", "lang*uage", "swEdition", "targetSw", "targetHw", "other");
+    public void testConstructorError6() {
+        assertThatThrownBy(() -> new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdi*tion", "targetSw", "targetHw", "other"))
+                .isInstanceOf(CpeValidationException.class);
     }
 
     /**
      * Test of constructor, of class Cpe.
      *
-     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testConstructorError6() throws Exception {
-        exception.expect(CpeValidationException.class);
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
-                "edition", "language", "swEdi*tion", "targetSw", "targetHw", "other");
+    public void testConstructorError7() {
+        assertThatThrownBy(() -> new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "tar*getSw", "targetHw", "other"))
+                .isInstanceOf(CpeValidationException.class);
     }
 
     /**
      * Test of constructor, of class Cpe.
      *
-     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testConstructorError7() throws Exception {
-        exception.expect(CpeValidationException.class);
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
-                "edition", "language", "swEdition", "tar*getSw", "targetHw", "other");
+    public void testConstructorError8() {
+        assertThatThrownBy(() -> new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targ*etHw", "other"))
+                .isInstanceOf(CpeValidationException.class);
     }
 
     /**
      * Test of constructor, of class Cpe.
      *
-     * @throws Exception thrown if there is an error
      */
     @Test
-    public void testConstructorError8() throws Exception {
-        exception.expect(CpeValidationException.class);
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
-                "edition", "language", "swEdition", "targetSw", "targ*etHw", "other");
-    }
-
-    /**
-     * Test of constructor, of class Cpe.
-     *
-     * @throws Exception thrown if there is an error
-     */
-    @Test
-    public void testConstructorError9() throws Exception {
-        exception.expect(CpeValidationException.class);
-        Cpe instance = new Cpe(Part.ANY, "vendor", "product", "version", "update",
-                "edition", "language", "swEdition", "targetSw", "targetHw", "ot*her");
+    public void testConstructorError9() {
+        assertThatThrownBy(() -> new Cpe(Part.ANY, "vendor", "product", "version", "update",
+                "edition", "language", "swEdition", "targetSw", "targetHw", "ot*her"))
+                .isInstanceOf(CpeValidationException.class);
     }
 
     /**
@@ -895,9 +862,9 @@ public class CpeTest {
 
         // Transitivity requires: if a>b and b>c, then a>c
         if (ab > 0 && bc > 0) {
-            assertTrue("Transitivity violation: if 2>11 and 11>10, then 2 must be >10", ac > 0);
+            assertTrue(ac > 0, "Transitivity violation: if 2>11 and 11>10, then 2 must be >10");
         } else if (ab < 0 && bc < 0) {
-            assertTrue("Transitivity violation: if 2<11 and 11<10, then 2 must be <10", ac < 0);
+            assertTrue(ac < 0, "Transitivity violation: if 2<11 and 11<10, then 2 must be <10");
         }
     }
 
@@ -917,8 +884,8 @@ public class CpeTest {
         for (int i = 0; i < chain.length - 1; i++) {
             for (int j = i + 1; j < chain.length; j++) {
                 assertTrue(
-                        String.format("Expected %s < %s for transitivity", chain[i], chain[j]),
-                        Cpe.compareVersions(chain[i], chain[j]) < 0
+                        Cpe.compareVersions(chain[i], chain[j]) < 0,
+                        String.format("Expected %s < %s for transitivity", chain[i], chain[j])
                 );
             }
         }
@@ -931,8 +898,8 @@ public class CpeTest {
     @Test
     public void testLeadingZeroVersions() {
         // Leading zeros are treated differently than non-leading zeros
-        assertNotEquals("01 should not equal 1 if leading zeros are treated as strings",
-                0, Cpe.compareVersions("01", "1"));
+        assertNotEquals(0, Cpe.compareVersions("01", "1"),
+                "01 should not equal 1 if leading zeros are treated as strings");
 
         // Multiple leading zeros in different segments
         assertTrue(Cpe.compareVersions("1.01", "1.1") != 0);
@@ -948,16 +915,16 @@ public class CpeTest {
     @Test
     public void testMixedTypeComparisons() {
         // Numeric vs string suffix
-        assertTrue("Numeric should come before alpha suffix", Cpe.compareVersions("1.2", "1.2a") < 0);
-        assertTrue("Alpha comparison", Cpe.compareVersions("1.2z", "1.2a") > 0);
+        assertTrue(Cpe.compareVersions("1.2", "1.2a") < 0, "Numeric should come before alpha suffix");
+        assertTrue(Cpe.compareVersions("1.2z", "1.2a") > 0, "Alpha comparison");
 
         // Pure string vs numeric in same position
         int cmp = Cpe.compareVersions("1.alpha", "1.2");
-        assertNotEquals("String vs numeric should have defined ordering", 0, cmp);
+        assertNotEquals(0, cmp, "String vs numeric should have defined ordering");
 
         // Very large number vs string
-        assertNotEquals("Large number vs string should have defined ordering",
-                0, Cpe.compareVersions("1.9999999999999999999", "1.abc"));
+        assertNotEquals(0, Cpe.compareVersions("1.9999999999999999999", "1.abc"),
+                "Large number vs string should have defined ordering");
     }
 
     /**
@@ -966,16 +933,16 @@ public class CpeTest {
     @Test
     public void testEmptySegmentsAndTrailingSeparators() {
         // Trailing separators should be ignored
-        assertEquals("Trailing separator should be ignored",
-                0, Cpe.compareVersions("1.2.3", "1.2.3."));
-        assertEquals("Trailing separator should be ignored",
-                0, Cpe.compareVersions("1.2.3", "1.2.3:"));
+        assertEquals(0, Cpe.compareVersions("1.2.3", "1.2.3."),
+                "Trailing separator should be ignored");
+        assertEquals(0, Cpe.compareVersions("1.2.3", "1.2.3:"),
+                "Trailing separator should be ignored");
 
         // Multiple consecutive separators
-        assertEquals("Empty segment from double separator",
-                0, Cpe.compareVersions("1..2", "1.2"));
-        assertEquals("Trailing dash",
-                0, Cpe.compareVersions("1-", "1"));
+        assertEquals(0, Cpe.compareVersions("1..2", "1.2"),
+                "Empty segment from double separator");
+        assertEquals(0, Cpe.compareVersions("1-", "1"),
+                "Trailing dash");
     }
 
     /**
@@ -985,16 +952,16 @@ public class CpeTest {
     @Test
     public void testRealWorldVersions() {
         // Python versions - numeric comparison
-        assertTrue("2.7.18 > 2.7.9", Cpe.compareVersions("2.7.18", "2.7.9") > 0);
-        assertTrue("3.9.0 < 3.10.0", Cpe.compareVersions("3.9.0", "3.10.0") < 0);
+        assertTrue(Cpe.compareVersions("2.7.18", "2.7.9") > 0, "2.7.18 > 2.7.9");
+        assertTrue(Cpe.compareVersions("3.9.0", "3.10.0") < 0, "3.9.0 < 3.10.0");
 
         // Pre-release versions with text
-        assertTrue("alpha < beta", Cpe.compareVersions("1.0.0-alpha", "1.0.0-beta") < 0);
-        assertTrue("rc1 < rc2", Cpe.compareVersions("1.0.0-rc1", "1.0.0-rc2") < 0);
+        assertTrue(Cpe.compareVersions("1.0.0-alpha", "1.0.0-beta") < 0, "alpha < beta");
+        assertTrue(Cpe.compareVersions("1.0.0-rc1", "1.0.0-rc2") < 0, "rc1 < rc2");
 
         // Numeric suffixes - this is tricky: rc10 vs rc2
         // If "rc" splits properly, we get numeric comparison of 10 vs 2
-        assertTrue("rc10 > rc2 when numeric", Cpe.compareVersions("1.0.0-rc10", "1.0.0-rc2") > 0);
+        assertTrue(Cpe.compareVersions("1.0.0-rc10", "1.0.0-rc2") > 0, "rc10 > rc2 when numeric");
     }
 
 
@@ -1025,7 +992,7 @@ public class CpeTest {
             String msg = String.format("Transitivity check for %s, %s, %s", a, b, c);
 
             if (ab < 0 && bc < 0) {
-                assertTrue(msg + ": if a<b and b<c then a<c", ac < 0);
+                assertTrue(ac < 0, msg + ": if a<b and b<c then a<c");
             }
         }
     }
@@ -1039,8 +1006,8 @@ public class CpeTest {
         String veryLarge = "99999999999999999999999999999";
         String larger = "999999999999999999999999999999";
 
-        assertTrue("Very large number comparison", Cpe.compareVersions(veryLarge, larger) < 0);
-        assertTrue("Large vs small", Cpe.compareVersions(veryLarge, "100") > 0);
+        assertTrue(Cpe.compareVersions(veryLarge, larger) < 0, "Very large number comparison");
+        assertTrue(Cpe.compareVersions(veryLarge, "100") > 0, "Large vs small");
     }
 
     /**
@@ -1049,12 +1016,12 @@ public class CpeTest {
     @Test
     public void testSeparatorBehaviors() {
         // All valid separators should split tokens
-        assertEquals("Dot separator", 0, Cpe.compareVersions("1.2.3", "1.2.3"));
-        assertEquals("Pipe separator", 0, Cpe.compareVersions("1|2|3", "1.2.3"));
-        assertEquals("Colon separator", 0, Cpe.compareVersions("1:2:3", "1.2.3"));
-        assertEquals("Dash separator", 0, Cpe.compareVersions("1-2-3", "1.2.3"));
+        assertEquals(0, Cpe.compareVersions("1.2.3", "1.2.3"), "Dot separator");
+        assertEquals(0, Cpe.compareVersions("1|2|3", "1.2.3"), "Pipe separator");
+        assertEquals(0, Cpe.compareVersions("1:2:3", "1.2.3"), "Colon separator");
+        assertEquals(0, Cpe.compareVersions("1-2-3", "1.2.3"), "Dash separator");
 
         // Mixed separators in same version
-        assertEquals("Mixed separators", 0, Cpe.compareVersions("1.2-3", "1.2.3"));
+        assertEquals(0, Cpe.compareVersions("1.2-3", "1.2.3"), "Mixed separators");
     }
 }

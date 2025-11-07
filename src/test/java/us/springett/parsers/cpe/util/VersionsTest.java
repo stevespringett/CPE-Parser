@@ -1,6 +1,6 @@
 package us.springett.parsers.cpe.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static us.springett.parsers.cpe.util.Versions.VersionPart.intPart;

@@ -43,13 +43,12 @@
     </developers>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.release>8</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Dependency Versions -->
         <slf4j.version>1.7.36</slf4j.version>
-        <junit.version>4.13.2</junit.version>
+        <junit.version>5.14.1</junit.version>
         <logback.classic.version>1.2.13</logback.classic.version>
         <!-- Maven Plugin Versions -->
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
@@ -85,20 +84,9 @@
     </issueManagement>
 
     <ciManagement>
-        <system>travis-ci</system>
-        <url>https://travis-ci.org/stevespringett/CPE-Parser</url>
+        <system>GitHub Actions</system>
+        <url>https://github.com/stevespringett/CPE-Parser/actions/workflows/maven.yml</url>
     </ciManagement>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
@@ -106,6 +94,13 @@
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-bom</artifactId>
                 <version>3.27.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -119,9 +114,8 @@
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -377,10 +371,10 @@
                                 <configuration>
                                     <rules>
                                         <requireJavaVersion>
-                                            <version>1.8.0</version>
+                                            <version>8</version>
                                         </requireJavaVersion>
                                         <enforceBytecodeVersion>
-                                            <maxJdkVersion>1.8</maxJdkVersion>
+                                            <maxJdkVersion>8</maxJdkVersion>
                                         </enforceBytecodeVersion>
                                     </rules>
                                 </configuration>

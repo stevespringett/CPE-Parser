@@ -17,30 +17,26 @@
  */
 package us.springett.parsers.cpe.util;
 
-import java.util.regex.Pattern;
+import org.junit.jupiter.api.Test;
+import us.springett.parsers.cpe.exceptions.CpeEncodingException;
 import us.springett.parsers.cpe.values.LogicalValue;
 import us.springett.parsers.cpe.values.Part;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
-import us.springett.parsers.cpe.exceptions.CpeEncodingException;
+
+import java.util.regex.Pattern;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
  * @author Jeremy Long
  */
 public class ConvertTest {
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     /**
      * Test of toWellFormed method, of class Convert.
      */
     @Test
     public void testToWellFormed() {
-        exception = ExpectedException.none();
         String value = "test";
         String expResult = "test";
         String result = Convert.toWellFormed(value);
@@ -87,7 +83,6 @@ public class ConvertTest {
      */
     @Test
     public void testFromWellFormed() {
-        exception = ExpectedException.none();
         String value = "test";
         String expResult = "test";
         String result = Convert.fromWellFormed(value);
@@ -137,8 +132,7 @@ public class ConvertTest {
      */
     @Test
     public void testWellFormedToCpeUri() throws CpeEncodingException {
-        exception = ExpectedException.none();
-
+        
         String value = null;
         String expResult = "";
         String result = Convert.wellFormedToCpeUri(value);
@@ -196,19 +190,17 @@ public class ConvertTest {
     }
 
     @Test
-    public void testWellFormedToCpeUriException() throws CpeEncodingException {
-        exception.expect(CpeEncodingException.class);
-
+    public void testWellFormedToCpeUriException() {
         String value = "test\\";
-        Convert.wellFormedToCpeUri(value);
+        assertThatThrownBy(() -> Convert.wellFormedToCpeUri(value))
+                .isInstanceOf(CpeEncodingException.class);
     }
 
     @Test
-    public void testWellFormedToCpeUriException2() throws CpeEncodingException {
-        exception.expect(CpeEncodingException.class);
-
+    public void testWellFormedToCpeUriException2() {
         String value = "test:";
-        Convert.wellFormedToCpeUri(value);
+        assertThatThrownBy(() -> Convert.wellFormedToCpeUri(value))
+                .isInstanceOf(CpeEncodingException.class);
     }
 
     /**
@@ -216,8 +208,7 @@ public class ConvertTest {
      */
     @Test
     public void testWellFormedToCpeUri_Part() {
-        exception = ExpectedException.none();
-
+        
         Part value = null;
         String expResult = "*";
         String result = Convert.wellFormedToCpeUri(value);
@@ -231,8 +222,7 @@ public class ConvertTest {
      */
     @Test
     public void testCpeUriToWellFormed() throws CpeEncodingException {
-        exception = ExpectedException.none();
-
+        
         String value = null;
         String expResult = "*";
         String result = Convert.cpeUriToWellFormed(value);
@@ -280,19 +270,17 @@ public class ConvertTest {
     }
 
     @Test
-    public void testCpeUriToWellFormedException() throws CpeEncodingException {
-        exception.expect(CpeEncodingException.class);
-
+    public void testCpeUriToWellFormedException() {
         String value = "test%";
-        Convert.cpeUriToWellFormed(value);
+        assertThatThrownBy(() -> Convert.cpeUriToWellFormed(value))
+                .isInstanceOf(CpeEncodingException.class);
     }
 
     @Test
-    public void testCpeUriToWellFormedException2() throws CpeEncodingException {
-        exception.expect(CpeEncodingException.class);
-
+    public void testCpeUriToWellFormedException2() {
         String value = "test:";
-        Convert.cpeUriToWellFormed(value);
+        assertThatThrownBy(() -> Convert.cpeUriToWellFormed(value))
+                .isInstanceOf(CpeEncodingException.class);
     }
 
     /**
@@ -300,8 +288,7 @@ public class ConvertTest {
      */
     @Test
     public void testWellFormedToFS() {
-        exception = ExpectedException.none();
-
+        
         String value = null;
         String expResult = "*";
         String result = Convert.wellFormedToFS(value);
@@ -354,8 +341,7 @@ public class ConvertTest {
      */
     @Test
     public void testWellFormedToFS_Part() {
-        exception = ExpectedException.none();
-
+        
         Part value = null;
         String expResult = "*";
         String result = Convert.wellFormedToFS(value);
@@ -367,8 +353,7 @@ public class ConvertTest {
      */
     @Test
     public void testFsToWellFormed() {
-        exception = ExpectedException.none();
-
+        
         String value = null;
         String expResult = "*";
         String result = Convert.fsToWellFormed(value);
@@ -421,9 +406,6 @@ public class ConvertTest {
         result = Convert.wellFormedToPattern(value);
         assertEquals(expResult.toString(), result.toString());
 
-//        String test = "test123a\\*bc\\[\\]";
-//        Matcher m = expResult.matcher(test);
-//        assertTrue(m.matches());
         value = "*???a\\*bc\\[\\]";
         expResult = Pattern.compile(".*...a\\\\\\*bc\\\\\\[\\\\\\]");
         result = Convert.wellFormedToPattern(value);
@@ -433,7 +415,6 @@ public class ConvertTest {
 
     @Test
     public void testCpeUriToWellFormedLenient() throws Exception {
-        exception = ExpectedException.none();
         String value = "te/st";
         String expResult = "te\\/st";
         String result = Convert.cpeUriToWellFormed(value, true);
@@ -441,11 +422,9 @@ public class ConvertTest {
     }
 
     @Test
-    public void testCpeUriToWellFormedLenientException() throws Exception {
-        exception.expect(CpeEncodingException.class);
+    public void testCpeUriToWellFormedLenientException() {
         String value = "te/st";
-        String expResult = "te\\/st";
-        String result = Convert.cpeUriToWellFormed(value, false);
-        assertEquals(expResult, result);
+        assertThatThrownBy(() -> Convert.cpeUriToWellFormed(value, false))
+            .isInstanceOf(CpeEncodingException.class);
     }
 }
