@@ -13,5 +13,6 @@ jobs:
       uses: actions/setup-java@v5
       with:
         java-version: 11
+        distribution: 'zulu'
     - name: Build with Maven
       run: mvn clean install site
