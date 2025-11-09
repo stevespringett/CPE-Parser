@@ -27,7 +27,7 @@ Maven Usage
 <dependency>
     <groupId>us.springett</groupId>
     <artifactId>cpe-parser</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.2</version>
 </dependency>
 ```
 
