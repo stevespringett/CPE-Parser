@@ -6,7 +6,7 @@
     <groupId>us.springett</groupId>
     <artifactId>cpe-parser</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.0.1</version>
 
     <name>CPE Parser</name>
     <description>A utility for validating and parsing Common Platform Enumeration (CPE) v2.2 and v2.3 as originally defined by MITRE and maintained by NIST.</description>
@@ -75,7 +75,7 @@
         <connection>scm:git:https://github.com/stevespringett/CPE-Parser.git</connection>
         <url>https://github.com/stevespringett/CPE-Parser.git</url>
         <developerConnection>scm:git:https://github.com/stevespringett/CPE-Parser.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>cpe-parser-3.0.1</tag>
     </scm>
 
     <issueManagement>
