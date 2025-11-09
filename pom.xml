@@ -72,9 +72,9 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git@github.com:stevespringett/CPE-Parser.git</connection>
+        <connection>scm:git:https://github.com/stevespringett/CPE-Parser.git</connection>
         <url>https://github.com/stevespringett/CPE-Parser.git</url>
-        <developerConnection>scm:git:git@github.com:stevespringett/CPE-Parser.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/stevespringett/CPE-Parser.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
