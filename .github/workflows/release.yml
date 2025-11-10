@@ -43,9 +43,9 @@ jobs:
         run: |
           # Set the Maven options based on the 'dry_run' input
           if ${{ github.event.inputs.dry_run }}; then
-            echo "options=release:prepare -DdryRun=true" >> $GITHUB_ENV
+            echo "options=-Prelease release:prepare -DdryRun=true" >> $GITHUB_ENV
           else
-            echo "options=release:clean release:prepare release:perform" >> $GITHUB_ENV
+            echo "options=-Prelease release:clean release:prepare release:perform -Darguments=\"-Prelease -Dgpg.passphrase=${MAVEN_GPG_PASSPHRASE}\"" >> $GITHUB_ENV
           fi
 
       - name: Run Maven command
